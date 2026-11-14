@@ -6,6 +6,7 @@ import { SwarmError, globMatch, pidAlive, sleep, truncate } from '../lib/util.ts
 import { materializePlan } from './plan.ts';
 import { Steps } from './steps.ts';
 import { recordOutcome } from './metrics.ts';
+import { contextPacket, creditMemories, ingestKnowledge } from '../memory/memory.ts';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -44,6 +45,7 @@ export class Coordinator {
     this.rt = rt;
     this.log = opts.log ?? (() => undefined);
     this.steps = new Steps(this);
+    this.onKnowledge = (task, doc) => void ingestKnowledge(rt, task, doc);
   }
 
   defs(release_id: string): ReleaseDefs {
@@ -250,6 +252,8 @@ export class Coordinator {
     }
     this.acceptHandoffs(task);
     const rework = store.getMeta<{ reason: string; repairs: number }>(`task:${task.id}:rework`);
+    // Context selection is part of the execution definitions, so it is versioned and improvable.
+    const context = contextPacket(this.rt, m, task, { max: defs.execution.context.max_memories, include_failed_approaches: defs.execution.context.include_failed_approaches });
     const faults = (store.getMeta<FaultSpec[]>(`faults:${m.id}`) ?? []).filter((f) => f.task_key === task.key && (f.attempt === '*' || f.attempt === token.attempt)).map((f) => f.fault);
     const handle = provider.start(
       {
@@ -260,7 +264,7 @@ export class Coordinator {
         workspace,
         inputs,
         params: { ...kernel.params(task.id), ...(rework ? { previous_attempt_rejected_because: rework.reason } : {}) },
-        instructions: defs.execution.agents[arch]?.instructions ?? '',
+        instructions: [defs.execution.agents[arch]?.instructions ?? '', context.text].filter(Boolean).join('\n\n'),
         model: route.model,
         effort: route.effort,
         timeout_ms: Math.max(5_000, task.contract.resources.reservation.wall_ms),
@@ -418,6 +422,7 @@ export class Coordinator {
     const top = tasks.filter((t) => t.parent_task_id === null);
     if (top.length && top.every((t) => t.status === 'accepted') && tasks.every((t) => ['accepted', 'not_selected', 'cancelled'].includes(t.status))) {
       recordOutcome(this.rt, mission_id);
+      creditMemories(this.rt, mission_id);
       kernel.setMissionStatus(mission_id, 'review_ready', 'runtime', { reason: 'all work accepted; awaiting the decision in the review packet' });
       return true;
     }

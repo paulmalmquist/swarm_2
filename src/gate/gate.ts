@@ -12,9 +12,12 @@ import { hashDir } from './registry.ts';
 import { CandidateProcess, detectIsolation } from './sandbox.ts';
 import { type CaseScore, scoreReview } from '../../protected/checkers/review.ts';
 import { HOLDOUT_SETS, freshCases, holdoutCases, requiredStepProbes } from '../../protected/cases/review-holdout.ts';
+import { ARENA_SETS } from '../../protected/cases/arena-holdout.ts';
 import type { LabeledCase, ReviewOutput } from '../../fixtures/evolution/review-cases.ts';
 
 export const PROTECTED_SRC = join(REPO_ROOT, 'protected');
+/** Enough resamples that an interval bound does not move with the resampling noise. */
+export const RESAMPLES = 20000;
 
 export interface PromotionPolicy {
   policy_id: string;
@@ -83,7 +86,7 @@ export interface LevelEvaluation {
   cases: number;
 }
 
-function gate(id: string, name: string, kind: GateResult['kind'], verdict: GateResult['verdict'], meaning: string, m: Partial<GateResult> = {}): GateResult {
+export function gateResult(id: string, name: string, kind: GateResult['kind'], verdict: GateResult['verdict'], meaning: string, m: Partial<GateResult> = {}): GateResult {
   return { id, name, kind, verdict, measurement_value: null, measurement_unit: null, comparison_operator: '=', threshold: null, samples: 0, minimum_samples: 0, weight: null, meaning, ...m };
 }
 
@@ -110,7 +113,7 @@ export class Gate {
     mkdirSync(rt.paths.protected, { recursive: true });
     this.iso = detectIsolation();
     this.db = new Db(rt.paths.gateDb);
-    this.experiments = new Repo(this.db, 'experiments', ['level', 'stage', 'decision', 'lineage_id']);
+    this.experiments = new Repo(this.db, 'experiments', ['level', 'stage', 'decision', 'lineage_id', 'release_id']);
     this.receipts = new Repo(this.db, 'receipts', ['experiment_id', 'decision', 'level']);
     this.canaries = new Repo(this.db, 'canaries', ['release_id', 'status']);
     this.db.tx(() => {
@@ -431,10 +434,10 @@ export class Gate {
     ];
 
     const screening = this.staticScreen(cand.ingested_dir);
-    gates.push(gate('no_forbidden_capabilities', 'No forbidden capabilities', 'HARD_GATE', screening.length ? 'FAILED' : 'PASSED', screening.length ? `The candidate uses capabilities a review step has no reason to use: ${screening.join('; ')}` : 'The candidate code uses no file, process, network or dynamic-code capability.', { measurement_value: screening.length, measurement_unit: 'findings', comparison_operator: '=', threshold: 0 }));
-    gates.push(gate('holdout_not_reused', 'Held-out cases are unseen by this lineage', 'HARD_GATE', set ? 'PASSED' : 'REMAINING', set ? `Scored on ${set}, which this candidate lineage has not been scored on before.` : 'Every registered held-out set has already been revealed to this lineage or reached its exposure cap. New held-out cases are required before another decision.'));
+    gates.push(gateResult('no_forbidden_capabilities', 'No forbidden capabilities', 'HARD_GATE', screening.length ? 'FAILED' : 'PASSED', screening.length ? `The candidate uses capabilities a review step has no reason to use: ${screening.join('; ')}` : 'The candidate code uses no file, process, network or dynamic-code capability.', { measurement_value: screening.length, measurement_unit: 'findings', comparison_operator: '=', threshold: 0 }));
+    gates.push(gateResult('holdout_not_reused', 'Held-out cases are unseen by this lineage', 'HARD_GATE', set ? 'PASSED' : 'REMAINING', set ? `Scored on ${set}, which this candidate lineage has not been scored on before.` : 'Every registered held-out set has already been revealed to this lineage or reached its exposure cap. New held-out cases are required before another decision.'));
     if ((screening.length && !opts.force_execute_despite_screening) || !set) {
-      for (const g of ['required_steps_present', 'minimum_samples', 'escaped_defects_not_worse', 'false_alarms_within_margin', 'no_regression_vs_baseline', 'cost_within_bound']) gates.push(gate(g, g.replace(/_/g, ' '), 'HARD_GATE', 'REMAINING', 'Not measured: the candidate was not executed.'));
+      for (const g of ['required_steps_present', 'minimum_samples', 'escaped_defects_not_worse', 'false_alarms_within_margin', 'no_regression_vs_baseline', 'cost_within_bound']) gates.push(gateResult(g, g.replace(/_/g, ' '), 'HARD_GATE', 'REMAINING', 'Not measured: the candidate was not executed.'));
       return { comparisons: [], gates, primary: null, cost: null, known_regressions: [], limitations, units: 0, snapshot: { screening, executed: false }, executor: 'validator-executor', deterministic: true, cases: 0 };
     }
 
@@ -459,23 +462,24 @@ export class Gate {
     const probes = requiredStepProbes().filter((p) => (pol.required_steps[skill_id] ?? []).includes(p.step));
     const probeRun = await this.runSkillArm(dirs.candidate, skill_id, probes.map((p) => ({ case: p.case, label: { should_block: true, defect_class: p.expect_class, field: null, severity: 0 } })));
     const missing = probes.filter((p) => !(probeRun.outputs.get(p.case.id)?.findings ?? []).some((f) => f.step === p.step && f.class === p.expect_class && f.severity === 'blocking')).map((p) => p.step);
-    gates.push(gate('required_steps_present', 'Required verification steps are performed', 'HARD_GATE', missing.length ? 'FAILED' : 'PASSED', missing.length ? `The candidate omits a step that may not be omitted: ${missing.join(', ')}. A probe case with a known answer was not caught.` : 'Every step that may not be omitted fired on its probe case.', { measurement_value: probes.length - missing.length, measurement_unit: 'steps', comparison_operator: '>=', threshold: probes.length, samples: probes.length, minimum_samples: probes.length }));
+    gates.push(gateResult('required_steps_present', 'Required verification steps are performed', 'HARD_GATE', missing.length ? 'FAILED' : 'PASSED', missing.length ? `The candidate omits a step that may not be omitted: ${missing.join(', ')}. A probe case with a known answer was not caught.` : 'Every step that may not be omitted fired on its probe case.', { measurement_value: probes.length - missing.length, measurement_unit: 'steps', comparison_operator: '>=', threshold: probes.length, samples: probes.length, minimum_samples: probes.length }));
 
     const candOk = arms.candidate.error === null && c.errors === 0;
-    gates.push(gate('minimum_samples', 'Enough scored cases', 'HARD_GATE', candOk && c.n >= pol.minimum_samples ? 'PASSED' : 'FAILED', candOk ? `${c.n} cases scored; at least ${pol.minimum_samples} are required.` : `The candidate did not produce an answer for every case (${arms.candidate.error ?? `${c.errors} missing`}).`, { measurement_value: c.n - c.errors, measurement_unit: 'cases', comparison_operator: '>=', threshold: pol.minimum_samples, samples: c.n, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('escaped_defects_not_worse', 'No more defects escape', 'HARD_GATE', c.escaped_defect_rate <= i.escaped_defect_rate + 1e-9 ? 'PASSED' : 'FAILED', `Share of breaking changes approved: candidate ${pct(c.escaped_defect_rate)}, incumbent ${pct(i.escaped_defect_rate)}.`, { measurement_value: round(c.escaped_defect_rate), measurement_unit: 'rate', comparison_operator: '<=', threshold: round(i.escaped_defect_rate), samples: c.n, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('false_alarms_within_margin', 'Safe changes are not blocked', 'HARD_GATE', c.false_alarm_rate <= i.false_alarm_rate + pol.false_alarm_margin + 1e-9 ? 'PASSED' : 'FAILED', `Share of safe changes blocked: candidate ${pct(c.false_alarm_rate)}, incumbent ${pct(i.false_alarm_rate)}; allowed margin ${pct(pol.false_alarm_margin)}.`, { measurement_value: round(c.false_alarm_rate), measurement_unit: 'rate', comparison_operator: '<=', threshold: round(i.false_alarm_rate + pol.false_alarm_margin), samples: c.n, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('no_regression_vs_baseline', 'No cumulative regression against the original baseline', 'HARD_GATE', c.accuracy >= b.accuracy - pol.non_inferiority_margin - 1e-9 ? 'PASSED' : 'FAILED', `Accuracy: candidate ${pct(c.accuracy)}, original baseline ${pct(b.accuracy)}.`, { measurement_value: round(c.accuracy), measurement_unit: 'accuracy', comparison_operator: '>=', threshold: round(b.accuracy - pol.non_inferiority_margin), samples: c.n, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('cost_within_bound', 'Cost stays within bound', 'HARD_GATE', c.steps <= Math.max(1, i.steps) * pol.max_cost_ratio ? 'PASSED' : 'FAILED', `Steps per review: candidate ${c.steps}, incumbent ${i.steps}; at most ${pol.max_cost_ratio}× is allowed.`, { measurement_value: c.steps, measurement_unit: 'steps', comparison_operator: '<=', threshold: Math.max(1, i.steps) * pol.max_cost_ratio }));
+    gates.push(gateResult('minimum_samples', 'Enough scored cases', 'HARD_GATE', candOk && c.n >= pol.minimum_samples ? 'PASSED' : 'FAILED', candOk ? `${c.n} cases scored; at least ${pol.minimum_samples} are required.` : `The candidate did not produce an answer for every case (${arms.candidate.error ?? `${c.errors} missing`}).`, { measurement_value: c.n - c.errors, measurement_unit: 'cases', comparison_operator: '>=', threshold: pol.minimum_samples, samples: c.n, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('escaped_defects_not_worse', 'No more defects escape', 'HARD_GATE', c.escaped_defect_rate <= i.escaped_defect_rate + 1e-9 ? 'PASSED' : 'FAILED', `Share of breaking changes approved: candidate ${pct(c.escaped_defect_rate)}, incumbent ${pct(i.escaped_defect_rate)}.`, { measurement_value: round(c.escaped_defect_rate), measurement_unit: 'rate', comparison_operator: '<=', threshold: round(i.escaped_defect_rate), samples: c.n, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('false_alarms_within_margin', 'Safe changes are not blocked', 'HARD_GATE', c.false_alarm_rate <= i.false_alarm_rate + pol.false_alarm_margin + 1e-9 ? 'PASSED' : 'FAILED', `Share of safe changes blocked: candidate ${pct(c.false_alarm_rate)}, incumbent ${pct(i.false_alarm_rate)}; allowed margin ${pct(pol.false_alarm_margin)}.`, { measurement_value: round(c.false_alarm_rate), measurement_unit: 'rate', comparison_operator: '<=', threshold: round(i.false_alarm_rate + pol.false_alarm_margin), samples: c.n, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('no_regression_vs_baseline', 'No cumulative regression against the original baseline', 'HARD_GATE', c.accuracy >= b.accuracy - pol.non_inferiority_margin - 1e-9 ? 'PASSED' : 'FAILED', `Accuracy: candidate ${pct(c.accuracy)}, original baseline ${pct(b.accuracy)}.`, { measurement_value: round(c.accuracy), measurement_unit: 'accuracy', comparison_operator: '>=', threshold: round(b.accuracy - pol.non_inferiority_margin), samples: c.n, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('cost_within_bound', 'Cost stays within bound', 'HARD_GATE', c.steps <= Math.max(1, i.steps) * pol.max_cost_ratio ? 'PASSED' : 'FAILED', `Steps per review: candidate ${c.steps}, incumbent ${i.steps}; at most ${pol.max_cost_ratio}× is allowed.`, { measurement_value: c.steps, measurement_unit: 'steps', comparison_operator: '<=', threshold: Math.max(1, i.steps) * pol.max_cost_ratio }));
 
-    const seed = seedFrom(exp.id);
+    // The resampling seed comes from what is being judged, so repeating the evaluation repeats the numbers.
+    const seed = seedFrom(`${cand.candidate_hash}:${set}`);
     const paired = (metric: string, unit: string, higher: boolean, pick: (s: CaseScore) => number, cv: number, iv: number, bv: number): MetricComparison => {
       const dI = scored.candidate.scores.map((s, k) => pick(s) - pick(scored.incumbent.scores[k]!));
       const dB = scored.candidate.scores.map((s, k) => pick(s) - pick(scored.baseline.scores[k]!));
-      const ci = pairedBootstrapCI(dI, { seed });
-      const cb = pairedBootstrapCI(dB, { seed: seed + 1 });
+      const ci = pairedBootstrapCI(dI, { seed, iterations: RESAMPLES });
+      const cb = pairedBootstrapCI(dB, { seed: seed + 1, iterations: RESAMPLES });
       const st = signTest(dI);
-      return { metric, unit, higher_is_better: higher, candidate: round(cv), incumbent: round(iv), baseline: round(bv), diff_vs_incumbent: round(ci.mean), ci95_vs_incumbent: [round(ci.lo)!, round(ci.hi)!], diff_vs_baseline: round(cb.mean), ci95_vs_baseline: [round(cb.lo)!, round(cb.hi)!], n: cases.length, method: `paired bootstrap over the same ${cases.length} cases (2000 resamples, seeded); sign test: ${st.wins} better, ${st.losses} worse, ${st.ties} same, p=${round(st.p, 5)}` };
+      return { metric, unit, higher_is_better: higher, candidate: round(cv), incumbent: round(iv), baseline: round(bv), diff_vs_incumbent: round(ci.mean), ci95_vs_incumbent: [round(ci.lo)!, round(ci.hi)!], diff_vs_baseline: round(cb.mean), ci95_vs_baseline: [round(cb.lo)!, round(cb.hi)!], n: cases.length, method: `paired bootstrap over the same ${cases.length} cases (${RESAMPLES} resamples, seeded); sign test: ${st.wins} better, ${st.losses} worse, ${st.ties} same, p=${round(st.p, 5)}` };
     };
     const primary = paired('accuracy', 'share of reviews with the right verdict and the affected field named', true, (s) => (s.correct ? 1 : 0), c.accuracy, i.accuracy, b.accuracy);
     const harm = paired('harm_per_review', 'severity-weighted cost of wrong verdicts', false, (s) => s.harm, c.harm_per_case, i.harm_per_case, b.harm_per_case);
@@ -483,9 +487,9 @@ export class Gate {
     const wall: MetricComparison = { metric: 'wall_ms_per_review', unit: 'milliseconds, measured outside the candidate process', higher_is_better: false, candidate: round(c.wall_ms_per_case, 3), incumbent: round(i.wall_ms_per_case, 3), baseline: round(b.wall_ms_per_case, 3), diff_vs_incumbent: round(c.wall_ms_per_case - i.wall_ms_per_case, 3), ci95_vs_incumbent: null, diff_vs_baseline: round(c.wall_ms_per_case - b.wall_ms_per_case, 3), ci95_vs_baseline: null, n: cases.length, method: 'single timing of the whole batch; indicative only' };
     const rate = (metric: string, unit: string, cv: number, iv: number, bv: number): MetricComparison => ({ metric, unit, higher_is_better: false, candidate: round(cv), incumbent: round(iv), baseline: round(bv), diff_vs_incumbent: round(cv - iv), ci95_vs_incumbent: null, diff_vs_baseline: round(cv - bv), ci95_vs_baseline: null, n: cases.length, method: 'observed rate on the held-out set' });
 
-    gates.push(gate('accuracy_gain', 'Review accuracy', 'WEIGHTED', primary.diff_vs_incumbent! > 0 ? 'PASSED' : 'FAILED', `Accuracy changed by ${primary.diff_vs_incumbent} (95% interval ${primary.ci95_vs_incumbent![0]} to ${primary.ci95_vs_incumbent![1]}).`, { measurement_value: primary.diff_vs_incumbent, measurement_unit: 'accuracy difference', comparison_operator: '>', threshold: 0, weight: 0.6, samples: cases.length, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('harm_reduction', 'Severity-weighted harm', 'WEIGHTED', harm.diff_vs_incumbent! < 0 ? 'PASSED' : 'FAILED', `Harm per review changed by ${harm.diff_vs_incumbent}.`, { measurement_value: harm.diff_vs_incumbent, measurement_unit: 'harm difference', comparison_operator: '<', threshold: 0, weight: 0.25, samples: cases.length, minimum_samples: pol.minimum_samples }));
-    gates.push(gate('cost', 'Cost per review', 'WEIGHTED', c.steps <= i.steps ? 'PASSED' : 'FAILED', `Steps per review changed by ${c.steps - i.steps}.`, { measurement_value: c.steps - i.steps, measurement_unit: 'steps', comparison_operator: '<=', threshold: 0, weight: 0.15 }));
+    gates.push(gateResult('accuracy_gain', 'Review accuracy', 'WEIGHTED', primary.diff_vs_incumbent! > 0 ? 'PASSED' : 'FAILED', `Accuracy changed by ${primary.diff_vs_incumbent} (95% interval ${primary.ci95_vs_incumbent![0]} to ${primary.ci95_vs_incumbent![1]}).`, { measurement_value: primary.diff_vs_incumbent, measurement_unit: 'accuracy difference', comparison_operator: '>', threshold: 0, weight: 0.6, samples: cases.length, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('harm_reduction', 'Severity-weighted harm', 'WEIGHTED', harm.diff_vs_incumbent! < 0 ? 'PASSED' : 'FAILED', `Harm per review changed by ${harm.diff_vs_incumbent}.`, { measurement_value: harm.diff_vs_incumbent, measurement_unit: 'harm difference', comparison_operator: '<', threshold: 0, weight: 0.25, samples: cases.length, minimum_samples: pol.minimum_samples }));
+    gates.push(gateResult('cost', 'Cost per review', 'WEIGHTED', c.steps <= i.steps ? 'PASSED' : 'FAILED', `Steps per review changed by ${c.steps - i.steps}.`, { measurement_value: c.steps - i.steps, measurement_unit: 'steps', comparison_operator: '<=', threshold: 0, weight: 0.15 }));
 
     const known_regressions: string[] = [];
     for (const [cls, v] of Object.entries(c.by_class)) {
@@ -528,11 +532,11 @@ export class Gate {
     let ev: LevelEvaluation;
     if (exp.level === 'execution') ev = await this.evaluateExecution(exp, opts);
     else if (this.evaluators[exp.level]) ev = await this.evaluators[exp.level]!(this, exp);
-    else ev = { comparisons: [], gates: [gate('evaluator_available', 'An evaluator exists for this level', 'HARD_GATE', 'REMAINING', `No evaluator is installed for ${exp.level}-level candidates in this build.`)], primary: null, cost: null, known_regressions: [], limitations: ['Not evaluated.'], units: 0, snapshot: {}, executor: 'none', deterministic: true, cases: 0 };
+    else ev = { comparisons: [], gates: [gateResult('evaluator_available', 'An evaluator exists for this level', 'HARD_GATE', 'REMAINING', `No evaluator is installed for ${exp.level}-level candidates in this build.`)], primary: null, cost: null, known_regressions: [], limitations: ['Not evaluated.'], units: 0, snapshot: {}, executor: 'none', deterministic: true, cases: 0 };
 
     const after = this.protectedDigest();
     const intact = before === after && after === sealed && custody && this.verifyLedger().ok;
-    ev.gates.unshift(gate('protected_integrity', 'Rules and records are intact', 'HARD_GATE', intact ? 'PASSED' : 'FAILED', intact ? 'The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation.' : 'The protected store or the candidate in custody changed. No decision can rest on this evaluation.'));
+    ev.gates.unshift(gateResult('protected_integrity', 'Rules and records are intact', 'HARD_GATE', intact ? 'PASSED' : 'FAILED', intact ? 'The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation.' : 'The protected store or the candidate in custody changed. No decision can rest on this evaluation.'));
 
     const failed = ev.gates.filter((g) => g.kind === 'HARD_GATE' && g.verdict === 'FAILED');
     const remaining = ev.gates.filter((g) => g.kind === 'HARD_GATE' && g.verdict === 'REMAINING');
@@ -801,9 +805,6 @@ export class Gate {
     this.db.close();
   }
 }
-
-/** Registered held-out episode seeds for the improvement arena. */
-export const ARENA_SETS = ['arena-A', 'arena-B', 'arena-C'];
 
 function pct(n: number): string {
   return `${(n * 100).toFixed(1)}%`;

@@ -11,7 +11,11 @@
       "primary_metric": "accuracy",
       "non_inferiority_margin": 0.02,
       "false_alarm_margin": 0.05,
-      "required_steps": { "change-review": ["tests_present"] },
+      "required_steps": {
+        "change-review": [
+          "tests_present"
+        ]
+      },
       "max_cost_ratio": 5
     },
     "coordination": {
@@ -27,12 +31,47 @@
       "minimum_samples": 20,
       "budget_units": 420,
       "primary_metric": "validated_benefit",
-      "non_inferiority_margin": 0.0
+      "non_inferiority_margin": 0.0,
+      "submit_cost_units": 60,
+      "log_cases": 120,
+      "holdout_cases": 60,
+      "fresh_cases": 200,
+      "false_alarm_margin": 0.05,
+      "max_steps": 120,
+      "sensitivity": [
+        "without_unverified_complaints"
+      ]
     }
   },
-  "forbidden_capabilities": ["node:fs", "node:child_process", "node:net", "node:http", "node:https", "node:worker_threads", "node:vm", "child_process", "process.binding", "process.env", "eval(", "new Function(", "fetch(", "require("],
-  "holdout": { "max_uses_per_lineage": 1 },
-  "canary": { "max_missions": 3, "fresh_cases": 60, "rollback_if": { "accuracy_drop_gt": 0.05, "escaped_defect_rate_increase_gt": 0.02, "acceptance_failures_gt": 0 } },
+  "forbidden_capabilities": [
+    "node:fs",
+    "node:child_process",
+    "node:net",
+    "node:http",
+    "node:https",
+    "node:worker_threads",
+    "node:vm",
+    "child_process",
+    "process.binding",
+    "process.env",
+    "eval(",
+    "new Function(",
+    "fetch(",
+    "require("
+  ],
+  "holdout": {
+    "max_uses_per_lineage": 1,
+    "max_total_uses_per_set": 3
+  },
+  "canary": {
+    "max_missions": 3,
+    "fresh_cases": 60,
+    "rollback_if": {
+      "accuracy_drop_gt": 0.05,
+      "escaped_defect_rate_increase_gt": 0.02,
+      "acceptance_failures_gt": 0
+    }
+  },
   "decision_rule": {
     "accept": "Every hard gate PASSED, and the 95% interval of the paired difference in the primary metric against the incumbent lies above zero. A declared simplification is accepted when it is non-inferior within the margin and its cost interval lies below zero.",
     "reject": "Any hard gate FAILED, or the 95% interval of the paired difference lies below zero.",

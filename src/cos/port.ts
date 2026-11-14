@@ -93,12 +93,16 @@ export interface AttentionItem {
 export class LocalChiefOfStaff implements ChiefOfStaffPort {
   readonly adapter = 'local';
   private rt: Runtime;
-  /** Resolves which release a new mission is pinned to (active release, or a managed canary). */
-  releaseFor: (m: SubmitMission) => string;
+  /**
+   * Resolves which release a new mission is pinned to: the active release, or a managed canary.
+   * `onPinned` lets the release gate record which missions a canary took.
+   */
+  releaseFor: (m: SubmitMission) => { release_id: string; canary_id: string | null };
+  onPinned: ((canary_id: string, mission_id: string) => void) | null = null;
 
-  constructor(rt: Runtime, releaseFor?: (m: SubmitMission) => string) {
+  constructor(rt: Runtime, releaseFor?: (m: SubmitMission) => { release_id: string; canary_id: string | null }) {
     this.rt = rt;
-    this.releaseFor = releaseFor ?? (() => rt.registry.active());
+    this.releaseFor = releaseFor ?? (() => ({ release_id: rt.registry.active(), canary_id: null }));
   }
 
   private env<T>(data: T, source: Exclude<SourceLabel, 'unavailable'> = 'fixture'): Envelope<T> {
@@ -142,6 +146,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
     const d = cmd.data;
     const { kernel, store } = this.rt;
     const provider_mode = d.provider_mode ?? 'fixture';
+    const pin = d.release_id ? { release_id: d.release_id, canary_id: null } : this.releaseFor({ ...d, provider_mode });
     const mission = store.db.tx(() => {
       const before = store.missions.count();
       const m = kernel.createMission({
@@ -160,10 +165,14 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           provider_mode,
           scenario: d.scenario ?? null,
           request_ids: d.request_ids ?? [],
-          release_id: d.release_id ?? this.releaseFor(d),
+          release_id: pin.release_id,
         },
       });
       if (store.missions.count() === before) return m; // replayed command: nothing more to do
+      if (pin.canary_id) {
+        this.onPinned?.(pin.canary_id, m.id);
+        store.emit({ type: 'mission_pinned_to_canary', mission_id: m.id, actor_id: 'release-gate', actor_kind: 'gate', payload: { canary_id: pin.canary_id, release_id: pin.release_id } });
+      }
       const requests = (d.request_ids ?? []).map((id) => store.requests.get(id)).filter((r): r is IntakeRequest => Boolean(r));
       for (const r of requests) store.requests.put({ ...r, mission_id: m.id });
       if (requests.length) {

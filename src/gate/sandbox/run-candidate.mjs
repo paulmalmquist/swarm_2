@@ -11,6 +11,7 @@ import { pathToFileURL } from 'node:url';
 
 let validators = [];
 let policy = null;
+const cache = new Map();
 
 async function handle(req) {
   if (req.op === 'load_skill') {
@@ -38,6 +39,27 @@ async function handle(req) {
         }
       }
       outputs.push({ id: c.id, verdict: findings.some((f) => f.severity === 'blocking') ? 'request_changes' : 'approve', findings, steps_run: validators.length, errors });
+    }
+    return { outputs };
+  }
+  if (req.op === 'review_set') {
+    // Run an explicit set of validator files (absolute paths) over cases. Modules are cached.
+    const mods = [];
+    for (const file of req.files) {
+      if (!cache.has(file)) cache.set(file, await import(pathToFileURL(file).href));
+      mods.push(cache.get(file));
+    }
+    const outputs = [];
+    for (const c of req.cases) {
+      const findings = [];
+      for (const m of mods) {
+        try {
+          for (const f of m.check(structuredClone(c)) ?? []) findings.push({ step: String(f.step ?? m.id), class: String(f.class ?? 'unknown'), field: f.field == null ? null : String(f.field), severity: f.severity === 'blocking' ? 'blocking' : 'advisory', message: String(f.message ?? '').slice(0, 300) });
+        } catch {
+          /* a failing validator contributes no finding */
+        }
+      }
+      outputs.push({ id: c.id, verdict: findings.some((f) => f.severity === 'blocking') ? 'request_changes' : 'approve', findings, steps_run: mods.length });
     }
     return { outputs };
   }

@@ -5,6 +5,7 @@ import { type Experiment, Gate } from '../gate/gate.ts';
 import type { Runtime } from '../runtime.ts';
 import { devCases } from '../../fixtures/evolution/review-cases.ts';
 import { type BuiltCandidate, type CandidateSpec, buildCandidate } from './candidates.ts';
+import { runPolicy } from './arena.ts';
 
 export const CANDIDATE_LIBRARY = join(REPO_ROOT, 'fixtures', 'evolution', 'candidates');
 
@@ -63,6 +64,15 @@ export async function runExperiment(rt: Runtime, gate: Gate, candidate: string, 
   }
   gate.submitCandidate(exp.id, built);
   if (dev) gate.recordDevelopment(exp.id, 'development check by the candidate author', dev.cases, { accuracy: Number(dev.accuracy.toFixed(4)) });
+  if (spec.level === 'evolution' && gate.staticScreen(built.dir).length === 0) {
+    // The policy author may run the arena on any episode that is not a registered held-out one.
+    const seeds = Array.from({ length: 8 }, (_, i) => `arena-dev-${i}`);
+    const module = (JSON.parse((await import('node:fs')).readFileSync(join(built.dir, 'evolution.json'), 'utf8')) as { policy_module: string }).policy_module;
+    const mine = await runPolicy(gate, built.dir, module, seeds, { complaints: true });
+    const theirs = await runPolicy(gate, parentDir, (JSON.parse((await import('node:fs')).readFileSync(join(parentDir, 'evolution.json'), 'utf8')) as { policy_module: string }).policy_module, seeds, { complaints: true });
+    const avg = (xs: number[]): number => Number((xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(3));
+    gate.recordDevelopment(exp.id, 'development episodes run by the policy author', seeds.length, { candidate_mean_benefit: avg(mine.map((r) => r.validated_benefit)), incumbent_mean_benefit: avg(theirs.map((r) => r.validated_benefit)), units: mine.concat(theirs).reduce((a, r) => a + r.spent, 0) });
+  }
   const receipt = await gate.evaluate(exp.id, { force_execute_despite_screening: opts.force_execute_despite_screening });
   return { experiment: gate.experiments.must(exp.id), receipt, built, dev };
 }
