@@ -122,6 +122,14 @@ export interface PublishInput {
 
 const TERMINAL: Task['status'][] = ['accepted', 'failed', 'cancelled', 'not_selected'];
 
+/**
+ * Whether an attempt ran a model client. In a live mission some attempts do not: steps the runtime
+ * executes itself, steps a scenario keeps scripted, and verified results that are reused.
+ */
+export function ranAModel(a: Pick<Attempt, 'provider' | 'provider_mode'>): boolean {
+  return a.provider_mode === 'live' && !['runtime', 'fixture', 'reuse'].includes(a.provider);
+}
+
 export class Kernel {
   store: Store;
   limits: LimitsProfile;
@@ -725,7 +733,7 @@ export class Kernel {
   unreportedUsage(mission_id: string): number {
     return this.store.attempts
       .where('"mission_id" = ?', mission_id)
-      .filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime' && a.ended_at !== null && a.status !== 'rate_limited' && (!a.usage || a.usage.completeness !== 'complete')).length;
+      .filter((a) => ranAModel(a) && a.ended_at !== null && a.status !== 'rate_limited' && (!a.usage || a.usage.completeness !== 'complete')).length;
   }
 
   private usageAmounts(usage: UsageRecord | null): ResourceAmounts {

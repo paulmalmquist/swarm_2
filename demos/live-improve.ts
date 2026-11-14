@@ -11,7 +11,9 @@
  * What is live: the author. What is not: the review workload is synthetic, and the gate's
  * evaluation executes the checks on cases — no model is run to judge anything.
  *
- * Evidence is written to evidence/<name>/ (default: live-improve).
+ * Evidence is written to evidence/<name>/. Without a name the run gets a new one
+ * (live-improve-<date>-<time>). A bundle that already exists is not overwritten unless
+ * SWARM2_OVERWRITE=1 is set.
  */
 import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -23,9 +25,9 @@ import { observeReviewWork, runExperiment } from '../src/evolution/loop.ts';
 import { renderManifest, renderReceipt } from '../src/evolution/receipts.ts';
 import { Gate } from '../src/gate/gate.ts';
 import { devCases } from '../fixtures/evolution/review-cases.ts';
-import { freshHome, writeEvidence } from './lib.ts';
+import { freshHome, liveRunName, writeEvidence } from './lib.ts';
 
-const name = process.argv[2] ?? 'live-improve';
+const given = process.argv[2];
 const TIMEOUT_MS = Number(process.env.SWARM2_LIVE_MAX_MS ?? 12 * 60_000);
 
 const CHECK_SCRIPT = `// Development check. Runs the skill's current checks plus anything in candidate/validators on the
@@ -140,6 +142,8 @@ async function main(): Promise<void> {
     process.stderr.write('Live execution is off. This run uses real model calls; set SWARM2_LIVE=1 to allow it.\n');
     process.exit(2);
   }
+  // Checked before anything is removed: a kept bundle is not replaced unless that is asked for.
+  const name = liveRunName(given, 'live-improve');
   const out = join(REPO_ROOT, 'evidence', name);
   rmSync(out, { recursive: true, force: true });
   const rt = freshHome(join(REPO_ROOT, 'var', name));
@@ -333,6 +337,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  process.stderr.write(String(err instanceof Error ? err.stack : err) + '\n');
+  process.stderr.write(String(err instanceof Error && !/already exists|not a usable run name/.test(err.message) ? err.stack : err instanceof Error ? err.message : err) + '\n');
   process.exit(1);
 });

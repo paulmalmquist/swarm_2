@@ -71,10 +71,11 @@ Defaults are the development profile in `src/config.ts`. Override them in `swarm
 
 | Limit | Default | Override |
 |---|---|---|
-| Concurrent model calls | 12 | `SWARM2_MAX_CONCURRENT` |
+| Concurrent model calls | 12 | `SWARM2_MAX_CONCURRENT` (never more than 64) |
 | Delegated layers | 3 | `SWARM2_MAX_DEPTH` |
 | Worker invocations per mission | 200 (mission budget: 120) | config, or the mission's budget |
 | Wall-clock per mission | 60 minutes of running time | config (`max_wall_ms`). Past it the mission stops and asks you: cancel, extend by one period, or hold |
+| Worker time per mission | 30 minutes, summed over its workers (mission budget) | the mission's budget. A different limit from the wall-clock one above: this is time workers spent, not time elapsed |
 | Tokens / estimated cost | per mission budget (4,000,000 tokens, 20 USD list-price estimate) | the mission's budget |
 | Retries / repair attempts per task | 2 / 2 | config, or the execution definitions |
 | Reserved for verification / recovery / completion | 15% / 10% / 5% | config |
@@ -114,7 +115,7 @@ then the gate reports the store as changed and refuses to decide.
 ## Demonstrations and tests
 
 ```
-npm test                 # 63 tests, about two minutes
+npm test                 # 66 tests, about two minutes
 npm run demo:all         # demonstrations A–I on fixtures; rewrites evidence/
 npm run check:report     # the figures the documents quote, rebuilt from evidence/
 npm run demo:a           # one demonstration (a … i)

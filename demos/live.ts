@@ -8,7 +8,8 @@
  * scenario marks as templates stay scripted and are counted separately. Nothing here approves the
  * result: if the mission needs a person, the run stops and says so.
  *
- * Evidence is written to evidence/<name>/ (default: live-a).
+ * Evidence is written to evidence/<name>/. Without a name the run gets a new one (live-<date>-<time>).
+ * A bundle that already exists is not overwritten unless SWARM2_OVERWRITE=1 is set.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, rmSync } from 'node:fs';
@@ -16,10 +17,11 @@ import { join } from 'node:path';
 import { REPO_ROOT } from '../src/config.ts';
 import { Coordinator } from '../src/coordination/coordinator.ts';
 import type { ReviewPacket } from '../src/contracts/types.ts';
-import { freshHome, scenarioRequests, writeEvidence } from './lib.ts';
+import { freshHome, liveRunName, scenarioRequests, writeEvidence } from './lib.ts';
 import { LocalChiefOfStaff } from '../src/cos/port.ts';
+import { ranAModel } from '../src/kernel/kernel.ts';
 
-const name = process.argv[2] ?? 'live-a';
+const given = process.argv[2];
 const MAX_MS = Number(process.env.SWARM2_LIVE_MAX_MS ?? 25 * 60_000);
 
 async function main(): Promise<void> {
@@ -27,6 +29,8 @@ async function main(): Promise<void> {
     process.stderr.write('Live execution is off. This run uses real model calls; set SWARM2_LIVE=1 to allow it.\n');
     process.exit(2);
   }
+  // Checked before anything is removed: a kept bundle is not replaced unless that is asked for.
+  const name = liveRunName(given, 'live');
   const home = join(REPO_ROOT, 'var', name);
   const out = join(REPO_ROOT, 'evidence', name);
   rmSync(out, { recursive: true, force: true });
@@ -52,7 +56,7 @@ async function main(): Promise<void> {
     const tasks = store.tasks.where('"mission_id" = ?', id);
     const attempts = store.attempts.where('"mission_id" = ?', id).sort((a, b) => a.started_at.localeCompare(b.started_at));
     const keyOf = (task_id: string): string => tasks.find((t) => t.id === task_id)?.key ?? task_id;
-    const model = attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime');
+    const model = attempts.filter(ranAModel);
     const scripted = attempts.filter((a) => a.provider === 'fixture');
     const sum = (f: (a: (typeof attempts)[number]) => number | null | undefined): number => model.reduce((x, a) => x + (f(a) ?? 0), 0);
     const verifications = store.verifications.where('"mission_id" = ?', id);
@@ -158,6 +162,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  process.stderr.write(String(err instanceof Error ? err.stack : err) + '\n');
+  process.stderr.write(String(err instanceof Error && !/already exists|not a usable run name/.test(err.message) ? err.stack : err instanceof Error ? err.message : err) + '\n');
   process.exit(1);
 });

@@ -1,5 +1,5 @@
 import { type ChildProcess, spawn } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../src/config.ts';
 import type { FaultSpec } from '../src/coordination/coordinator.ts';
@@ -38,6 +38,21 @@ export async function waitFor<T>(fn: () => T | undefined | null | false, timeout
 
 export function scenarioRequests(): RawRequest[] {
   return (JSON.parse(readFileSync(join(REPO_ROOT, 'fixtures/scenarios/shared-capability/requests.json'), 'utf8')) as { requests: RawRequest[] }).requests;
+}
+
+/**
+ * The name a live run writes its bundle under. A live run costs real model calls and cannot be
+ * repeated exactly, so a kept bundle is never replaced by accident: without a name the run gets a
+ * new timestamped one, and naming a bundle that exists is refused unless SWARM2_OVERWRITE=1 says
+ * the replacement is meant. The name is a single path segment, so it cannot point outside evidence/.
+ */
+export function liveRunName(given: string | undefined, prefix: string, now = new Date()): string {
+  const name = given ?? `${prefix}-${now.toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '-')}`;
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(name)) throw new Error(`"${name}" is not a usable run name: letters, digits, hyphens and underscores only.`);
+  if (existsSync(join(REPO_ROOT, 'evidence', name)) && process.env.SWARM2_OVERWRITE !== '1') {
+    throw new Error(`evidence/${name} already exists and is not overwritten. Choose another name, or set SWARM2_OVERWRITE=1 to replace it.`);
+  }
+  return name;
 }
 
 export function freshHome(home: string, limits: Record<string, unknown> = {}): Runtime {

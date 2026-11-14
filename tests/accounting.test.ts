@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { FIXTURE, mission, output, rig, task } from './helpers.ts';
+import { ranAModel } from '../src/kernel/kernel.ts';
 import { amounts } from '../src/lib/util.ts';
 import { interpretResult } from '../src/providers/claude-cli.ts';
 import { attemptDeadlineMs } from '../src/coordination/coordinator.ts';
@@ -42,6 +43,11 @@ test('a model attempt stopped at its deadline is charged what was measured, and 
     const again = r.kernel.claim(t.id, 'w', LIVE)!;
     r.kernel.failAttempt(t.id, again.token, 'rate_limited', { code: 'rate_limited', message: 'limit reached' }, null, { countsAsRetry: false });
     assert.equal(r.kernel.unreportedUsage(m.id), 1);
+
+    // In a live mission, only an attempt that ran a model client is a model attempt.
+    assert.equal(ranAModel({ provider: 'claude-cli', provider_mode: 'live' }), true);
+    for (const provider of ['runtime', 'fixture', 'reuse']) assert.equal(ranAModel({ provider, provider_mode: 'live' }), false, `${provider} runs no model`);
+    assert.equal(ranAModel({ provider: 'fixture', provider_mode: 'fixture' }), false);
   } finally {
     r.cleanup();
   }

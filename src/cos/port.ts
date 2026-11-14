@@ -1,6 +1,7 @@
 import type { ActorKind, AuthorityEnvelope, Command, Decision, Draft, Envelope, IntakeRequest, Mission, NextAction, ResourceAmounts, ReviewPacket, SourceLabel } from '../contracts/types.ts';
 import { devAuthority, devBudget } from '../config.ts';
 import type { Cluster } from '../kernel/intake.ts';
+import { ranAModel } from '../kernel/kernel.ts';
 import type { Runtime } from '../runtime.ts';
 import { SwarmError, newId } from '../lib/util.ts';
 
@@ -220,7 +221,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         tasks: { total: tasks.length, by_status },
         next_actions: tasks.filter((t) => t.next_action).map((t) => ({ ...t.next_action!, task_key: t.key, task_title: t.title, status: t.status })),
         blockers: tasks.filter((t) => t.status === 'blocked' || t.status === 'failed').map((t) => ({ task_key: t.key, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null })),
-        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length, unreported_usage_attempts: kernel.unreportedUsage(m.id) }))(store.attempts.where('"mission_id" = ?', m.id)),
+        execution: ((attempts) => ({ model_attempts: attempts.filter(ranAModel).length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length, unreported_usage_attempts: kernel.unreportedUsage(m.id) }))(store.attempts.where('"mission_id" = ?', m.id)),
         spent: kernel.budget.spent(m.budget_account_id),
         budget: store.accounts.must(m.budget_account_id).limit,
         open_decisions: store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).length,

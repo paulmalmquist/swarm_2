@@ -8,10 +8,12 @@ All seven increments of the build order are complete and merged into `main` (pul
 merged 2026-11-14). Follow-up work goes on branch `claude/swarm-2-agent-org-ffiy5j`, restarted from
 `main`, as a new pull request.
 
-Pull request #2 carries what auditing the evidence report turned up: four runtime defects fixed
-(two in spend accounting, two that could leave a mission stopped with nobody told), fourteen tests
-added, the report corrected, and a test that rebuilds the report's figures from `evidence/`
-(`docs/evidence-report.md`, sections 5 and 9).
+Pull request #2 carries what checking the evidence report turned up, first by its author and then
+by a separate agent (`docs/evidence-report.md`, sections 5 and 9): four runtime defects fixed (two
+in spend accounting, two that could leave a mission stopped with nobody told), a live command
+that would have deleted the kept live evidence, seventeen tests added, the report and the handoff
+corrected, and a test that rebuilds the documents' figures from `evidence/` and catches planted
+errors.
 
 | Increment | State | Where to look |
 |---|---|---|
@@ -30,7 +32,7 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 63 tests, about two minutes
+npm test                           # 66 tests, about two minutes
 npm run check:report               # the figures the documents quote, rebuilt from evidence/
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration
@@ -90,9 +92,11 @@ node src/cli.ts serve --run        # interface + coordinator, http://127.0.0.1:4
 
 ## Next executable step
 
-`SWARM2_LIVE=1 npm run demo:live`, then read `evidence/live-a/README.md`. If the mission stops for
-a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
-`node src/cli.ts --home var/live-a decide <id> retry --rationale "<guidance>"` sends the work back.
+`SWARM2_LIVE=1 node demos/live.ts live-d`, then read `evidence/live-d/README.md`. (Without a name
+the run gets a new one; a bundle that exists is never replaced unless `SWARM2_OVERWRITE=1`.) If
+the mission stops for a person, `node src/cli.ts --home var/live-d attention` shows the decision,
+and `node src/cli.ts --home var/live-d decide <id> retry --rationale "<guidance>"` sends the work
+back.
 
 ## Environment notes
 
@@ -100,8 +104,8 @@ a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
   While it lasted, delegated agents and nested model workers returned HTTP 429; the build was done
   in one session and live runs were made afterwards.
 - The limit was hit again at about 19:25 UTC (reset stated as 21:50 UTC). It stopped an independent
-  audit of `docs/evidence-report.md` against `evidence/`. The audit by a separate agent is
-  still owed: read-only, every figure in the report and the handoff against the bundle files, and
-  a judgment of whether `tests/report.test.ts` is vacuous anywhere.
+  audit of `docs/evidence-report.md` against `evidence/`. The audit was run again after the reset
+  by a separate read-only agent; its 27 findings and 10 omissions are applied, and section 9 of
+  the report records them. What was written after it began has had no second reader.
 - `swarm_design` was not read: attaching it was declined by the session's permission check.
 - State directories under `var/` are not committed. `evidence/` is.

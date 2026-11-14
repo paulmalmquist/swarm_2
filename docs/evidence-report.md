@@ -1,9 +1,11 @@
 # Evidence report
 
 What was built, what ran, what improved, what failed and what remains unverified.
-Recorded 2026-11-14. Every figure below comes from a file under `evidence/` or from the test
-suite, except where a sentence says the run was not kept. `npm run check:report` rebuilds the
-quoted figures from those files and fails when this report says something else.
+Recorded 2026-11-14. The figures below come from files under `evidence/` or from the test suite,
+with three exceptions that rest on the author's account and say so: runs that were not kept, the
+account of the build environment at the end of section 5, and the account of this report's own
+checking in section 9. `npm run check:report` rebuilds the figures it covers from those files and
+fails when this report says something else; section 9 says what it covers and what it does not.
 
 ## How to read this
 
@@ -29,9 +31,9 @@ Strongbox or Paul OS was reachable (`docs/capability-matrix.md`).
 | Provider and chief-of-staff adapters | Built: a fixture provider, a live `claude -p` provider, a local chief-of-staff port over three transports | `src/providers/`, `src/cos/port.ts` |
 | Separation of real execution from fixtures | Built: provenance on every response, per-attempt provider, evidence basis on every release | `docs/architecture.md` §8 |
 | Executable evaluation and promotion mechanism | Built: release gate, held-out sets, receipts, canary, rollback | `src/gate/` |
-| Tests for coordination, recovery, isolation, rollback | 63 tests, all passing | `tests/` |
-| Reproducible demonstration commands | Nine fixture demonstrations, two live drivers | `demos/`, `package.json` |
-| Example improvement receipts and release manifests | In every improvement bundle | `evidence/demo-c`, `-d`, `-e`, `-g`, `-h`, `-i`, `live-improve*` |
+| Tests for coordination, recovery, isolation, rollback | 66 tests, all passing | `tests/` |
+| Reproducible demonstration commands | Nine demonstrations (seven on fixtures, two in testbeds with assumed rates), two live drivers | `demos/`, `package.json` |
+| Example improvement receipts and release manifests | Receipts in every improvement bundle; manifests where a release was created | Receipts: `evidence/demo-c` to `-i`, `live-improve*`. Manifests: `demo-c`, `-d`, `-g`, `live-improve-2` |
 | Architecture and integration documentation, operator guide | Written | `docs/` |
 
 Connector ports exist with stated requirements; only local, labeled implementations are behind them.
@@ -45,13 +47,14 @@ criteria, two delivery workstreams in separate git worktrees, integration, indep
 on tests the workers never see, knowledge capture, review packet.
 
 Live in these runs: discovery (haiku), acceptance criteria (sonnet), both implementers (sonnet),
-knowledge capture (haiku). Scripted in these runs and recorded as fixture attempts: the reference
-contract, the work graph and the delivery decomposition, which come from the versioned
-coordination policy. Integration, verification and the review packet are runtime steps.
+knowledge capture (haiku; it ran to completion only in `live-c`). Scripted in these runs and
+recorded as fixture attempts: the reference contract, the work graph and the delivery
+decomposition, which come from the versioned coordination policy. Integration, verification and
+the review packet are runtime steps.
 
 | Run | Outcome | Elapsed | Model attempts | Rework | Integration failures | Acceptance criteria | Cost estimate | Waiting for a person |
 |---|---|---|---|---|---|---|---|---|
-| `live-a` | **Blocked** | 130 s | 7 | 4 | 0 | 4 of 5 passed; one failed three times | 0.62 USD | 1: what to do about the failed work |
+| `live-a` | **Blocked** | 130 s | 7 | 4 | 0 | 4 of 5 passed, one of them after a repair; one failed three times | 0.62 USD | 1: what to do about the failed work |
 | `live-b` | **Blocked** | 193 s | 9 (3 timed out) | 2 | 0 | 4 of 4 passed after two repairs | at least 0.41 USD | 1: what to do about the failed work |
 | `live-c` | **Reached review** | 150 s | 6 | 1 | 0 | 4 of 4 passed after one repair | 0.35 USD | 2: the scope change, and the merge approval |
 
@@ -67,11 +70,14 @@ What these three runs establish:
 - **Independent verification caught what delivery's own tests did not.** In all three runs the
   first integrated result failed at least one hidden acceptance criterion after passing every test
   delivery had. See the caveat below before generalizing.
-- **The repair loop works when the feedback is usable, and stops when it is not.** In `live-a` the
-  worker was told only `an unmeasured dataset shows unknown and a dash`, read that as the
+- **The repair loop repaired some failures and stopped at its limit on one.** In `live-a` a
+  second criterion that failed in the first round was repaired at the next attempt. On the other,
+  the worker was told only `an unmeasured dataset shows unknown and a dash`, read that as the
   complaint, and removed the dash; after the repair limit the mission stopped and asked a person.
-  With feedback stating the requirement as a requirement and showing what the work produced,
-  `live-b` repaired it in two attempts and `live-c` in one.
+  After the feedback was changed to state the requirement and show what the work produced,
+  `live-b` repaired the same failure in two attempts and `live-c` in one. One run each, on
+  different versions of the runtime: consistent with the feedback mattering, not a demonstration
+  of it.
 - **Workers said what they had not checked.** In the kept reports they named the tests they had
   not run and called a guess a guess (`live-b`: "this change is a guess at what the failed
   acceptance check wanted, so I'm not claiming AC-SLA-QUALITY is met"). They claimed only their
@@ -79,17 +85,33 @@ What these three runs establish:
   report only (`worker-reports/`).
 - **The harness scope held.** Six tool uses were refused across the runs (compound shell commands
   such as `mkdir … && cat > …` and `sed -i …`); none targeted a path outside a worktree.
-- **A scope change reached a person.** In `live-b` and `live-c` discovery judged one authorized
-  request (schema drift) to be a separate need. In `live-c` that became a decision for the chief of
-  staff while the rest proceeded, and the need is recorded as not covered.
+- **Discovery narrowed the scope twice; the second time it reached a person.** In `live-b` and
+  `live-c` discovery judged one authorized request (schema drift) to be a separate need. In
+  `live-b` the narrowing was silent (section 5, item 9). In `live-c` it became a decision for the
+  chief of staff while the rest proceeded, and the need is recorded as not covered.
 
 Caveats that limit what these runs show:
 
-- Three runs of one synthetic scenario. No rate should be read from them.
-- The recurring acceptance failure has one cause: a hidden test requires an exact rendering
-  (`| unknown | — |`) that no request and no criterion states. That is a defect in the fixture's
-  acceptance suite, exposed by live execution and left in place. The independent check did its job;
-  the requirement it enforced was nobody's.
+- Three runs of one synthetic scenario. No rate should be read from them. They are not three
+  samples of one system either: the runtime was being fixed between them (section 5, items 6 to
+  10), so `live-a` has the old feedback text, `live-b` has no scope decision, and `live-c` has both
+  fixes.
+- The acceptance failure that recurs in all three runs (AC-SLA-QUALITY) has one cause: a hidden
+  test requires an exact rendering (`| unknown | — |`) that no request and no criterion states.
+  That is a defect in the fixture's acceptance suite, exposed by live execution and left in place.
+  The independent check did its job; the requirement it enforced was nobody's. `live-a` also
+  failed AC-SCHEMA-SUPPLY in its first round, for an alert that did not name the drifted field;
+  that one was a real miss and was repaired.
+- `live-a`'s bundle ends untidily. After the mission was blocked, the integration step ran once
+  more, failed because one workstream was no longer accepted, and was queued again: item 7 in
+  section 5, as it looked before the fix. That step error is not among the "0 integration
+  failures", which counts merges and combined tests that failed. Its decision also offered only
+  cancel and hold (item 8).
+- `live-b`'s decision gave the person no reason: its question reads "Last rejection: not recorded".
+  The failure was a timeout, not a rejection; the question now carries the last error instead.
+- In `live-c` knowledge capture took 37.8 s against a time allowance of 21.6 s, the same allowance
+  that timed it out three times in `live-b`. The deadline floor (item 10) let it finish, and the
+  overrun is recorded as one.
 - In a live mission the criterion *wording* is written by a model and the *check* is the scenario's
   pre-authored suite. They can diverge, and did: the model-written AC-CONTRACT asks for fields the
   reference contract does not have, and a worker said so. A verdict refers to the executable check.
@@ -106,8 +128,10 @@ Caveats that limit what these runs show:
 - No decision was made on Paul's behalf in any live run. `live-c` is waiting, not approved.
 
 Two earlier live runs were not kept as bundles, so nothing under `evidence/` backs what is said
-about them: a one-agent mission (one sonnet call, 830 output tokens, 7 s, accepted on inspection),
-and a first cross-swarm attempt that stranded a task on a runtime defect described in section 5.
+about them. One was a one-agent mission: one sonnet call, 830 output tokens, 7 s, accepted by a
+check that its output was present and not empty (its state is in a local directory that is not
+committed). The other was a first cross-swarm attempt, of which nothing is left; it stranded a
+task on a runtime defect described in section 5.
 
 ### 2.2 A real model as improvement author (Level 1)
 
@@ -117,19 +141,34 @@ development cases in a workspace of its own, wrote an executable check for the s
 submitted it. The release gate ran it on held-out cases the author did not have. No model took
 part in the judging.
 
+What is live here is the authorship. The evaluation is a fixture evaluation, executing the check
+on generated synthetic cases, and the receipts and the release manifest record it as such
+("evidence basis: fixture").
+
 | Run | Round | Development accuracy | Held-out set | Accuracy | Breaking changes approved | Safe changes blocked | Decision |
 |---|---|---|---|---|---|---|---|
 | `live-improve` | 1 | 1.00 | holdout-A | 0.50 → 0.9625 | 0.80 → 0 | 0 → **0.10** | **Reject** |
 | `live-improve-2` | 1 | 1.00 | holdout-A | 0.50 → 0.9625 | 0.80 → 0 | 0 → **0.10** | **Reject** |
 | `live-improve-2` | 2 (revision) | 1.00 | holdout-B | 0.4875 → 1.00 (difference 0.5125, 95% interval 0.40 to 0.625, n=80) | 0.95 → 0 | 0 → 0 | **Accept**, canary retained |
 
-- Both first candidates were perfect on development cases and were rejected: they blocked 10% of
-  safe changes on held-out cases. The allowed increase is 5%. The held-out generator contains
-  kinds of safe change that the development cases do not; the receipts do not itemize which kinds
-  were blocked.
-- The revision was written from the gate's aggregate result only (the decision and three rates).
-  It was scored on a different held-out set, as a revision must be. It was accepted, tried on fresh
-  cases in a canary, and retained; the active release became `r2` in that state directory.
+- Both first candidates were perfect on development cases and were rejected. On held-out cases
+  they blocked 3 of the 6 changes that only make a field nullable, a safe kind of change that the
+  development cases do not contain (the receipts' `known_regressions`). That is 10% of safe
+  changes; the allowed increase is 5%.
+- The revision was written from the gate's decision and three rates, plus fixed guidance that the
+  development cases do not contain every kind of change and that it should look for safe changes
+  it treats as breaking. It was not told which cases failed. That guidance was written by the
+  author of the held-out cases.
+- The revision was scored on a different held-out set, as a revision must be, and accepted. Its
+  figures are identical to demonstration C's accepted revision because both were perfect on the
+  same fixed set, `holdout-B`, which the scripted candidate had already been scored on in another
+  state directory.
+- The accepted check adds one step to every review (2 to 3). The gate's weighted cost criterion
+  recorded that as failed; hard gates decide, so the candidate was accepted anyway.
+- It was then tried in a canary and retained; the active release became `r2` in that state
+  directory. The canary was one observation on 60 fresh cases, not a period of use, and it
+  measured two of its three metrics: no mission ran under it, so the count of missions with
+  acceptance failures is empty.
 - Author effort: 81 to 94 seconds and 0.32 to 0.42 USD (list-price estimate) per round.
 - The harness refused four tool uses by the author across the runs: ad hoc `node -e` scripts where
   only the development check was permitted. None reached outside the workspace.
@@ -158,7 +197,8 @@ second coordinator resumed from the store alone and stopped an orphaned worker; 
 requests were ignored, a repeated command returned the original mission, and a reused key with a
 different body was refused; revising the upstream contract invalidated exactly its dependents;
 the pending review decision was superseded; discovery, criteria, plan and decomposition were
-reused and only engine and report were rebuilt; all criteria passed again.
+reused; engine and report were rebuilt, and the integration, knowledge and packet steps that
+depend on them were redone; all criteria passed again.
 
 **E. Rejection — 5 of 5.** A candidate cut review steps from 2 to 1 by omitting a required
 verification step. The gate rejected it on a hard gate. On held-out cases the share of breaking
@@ -175,19 +215,20 @@ detected by digest and the gate refused to decide.
 
 **G. Canary and rollback — 8 of 8.** An accepted release ran in a canary of two missions while
 earlier and later missions kept `r1`. An injected regression produced an accuracy drop well above
-the limit of 0.05 (between 0.10 and 0.22 in the five runs whose bundles were committed, and 0.28
-in one that was not; a canary draws fresh cases every run, so the size varies); the prior release
-was restored; 2 missions, 12 artifacts and 4 memories
+the limit of 0.05 (between 0.10 and 0.22 in the six bundles committed so far, which
+`git log -p -- evidence/demo-g/canary.json` shows; a canary draws fresh cases every run, so the
+size varies); the prior release was restored; 2 missions, 12 artifacts and 4 memories
 that depended on the withdrawn release were identified and marked; one decision was opened about
 the mission still in flight.
 
-**Tests.** 63 tests pass in about two minutes: ownership and fencing, dependencies and
+**Tests.** 66 tests pass in about two minutes: ownership and fencing, dependencies and
 invalidation, budgets and authority, idempotency, cancellation, a full mission, five execution
 patterns, recovery, the gate, isolation, canary and rollback, the arena, communication, connectors
 and reconciled effects, limits, the portfolio, escalation and scope change, spend accounting,
-stranded and blocked work, the API, and a check that this report quotes the evidence files.
+stranded and blocked work, the path a live worker takes (with a scripted stand-in for the model),
+the API, and checks that this report quotes the evidence files and that a planted error is caught.
 
-## 4. Simulation and testbed results
+## 4. Improvement and coordination experiments (fixture and simulation)
 
 ### 4.1 First-order improvement with scripted candidates (demonstration C — fixture)
 
@@ -259,9 +300,14 @@ workers both arrangements produce the same code, and no live comparison was run.
 ## 5. What failed
 
 Failures of the system, in the order they were found. Each is fixed unless it says otherwise,
-and each fix has a test that exercises the corrected behaviour. Items 1 to 11 were found by running real workers, 12 and 13 by reasoning
-while building, and 14 to 17 by checking this report against its evidence and against its own
-claims (section 9).
+and each fix has a test that exercises the corrected behaviour; the independent audit reverted
+five of the fixes in a scratch copy (items 2, 7, 14, 15 and 16) and saw those tests fail.
+
+Items 1 to 11 were found by running real workers. Items 1 to 5 came from attempts that were not
+kept, so only this account backs them. Items 6, 7 and 8 can be seen in `live-a`, 9 and 10 in
+`live-b`, and 11 in `live-c`. Items 12 and 13 were found by reasoning while building, and 14 to 18
+by checking this report against its evidence and its own claims (section 9). Item 3 is an error
+in instructions I wrote, not in the runtime.
 
 1. **A worker-declared artifact path that was a directory stranded its task** (first live run).
    Workers now publish only contract-named outputs, code is taken from git, files must be regular
@@ -295,7 +341,7 @@ claims (section 9).
 15. **A model attempt stopped at its deadline was recorded as no model call, no time and no cost**
     (`live-b`). It is now charged what the runtime measured, its tokens and cost are marked
     unknown instead of zero, and status, the review packet and the interface say when a total is
-    a lower bound.
+    a lower bound. A reused result in a live mission is also no longer counted as a model attempt.
 16. **A check that threw left its result marked as being verified, and nothing looked at it
     again.** The fix for item 5 covered a result still waiting for its check, not one whose check
     had started, so the mission would have sat idle with nobody told. Found by writing the test
@@ -307,22 +353,29 @@ claims (section 9).
     went idle. Found by looking for other ways into the state in item 16. A mission with work left
     and nothing able to run now stops, is shown as blocked, and asks the chief of staff once:
     release the blocked work, cancel, or hold. Waiting for provider capacity is not a stop.
+18. **The documented live commands would have deleted the kept live evidence.** Run without a
+    name, the live drivers wrote to `evidence/live-a` and `evidence/live-improve` and cleared them
+    first, and the README and the handoff gave exactly those commands. Found by the independent
+    audit. A run without a name now gets a new one, a name must be a single path segment, and a
+    bundle that exists is not replaced unless `SWARM2_OVERWRITE=1` says it is meant.
 
 Experiments that did not go the candidate's way, which is the gate working: the naive scripted
 check, the cheaper check that skipped a required step, the tampering candidate, both first
 model-written checks, retiring the verification swarm, and one fix in each portfolio campaign.
 Dropping the interface agreement was inconclusive.
 
-Outside the system: the account's usage limit was hit at 16:05 UTC and cleared by 18:30 UTC. For
-that period delegated agents and nested workers returned HTTP 429, so the investigation and
-implementation I had delegated came back empty and the build was done in one session. The limit
-was hit again at about 19:25 UTC (reset stated as 21:50 UTC), which stopped an independent agent
-partway through auditing this report. Section 9 says how the report has been checked since.
+Outside the system, on the author's account only (nothing in the repository records it): the
+account's usage limit was hit at 16:05 UTC and cleared by 18:30 UTC. For that period delegated
+agents and nested workers returned HTTP 429, so the investigation and implementation I had
+delegated came back empty and the build was done in one session. The limit was hit again at about
+19:25 UTC (reset stated as 21:50 UTC), which stopped an independent agent partway through auditing
+this report. Section 9 says how the report has been checked since.
 
 ## 6. What remains unverified
 
-- **This report, independently.** A separate agent's audit had not finished when this was
-  committed (section 9).
+- **What was written after the independent audit began.** Section 5 items 17 and 18, section 9
+  and the corrections made in response to the audit have been checked by the author and by the
+  test, not by a second reader.
 - **Anything at scale.** Three live missions and two live authoring runs, one scenario each.
 - **Live coordination and improvement-policy experiments.** Levels 2 and 3 were evaluated on
   fixture episodes and a synthetic arena only.
@@ -357,15 +410,15 @@ Where each requested metric is measured, and its value in the evidence that exis
 | Metric | Source | Live (3 missions) | Fixture / simulation |
 |---|---|---|---|
 | Independently accepted mission outcomes | Mission status after independent acceptance | 1 reached review; 2 stopped for a person | A: 1 of 1; H: 8 of 8 per incumbent arm |
-| Acceptance failures and escaped defects | `acceptance_failure` observations; oracle in episodes | 3, 2 and 1 failed acceptance rounds; escapes not measurable without an oracle | H: 0 escapes with verification, 5 in 8 missions without |
+| Acceptance failures and escaped defects | `acceptance_failure` observations; oracle in episodes | 3, 2 and 1 failed acceptance rounds; escapes not measurable without an oracle | H: no mission with an escaped defect with verification, 5 of 8 without |
 | Human correction and review effort | `human_correction` observations; decisions waiting | 0 corrections; 1, 1 and 2 decisions waiting | Tests exercise the path |
 | Resource use per accepted outcome | Budget tree; provider usage | `live-c`: 14 worker invocations, 6 model calls, 31.7k output tokens, 0.35 USD estimate | A: 11 invocations, 0 model calls |
 | Completion time and critical-path waiting | Events; `criticalPath()` | 130 to 193 s | A: about 3 s (scripted durations) |
 | Integration failures and rework | Observations | 0 integration failures; 4, 2 and 1 reworks | H: 0.625 integration failures per mission without the agreement |
 | Repeated mistakes | Failure signatures across missions | The same criterion failed first in all three runs | Not measured |
 | Recovery success | Demonstration B, recovery tests | Not exercised in a kept run. In the first attempt, which was not kept, a restarted coordinator fenced and re-dispatched one stranded attempt | B: 9 of 9 checks |
-| Useful improvements per fixed experiment budget | Receipts; exploration allocation | 1 accepted of 3 model-written candidates, for about 1.1 USD of author time | D: 177.6 against 165.0 per 420 units |
-| Downstream regressions after promotion | Canary observations, rollbacks | None observed in one canary | G: injected regression rolled back |
+| Useful improvements per fixed experiment budget | Receipts; exploration allocation | 1 accepted of 3 model-written candidates, for about 1.1 USD of author time | D: validated benefit of 177.6 against 165.0 per 100 reviews, on equal budgets of 420 units |
+| Downstream regressions after promotion | Canary observations, rollbacks | None in one canary observation, which measured two of three metrics | G: injected regression rolled back |
 
 Diagnostic activity (agents, messages, artifacts, proposals) is recorded per mission and shown in
 the interface's metrics; it is not used as a measure of success anywhere.
@@ -373,23 +426,30 @@ the interface's metrics; it is not used as a measure of success anywhere.
 ## 8. Reproduce
 
 ```
-npm test                                     # 63 tests
+npm test                                     # 66 tests
 npm run demo:all                             # demonstrations A–I; rewrites evidence/demo-*
 npm run check:report                         # the figures quoted here, rebuilt from evidence/
 SWARM2_LIVE=1 node demos/live.ts live-x      # a live mission; writes evidence/live-x
 SWARM2_LIVE=1 node demos/live-improve.ts live-improve-x
 ```
 
+A live run without a name gets a new one, and never replaces a bundle that exists.
+
 Fixture demonstrations are deterministic in outcome. Timings vary from run to run, and so does
 the size of the regression that demonstration G measures, because a canary draws fresh cases every
-time. Between the two most recent runs of all nine, nothing else in any bundle's summary changed
-except identifiers, hashes and timestamps. Live runs are not repeatable in detail: the same
-command gave a blocked mission twice and a reviewable one once, for the reasons in section 5.
+time. Between the two most recent committed runs of all nine, nothing else in any bundle's
+summary changed except identifiers, hashes, timestamps and which of two concurrent workers
+finished first. Live runs are not repeatable in detail: the same command gave a blocked mission
+twice and a reviewable one once, and the runtime was being fixed between those runs (section 5),
+so they are not three samples of one system.
 
 ## 9. How this report was checked
 
+Items 1 and 2 are the author's account of the author's own checking. Item 3 can be run. Item 4 is
+the only check made by a reader other than the author.
+
 1. **By its author when it was written.** Figures were read from the bundles, and several were
-   corrected then (six refused tool uses, not eight, for example).
+   corrected then.
 2. **By its author again after the merge, reading every figure back from the files.** That pass
    found:
    - a stale figure: demonstration G's regression was quoted as 0.2167 where the committed bundle
@@ -400,12 +460,42 @@ command gave a blocked mission twice and a reviewable one once, for the reasons 
      behind that the two accounting defects in section 5, items 14 and 15;
    - "each has a test", which was untrue for five of the fixes. The tests were then written, and
      one of them failed: item 16. Looking for other ways into that state found item 17;
-   - 832 output tokens that were 830, and a description of the rejected candidates' false alarms
-     that the receipts do not itemize.
-3. **Mechanically, from now on.** `tests/report.test.ts` rebuilds ninety quoted figures from the
-   evidence files and requires this report, the handoff and the operator guide to contain them.
-   Five planted errors were each caught. The check establishes that a figure is the evidence's
-   figure. It cannot establish that a sentence is a fair reading of it.
-4. **Independently.** Not yet. A separate agent's audit is the remaining step. Until its result
-   is recorded here, items 1 to 3 are all the checking this report has had, and the first two are
-   the author's own.
+   - 832 output tokens that were 830.
+
+   It also made a mistake of its own, which item 4 caught.
+3. **Mechanically, from now on.** `tests/report.test.ts` checks 113 fragments of this report, the
+   handoff, the operator guide, the README and the progress notes against the evidence files.
+   Most rebuild a figure from a file and require the document to contain it. Some are fixed
+   sentences guarded by an assertion on the evidence. A figure that varies from run to run is
+   checked as a band, not as a value. A second test plants 28 wrong figures in copies of the
+   documents and requires the check to catch each one. Not covered: sections 5, 6 and 9, some of
+   the caveats in section 2, and most of the handoff. The check establishes that a covered figure
+   is the evidence's figure. It cannot establish that a sentence is a fair reading of it.
+4. **Independently, by a separate agent that could read everything and change nothing.** It
+   checked about 265 claims in this report and about 45 in the handoff against the files,
+   reverted five fixes in a scratch copy to see whether their tests fail, and examined fourteen
+   of the check's own claims. It confirmed the figures: every number in the tables of sections
+   2.1, 2.2 and 7, in the fixture results and in section 4 matched its source. It reported 27
+   findings and 10 omissions. All are addressed in this version:
+   - **One statement was wrong, and the author's second pass had made it so.** That pass replaced
+     a correct sentence with "the receipts do not itemize" what the rejected candidates got wrong.
+     They do: three of six nullable-field changes.
+   - **A hazard:** the documented live commands would have deleted the kept live evidence
+     (section 5, item 18).
+   - **The live results claimed more than three runs can carry:** the later repairs read as caused
+     by the better feedback; a scope change "reached a person" when it did in one run of two; the
+     runs read as samples of one system although the runtime changed between them.
+   - **Omissions:** a second criterion that failed and was repaired in `live-a`; a step error at
+     the end of `live-a`; a time overrun in `live-c`; a decision in `live-b` that gave no reason;
+     the accepted candidate's failed cost criterion; a canary that measured two of three metrics.
+   - **Labeling:** the improvement run's evaluation is fixture evidence; section 4 had fixture and
+     simulation results under a heading that named only one.
+   - **The handoff** said more than this report supports in five places.
+   - **The check itself:** some of its claims were fixed text, and some figures were typed in
+     instead of derived. Those now come from the files, and item 3 describes the check in the
+     audit's terms, not the author's.
+
+   What the audit could not check: anything on GitHub, the times in the usage-limit account, and
+   the first cross-swarm attempt, of which nothing is left. It did not see the changes made after
+   it began: section 5 items 17 and 18, this section, and the corrections it prompted have been
+   checked by the author and by the test only.

@@ -29,7 +29,8 @@ It never sends, merges, deploys or commits anyone to anything. It prepares, veri
 Node 22.18 or later. Nothing to install or build; there are no runtime dependencies.
 
 ```
-npm test                 # 63 tests: coordination, recovery, isolation, rollback, limits, escalation, accounting
+npm test                 # 66 tests: coordination, recovery, isolation, rollback, limits, escalation, accounting
+npm run check:report     # the figures the documents quote, rebuilt from evidence/
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
 ```
@@ -52,6 +53,9 @@ Real model workers instead of fixtures (uses your Claude Code account; off by de
 SWARM2_LIVE=1 npm run demo:live                       # the cross-swarm mission on real workers
 SWARM2_LIVE=1 node demos/live-improve.ts              # a real model writes an improvement candidate
 ```
+
+Each live run writes a new bundle under `evidence/` (`live-<date>-<time>` unless you name it). A
+bundle that already exists is not replaced unless `SWARM2_OVERWRITE=1` is set.
 
 Stop everything: `node src/cli.ts stop`.
 
@@ -80,8 +84,9 @@ the reports:
 - **Simulation**: a synthetic testbed (the improvement arena, mission episodes with assumed defect
   rates). It describes behaviour in the testbed, not rates in real work.
 
-`npm run check:report` rebuilds the figures the documents quote from the files under `evidence/`
-and fails when a document says something else.
+`npm run check:report` rebuilds the quoted figures it covers from the files under `evidence/` and
+fails when a document says something else. What it covers, and what it does not, is in section 9
+of the evidence report.
 
 All requests, people, teams, datasets and review cases in this repository are invented and labeled
 as synthetic. No connector to Slack, Jira, GitLab, BigQuery, dbt, Power BI, OpenMetadata,
