@@ -328,7 +328,7 @@ async function renderReviewing() {
       p.requests.length ? [h('h4', {}, 'Each stakeholder\u2019s need, kept distinct'), h('ul', { class: 'plain' }, p.overlap.distinct_needs.map((n) => { const out = n.status === 'deferred' || n.status === 'open'; return h('li', {}, out ? st('warn', 'not covered') : '', out ? ' ' : '', h('b', {}, n.stakeholder), `: ${n.need} `, h('span', { class: 'muted small' }, out ? 'This result does not address it.' : `→ ${dash(n.criterion_id)} · ${n.status}`)); }))] : null,
       h('h4', {}, 'Exact changes'), p.exact_changes ? [h('p', { class: 'small sec' }, `Integration branch, ${short(p.exact_changes.base_commit)} → ${short(p.exact_changes.head_commit)}`), h('ul', { class: 'plain' }, p.exact_changes.files.map((f) => h('li', { class: 'small mono' }, `${f.status}  ${f.path}`)))] : h('p', { class: 'muted' }, 'No code changes.'),
       h('h4', {}, 'Acceptance evidence'), h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, ['Criterion', 'For', 'Verdict', 'Independent'].map((x) => h('th', {}, x)))), h('tbody', {}, p.acceptance.map((a) => h('tr', {}, h('td', {}, h('b', {}, a.criterion_id), ' ', a.description), h('td', {}, dash(a.stakeholder)), h('td', {}, st(a.verdict === 'pass' ? 'done' : 'warn', a.verdict)), h('td', {}, a.independent ? 'yes' : 'no')))))),
-      h('h4', {}, 'Remaining concerns'), p.remaining_concerns.length ? h('ul', { class: 'conseq' }, p.remaining_concerns.map((c) => h('li', {}, c))) : h('p', { class: 'muted' }, 'None recorded.'),
+      h('h4', {}, 'Remaining concerns'), concernsBlock(p.remaining_concerns),
       h('h4', {}, 'Resource use'), h('p', { class: 'small sec' }, `${p.resource_use.worker_invocations} worker invocations, ${p.resource_use.model_calls} model calls, ${num(p.resource_use.tokens)} tokens, ${ms(p.resource_use.wall_ms)} of worker time. Cost: ${p.resource_use.cost_basis === 'none' ? 'not measured' : `${p.resource_use.cost_usd_est} USD (list-price estimate, not billing)`}.`),
       r.draft ? h('details', {}, h('summary', { class: 'sec' }, `Draft in final form: ${r.draft.title} (${r.draft.status.replace(/_/g, ' ')})`), h('p', { class: 'small muted' }, `For ${r.draft.audience}. Kind: ${r.draft.kind}. Supporting context: ${r.draft.context_refs.join(', ')}`), h('pre', {}, r.draft.body)) : null,
       r.decision && ['open', 'escalated'].includes(r.decision.status) ? decisionBox({ kind: 'decision', id: r.decision.id, title: r.decision.question, what: 'This is the decision the packet asks for.', action: 'Choose one option. It is recorded with your reason.', options: r.decision.options, owner_id: 'chief_of_staff', created_at: p.generated_at }, () => refresh(true)) : null,
@@ -378,6 +378,19 @@ async function showReceipt(id) {
     r.release_manifest ? h('div', { class: 'card' }, h('h4', {}, 'Release manifest'), kv([['Release', `${r.release_manifest.release_id} (${r.release_manifest.status.replace(/_/g, ' ')})`], ['Execution', `v${r.release_manifest.components.execution.version}`], ['Coordination', `v${r.release_manifest.components.coordination.version}`], ['Evolution', `v${r.release_manifest.components.evolution.version}`], ['Rollback target', r.rollback_target], ['Evidence basis', r.release_manifest.evidence_basis]])) : h('p', { class: 'muted' }, 'No release was created. The candidate and this result are kept.'),
     h('p', { class: 'small muted mono' }, `receipt ${r.receipt_id} · hash ${r.receipt_hash.slice(0, 24)}`),
   ]);
+}
+
+// What a reviewer must not miss comes first; what workers said they were unsure of is one click away.
+function concernsBlock(all) {
+  if (!all.length) return h('p', { class: 'muted' }, 'None recorded.');
+  const stated = all.filter((c) => c.startsWith('Stated by the worker on '));
+  const first = all.filter((c) => !c.startsWith('Stated by the worker on '));
+  // Packets written before concerns were labeled carry no prefix: show the first few and fold the rest.
+  const lead = stated.length ? first : all.slice(0, 6);
+  const rest = stated.length ? stated : all.slice(6);
+  return h('div', {},
+    lead.length ? h('ul', { class: 'conseq' }, lead.map((c) => h('li', {}, c))) : h('p', { class: 'muted small' }, 'No unmet need and no open question.'),
+    rest.length ? h('details', {}, h('summary', {}, stated.length ? `What the workers said they were unsure of (${rest.length})` : `${rest.length} more`), h('ul', { class: 'conseq' }, rest.map((c) => h('li', {}, c.replace(/^Stated by the worker on ([^:]+): /, '$1 — '))))) : '');
 }
 
 function portfolioCard(env) {

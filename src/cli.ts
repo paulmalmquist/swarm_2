@@ -10,7 +10,16 @@ import { LocalChiefOfStaff, type RawRequest } from './cos/port.ts';
 import { ensureBaseline, openRuntime } from './runtime.ts';
 import { SwarmError } from './lib/util.ts';
 
-const argv = process.argv.slice(2);
+const BOOLEAN_FLAGS = ['live', 'md', 'once', 'json', 'force', 'run'];
+// Flags may come before the command (`swarm2 --home DIR status`); they are moved behind it.
+const given = process.argv.slice(2);
+const leading: string[] = [];
+while (given.length && given[0]!.startsWith('--')) {
+  const f = given.shift()!;
+  leading.push(f);
+  if (!BOOLEAN_FLAGS.includes(f.slice(2)) && given.length) leading.push(given.shift()!);
+}
+const argv = [...given, ...leading];
 const cmd = argv[0] ?? 'help';
 
 function flag(name: string): string | undefined {
@@ -24,7 +33,7 @@ function positional(n: number): string | undefined {
   const out: string[] = [];
   for (let i = 1; i < argv.length; i++) {
     if (argv[i]!.startsWith('--')) {
-      if (!['live', 'md', 'once', 'json', 'force', 'run'].includes(argv[i]!.slice(2))) i++;
+      if (!BOOLEAN_FLAGS.includes(argv[i]!.slice(2))) i++;
       continue;
     }
     out.push(argv[i]!);

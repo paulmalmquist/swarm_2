@@ -512,10 +512,16 @@ export class Steps {
       }
       const needs = store.needs.where('"mission_id" = ?', m.id);
       const requests = m.request_ids.map((id) => store.requests.get(id)).filter((r): r is NonNullable<typeof r> => Boolean(r));
+      // Ordered by what a reviewer must not miss: needs the result does not meet, then questions
+      // only a person can settle, then what the workers themselves said they were unsure of.
       const concerns = new Set<string>();
-      for (const t of tasks) for (const u of this.storedOutput(t)?.remaining_uncertainty ?? []) concerns.add(u);
-      for (const q of comms.openQuestions(m.id)) concerns.add(`Open question from ${q.from_id}: ${q.body}`);
+      const who = (id: string): string => {
+        const a = store.agents.get(id);
+        return a ? `the ${a.role} (${a.archetype})` : id.replace(/_/g, ' ');
+      };
       for (const n of needs.filter((x) => x.status !== 'satisfied')) concerns.add(`Stakeholder need not shown satisfied: ${n.stakeholder} — ${n.need}`);
+      for (const q of comms.openQuestions(m.id)) concerns.add(`Open question from ${who(q.from_id)}: ${q.body}`);
+      for (const t of tasks) for (const u of this.storedOutput(t)?.remaining_uncertainty ?? []) concerns.add(`Stated by the worker on ${t.key}: ${u}`);
       const spent = kernel.budget.spent(m.budget_account_id);
       const usages = store.attempts.where('"mission_id" = ?', m.id).map((a) => a.usage).filter((u): u is NonNullable<typeof u> => Boolean(u));
       const passed = acceptance.filter((a) => a.verdict === 'pass').length;
