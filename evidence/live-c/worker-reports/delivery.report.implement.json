@@ -1,0 +1,17 @@
+{
+  "task": "delivery.report.implement",
+  "attempt": 2,
+  "summary": "Fixed the rejection: the SLA report now renders a dash (—) instead of \"n/a\" in the staleness column for unmeasured datasets. They still show status 'unknown' and are not counted as fresh. I updated the unit test to match. `node --test test/report/*.test.ts` passes, 3 of 3.",
+  "criteria_claims": [
+    {
+      "criterion_id": "U-REPORT",
+      "claimed": "met",
+      "note": "The report unit tests pass when run with node --test test/report/*.test.ts."
+    }
+  ],
+  "remaining_uncertainty": [
+    "The dash character is a guess: the hidden acceptance check might want ASCII '-' instead of '—'.",
+    "I did not run test/integration/pipeline.test.ts. Its stale-row assertion does not depend on the changed cell, but it was not run."
+  ],
+  "questions": []
+}

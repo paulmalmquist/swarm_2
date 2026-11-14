@@ -120,6 +120,10 @@ test('a request left out by discovery is a scope change for the chief of staff, 
       assert.equal(criteria.has('AC-SCHEMA-SUPPLY'), false, 'nothing claims the left-out need was delivered');
       const att = cos.attention();
       assert.ok(att.source !== 'unavailable' && att.items.some((i) => i.id === d.id));
+      const ev = cos.retrieveEvidence(mission_id);
+      assert.ok(ev.source !== 'unavailable' && ev.packet && ev.packet_markdown);
+      assert.match(ev.packet.cold_read[0]!, /1 of the 4 requests this mission was authorized with is NOT covered by this result: syn-req-002/, 'the review packet does not read as covering a request it does not cover');
+      assert.match(ev.packet_markdown, /`syn-req-002`\) — \*\*not covered by this result\*\*/);
 
       const res = cos.resolveDecision({ command: 'resolveDecision', actor: 'paul', key: `scope-${choice}-decide`, data: { decision_id: d.id, chosen: choice, rationale: choice === 'separate' ? 'schema drift gets its own mission' : 'I asked for all four' } });
       assert.ok(res.source !== 'unavailable');

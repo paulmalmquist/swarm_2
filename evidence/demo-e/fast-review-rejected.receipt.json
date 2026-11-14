@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgql5r4a87a4711bf",
-  "experiment_id": "exp_0mwgql5fva44e6e0378",
+  "receipt_id": "rcpt_0mwgs2lhja802cbfcac",
+  "experiment_id": "exp_0mwgs2l86a4b3fa0a88",
   "level": "execution",
   "problem": {
     "statement": "Change review takes two steps per change; most changes are approved anyway.",
@@ -36,10 +36,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:26:00.523Z",
+    "frozen_at": "2026-11-14T19:07:33.750Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:5139327941c19634f72d3f40a1455bb65df2dcaa6de703113b950a26dcbabc4e"
+      "snapshot:2af1ae6934c36c0f1f5a284d5075e082caed14299df4cfd63bba71444133923e"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,21 +52,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:26:00.600Z",
+      "at": "2026-11-14T19:07:33.803Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:26:00.928Z",
+      "at": "2026-11-14T19:07:34.087Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 328,
+    "wall_ms": 284,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -163,10 +163,10 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.123,
-      "incumbent": 0.172,
-      "baseline": 0.133,
-      "diff_vs_incumbent": -0.049,
+      "candidate": 0.098,
+      "incumbent": 0.111,
+      "baseline": 0.108,
+      "diff_vs_incumbent": -0.013,
       "ci95_vs_incumbent": null,
       "diff_vs_baseline": -0.01,
       "ci95_vs_baseline": null,
@@ -355,7 +355,7 @@
   "decision": "reject",
   "justification": "Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:26:00.928Z",
+  "decided_at": "2026-11-14T19:07:34.087Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -371,5 +371,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "bd7acce48d7a34a1334a5b897030a9cead26ac609178267c78005dffd0f794de"
+  "receipt_hash": "b0729ff6bb1e3a259ffd26d0bb760eaae4ab6b728f4cd568427fab3927a51548"
 }

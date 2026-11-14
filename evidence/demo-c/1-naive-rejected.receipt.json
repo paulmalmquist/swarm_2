@@ -1,22 +1,22 @@
 {
-  "receipt_id": "rcpt_0mwgqkp419m68a26a6c",
-  "experiment_id": "exp_0mwgqkorr9i3fbf30e2",
+  "receipt_id": "rcpt_0mwgs242g9mf2b19c90",
+  "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract: removed, renamed and retyped fields pass because the procedure never compares the contract before and after.",
     "observation_ids": [
-      "obs_0mwgqkoro94772d8826",
-      "obs_0mwgqkoro95667601d5",
-      "obs_0mwgqkoro9620767e63",
-      "obs_0mwgqkoro97ad81c395",
-      "obs_0mwgqkoro9877c80f00",
-      "obs_0mwgqkoro995f7e35ea",
-      "obs_0mwgqkoro9ac224979f",
-      "obs_0mwgqkorp9c30344af6",
-      "obs_0mwgqkorp9d5dd85bcd",
-      "obs_0mwgqkorp9ecf2b833a",
-      "obs_0mwgqkorp9f6d033b42",
-      "obs_0mwgqkorp9gd9df12c5"
+      "obs_0mwgs23r894f3dc7bc4",
+      "obs_0mwgs23r895b0608f2a",
+      "obs_0mwgs23r8967ccb85d4",
+      "obs_0mwgs23r897796e93c5",
+      "obs_0mwgs23r898973c820a",
+      "obs_0mwgs23r8994eecbacb",
+      "obs_0mwgs23r89a2730dfad",
+      "obs_0mwgs23r89c736c898d",
+      "obs_0mwgs23r89dd6f6f0b7",
+      "obs_0mwgs23r89ee2582ac5",
+      "obs_0mwgs23r89f22f643cb",
+      "obs_0mwgs23r99g44d2b1db"
     ],
     "observed_failure_count": 12
   },
@@ -50,10 +50,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:25:38.919Z",
+    "frozen_at": "2026-11-14T19:07:11.111Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:563304e9c8c1745ade75201a2acf6bbacf865eb5017ec0cceb22c7180d0fe162"
+      "snapshot:35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -66,21 +66,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:25:38.977Z",
+      "at": "2026-11-14T19:07:11.182Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:25:39.362Z",
+      "at": "2026-11-14T19:07:11.512Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 384,
+    "wall_ms": 329,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -177,12 +177,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.18,
-      "incumbent": 0.13,
-      "baseline": 0.135,
-      "diff_vs_incumbent": 0.05,
+      "candidate": 0.194,
+      "incumbent": 0.153,
+      "baseline": 0.123,
+      "diff_vs_incumbent": 0.042,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.045,
+      "diff_vs_baseline": 0.071,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -371,7 +371,7 @@
   "decision": "reject",
   "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:25:39.362Z",
+  "decided_at": "2026-11-14T19:07:11.512Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -387,5 +387,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "4d2bfe6ce5b137d67d65797e5d8d4eebccf78b25d5aa24f355ba49fc1c593c40"
+  "receipt_hash": "482ef4cf929e467a912c8a99dd6f8e9d4155bf43ec0dcbd7df50454be4cb92ad"
 }

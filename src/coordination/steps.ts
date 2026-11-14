@@ -538,7 +538,10 @@ export class Steps {
         mission_id: m.id,
         title: m.title,
         cold_read: [
-          `This packet covers "${m.title}". ${passed} of ${acceptance.length} acceptance criteria passed independent verification${mandatoryOpen ? `; ${mandatoryOpen} mandatory criteria did not` : ''}.`,
+          `This packet covers "${m.title}". ${passed} of ${acceptance.length} acceptance criteria passed independent verification${mandatoryOpen ? `; ${mandatoryOpen} mandatory criteria did not` : ''}.${
+            // A result must not read as covering a request it does not cover.
+            ((left) => (left.length ? ` ${left.length} of the ${requests.length} requests this mission was authorized with ${left.length === 1 ? 'is' : 'are'} NOT covered by this result: ${left.map((n) => n.request_id).join(', ')}.` : ''))(needs.filter((n) => n.status === 'deferred' || n.status === 'open'))
+          }`,
           'Decide whether to approve the merge request draft. Approval records your decision; it does not merge anything.',
         ],
         context: m.objective,
@@ -587,10 +590,11 @@ export function renderPacket(p: ReviewPacket): string {
   lines.push(`# Review packet: ${p.title}`, '', `> ${label} · ${p.data_class.toUpperCase()} DATA · release ${p.release_id}`, '', p.cold_read[0], p.cold_read[1], '');
   lines.push('## Context', '', p.context, '');
   if (p.requests.length) {
-    lines.push('## Requests consolidated', '');
-    for (const r of p.requests) lines.push(`- **${r.team}** (${r.stakeholder}, \`${r.id}\`): ${r.text}`);
-    lines.push('', `Shared capability: ${p.overlap.shared_capability}`, '', '### Distinct needs preserved', '');
-    for (const n of p.overlap.distinct_needs) lines.push(`- ${n.stakeholder}: ${n.need} → ${n.criterion_id ?? 'no criterion'} (${n.status})`);
+    const uncovered = new Set(p.overlap.distinct_needs.filter((n) => n.status === 'deferred' || n.status === 'open').map((n) => n.stakeholder));
+    lines.push('## Requests this mission was authorized with', '');
+    for (const r of p.requests) lines.push(`- **${r.team}** (${r.stakeholder}, \`${r.id}\`)${uncovered.has(r.stakeholder) ? ' — **not covered by this result**' : ''}: ${r.text}`);
+    lines.push('', `Shared capability: ${p.overlap.shared_capability}`, '', '### Each stakeholder\'s need, kept distinct', '');
+    for (const n of p.overlap.distinct_needs) lines.push(`- ${n.stakeholder}: ${n.need} → ${n.criterion_id ?? 'no criterion'} (${n.status === 'deferred' ? 'not covered by this mission' : n.status === 'open' ? 'not covered: no criterion was written for it' : n.status})`);
     lines.push('');
   }
   lines.push('## Exact changes', '');

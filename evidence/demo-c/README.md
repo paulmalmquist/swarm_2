@@ -12,7 +12,7 @@ The first candidate catches breaks but also blocks safe additions, and is reject
 | Claim | Observed | Result |
 |---|---|---|
 | An observed failure is recorded with what actually went wrong | 13 verified failures in 40 reviews under release r1 (accuracy 68%): type_changed×3, field_removed×4, field_renamed×3, required_added×2, enum_value_removed×1 | held |
-| The first candidate is an executable change to a skill, judged on held-out cases against a frozen protocol | adds execution.json, validators/interface_compat.mjs; protocol frozen 2026-11-14T18:25:38.919Z; scored once on holdout-A | held |
+| The first candidate is an executable change to a skill, judged on held-out cases against a frozen protocol | adds execution.json, validators/interface_compat.mjs; protocol frozen 2026-11-14T19:07:11.111Z; scored once on holdout-A | held |
 | A candidate that helps but harms something else is rejected, and its result kept | accuracy 0.5 → 0.6, but Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%. | held |
 | A revision is never scored on cases its lineage has already seen results for | first attempt on holdout-A; revision on holdout-B; the first set is recorded as development data for this lineage | held |
 | The revised candidate is compared with the incumbent and the fixed original baseline | accuracy 0.4875 → 1 (difference 0.5125, 95% interval 0.4 to 0.625, n=80); baseline 0.4875 | held |
@@ -23,4 +23,4 @@ The first candidate catches breaks but also blocks safe additions, and is reject
 
 Files in this folder: `1-naive-rejected.receipt.json`, `1-naive-rejected.receipt.md`, `2-revised-accepted.receipt.json`, `2-revised-accepted.receipt.md`, `release-manifests.json`, `release-manifests.md`, `ledger.json`, `canary.json`, `observations.json`.
 
-Reproduce with `npm run demo:c`. Run time 950 ms.
+Reproduce with `npm run demo:c`. Run time 935 ms.

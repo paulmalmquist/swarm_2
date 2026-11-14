@@ -27,7 +27,7 @@
     },
     {
       "claim": "The rejected candidate and its result are preserved",
-      "observed": "candidate ad307fc1e0c2ada6 kept in custody; receipt rcpt_0mwgql5r4a87a4711bf",
+      "observed": "candidate ad307fc1e0c2ada6 kept in custody; receipt rcpt_0mwgs2lhja802cbfcac",
       "ok": true
     }
   ],
@@ -37,5 +37,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 425
+  "ms": 359
 }

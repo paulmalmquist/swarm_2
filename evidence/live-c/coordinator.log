@@ -1,0 +1,10 @@
+2026-11-14T19:06:54.668Z bootstrapped mission msn_0mwgs1r1t07e7b33124 with a hierarchical plan
+2026-11-14T19:06:54.684Z dispatched discovery.analyze (claude-cli, token g1a1)
+2026-11-14T19:07:20.864Z dispatched planning.criteria (claude-cli, token g1a1)
+2026-11-14T19:07:43.265Z dispatched planning.contract (fixture, token g1a1)
+2026-11-14T19:07:43.779Z dispatched planning.plan (fixture, token g1a1)
+2026-11-14T19:07:44.557Z dispatched delivery.decompose (fixture, token g1a1)
+2026-11-14T19:07:45.187Z dispatched delivery.engine.implement (claude-cli, token g1a1)
+2026-11-14T19:07:45.277Z dispatched delivery.report.implement (claude-cli, token g1a1)
+2026-11-14T19:08:26.343Z dispatched delivery.report.implement (claude-cli, token g2a2)
+2026-11-14T19:08:45.124Z dispatched reliability.knowledge (claude-cli, token g1a1)

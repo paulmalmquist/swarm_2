@@ -33,7 +33,7 @@
     },
     {
       "claim": "A proposal to change the rules is routed to the chief of staff and applied by nobody",
-      "observed": "decision dec_0mwgql60ham85d50464 awaits a person; the policy file is unchanged",
+      "observed": "decision dec_0mwgs2ls5am09cb198c awaits a person; the policy file is unchanged",
       "ok": true
     },
     {
@@ -52,5 +52,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 676
+  "ms": 736
 }

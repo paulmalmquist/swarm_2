@@ -1,17 +1,17 @@
 {
-  "receipt_id": "rcpt_0mwgqny1n1c181070cd",
-  "experiment_id": "exp_0mwgqnxs318c63addd6",
+  "receipt_id": "rcpt_0mwgs5go11c119a7a57",
+  "experiment_id": "exp_0mwgs5gdl18c3e2ac5f",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).",
     "observation_ids": [
-      "obs_0mwgqnxc9zq92ef1084",
-      "obs_0mwgqnxc9zrdaa65a65",
-      "obs_0mwgqnxc9zt265469ce",
-      "obs_0mwgqnxcazxc366dbb0",
-      "obs_0mwgqnxcazzb59513d8",
-      "obs_0mwgqnxca00337c1a91",
-      "obs_0mwgqnxca017a0f423d"
+      "obs_0mwgs5fybzqf0c8fe18",
+      "obs_0mwgs5fybzrb8a0294f",
+      "obs_0mwgs5fybzt9463a386",
+      "obs_0mwgs5fybzx1e060905",
+      "obs_0mwgs5fyczzd5bace1f",
+      "obs_0mwgs5fyc0017ef91cc",
+      "obs_0mwgs5fyc01b38dd3c1"
     ],
     "observed_failure_count": 7
   },
@@ -45,10 +45,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:28:10.564Z",
+    "frozen_at": "2026-11-14T19:09:47.433Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:6ee86cd619e4308968618ba6599390e67459fcb485e46df498a81d74feffa828"
+      "snapshot:ed7045f4b028dec066403d9e37691cebbb62280516c2b43bdecc86ea2f6de390"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -61,21 +61,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:28:10.631Z",
+      "at": "2026-11-14T19:09:47.495Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:28:10.907Z",
+      "at": "2026-11-14T19:09:47.810Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 276,
+    "wall_ms": 315,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -172,12 +172,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.129,
-      "incumbent": 0.106,
-      "baseline": 0.101,
-      "diff_vs_incumbent": 0.024,
+      "candidate": 0.127,
+      "incumbent": 0.151,
+      "baseline": 0.155,
+      "diff_vs_incumbent": -0.024,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.029,
+      "diff_vs_baseline": -0.028,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -364,7 +364,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.1125 against the incumbent (95% interval 0.05 to 0.1875) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:28:10.907Z",
+  "decided_at": "2026-11-14T19:09:47.810Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -383,13 +383,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "6ee86cd619e4308968618ba6599390e67459fcb485e46df498a81d74feffa828",
-    "receipt_id": "rcpt_0mwgqny1n1c181070cd",
+    "evaluation_snapshot_hash": "ed7045f4b028dec066403d9e37691cebbb62280516c2b43bdecc86ea2f6de390",
+    "receipt_id": "rcpt_0mwgs5go11c119a7a57",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T18:28:10.907Z",
-    "manifest_hash": "8a8c878397265335d683ca141ce2ed14c23a7c73cf78d92f692b3c624954b549"
+    "created_at": "2026-11-14T19:09:47.809Z",
+    "manifest_hash": "5e06a6efdc070e3c8b8d6d23d413b283a681adf4a84f70de3eafbf75fda48923"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -405,6 +405,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "9843d247457bc49759f04035a7f16141a4b8796a72ba83445f1e5fdf0d996166",
-  "id": "rcpt_0mwgqny1n1c181070cd"
+  "receipt_hash": "ce95cd83b7b3ffee4aac6ee1a83cd8e71a382c1e4b7f9fe215b6c547d0214e1d",
+  "id": "rcpt_0mwgs5go11c119a7a57"
 }

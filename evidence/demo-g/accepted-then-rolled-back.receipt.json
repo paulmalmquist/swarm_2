@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgql6wqbj5c9433ec",
-  "experiment_id": "exp_0mwgql6mtbf77382724",
+  "receipt_id": "rcpt_0mwgs2mpzbj13e1ec33",
+  "experiment_id": "exp_0mwgs2mf5bfcb3594c2",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract. A first attempt blocked top-level breaks but also blocked safe additions.",
@@ -37,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:26:02.070Z",
+    "frozen_at": "2026-11-14T19:07:35.297Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:fc69c80fffda04bac30b33b6c459268f57bf5c5df85512cd700783c4fa6fcbe2"
+      "snapshot:13f5a4a172f30512aa9e1996fd6bc75404bfc81720b7387ba5769c00836948e0"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -53,21 +53,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:26:02.124Z",
+      "at": "2026-11-14T19:07:35.364Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:26:02.426Z",
+      "at": "2026-11-14T19:07:35.687Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 302,
+    "wall_ms": 322,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -164,12 +164,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.2,
-      "incumbent": 0.104,
+      "candidate": 0.146,
+      "incumbent": 0.14,
       "baseline": 0.13,
-      "diff_vs_incumbent": 0.096,
+      "diff_vs_incumbent": 0.006,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.07,
+      "diff_vs_baseline": 0.016,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -356,7 +356,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:26:02.426Z",
+  "decided_at": "2026-11-14T19:07:35.687Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -375,13 +375,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "fc69c80fffda04bac30b33b6c459268f57bf5c5df85512cd700783c4fa6fcbe2",
-    "receipt_id": "rcpt_0mwgql6wqbj5c9433ec",
+    "evaluation_snapshot_hash": "13f5a4a172f30512aa9e1996fd6bc75404bfc81720b7387ba5769c00836948e0",
+    "receipt_id": "rcpt_0mwgs2mpzbj13e1ec33",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T18:26:02.426Z",
-    "manifest_hash": "e259d4d5a55ba8c2b761d7ffb3073a6cb3871002f4556bea7f5123efc33f7eaa"
+    "created_at": "2026-11-14T19:07:35.687Z",
+    "manifest_hash": "60b00165f88b5e5157e33e6caf29bdae4814fc39474d5f6d0a8d6e89b1a23eb8"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -397,5 +397,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "1d069d6e7c7540e1257ab32a8889f99f224cfbac31c2581af088329ddc4f034f"
+  "receipt_hash": "6d0c740e23878b0a40a255dabc27c9de3c517c0c150b311e99bd4763f53e08f6"
 }

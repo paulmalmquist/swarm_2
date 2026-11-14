@@ -1,0 +1,250 @@
+{
+  "label": "LIVE MODEL EXECUTION on SYNTHETIC requests, datasets and fixture application",
+  "ran_at": "2026-11-14T19:06:54.622Z",
+  "coordinator_state": "idle",
+  "mission": {
+    "id": "msn_0mwgs1r1t07e7b33124",
+    "status": "review_ready",
+    "release_id": "r1",
+    "provider_mode": "live",
+    "data_class": "synthetic"
+  },
+  "reached_review": true,
+  "elapsed_ms": 149598,
+  "tasks": {
+    "total": 18,
+    "by_status": {
+      "accepted": 18
+    }
+  },
+  "execution": {
+    "model_attempts": 6,
+    "scripted_attempts": 3,
+    "scripted_steps": [
+      "planning.contract",
+      "planning.plan",
+      "delivery.decompose"
+    ],
+    "runtime_steps": 5,
+    "models_served": [
+      "claude-haiku-5-5",
+      "claude-sonnet-5-5"
+    ],
+    "tokens_out": 31741,
+    "tokens_in_including_cache": 243808,
+    "cost_usd_list_price_estimate": 0.3515,
+    "cost_note": "A client-side estimate at list prices. It is not billing.",
+    "worker_wall_ms": 166754
+  },
+  "attempts": [
+    {
+      "task": "discovery.analyze",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": "claude-haiku-5-5",
+      "status": "succeeded",
+      "wall_ms": 25443,
+      "output_tokens": 5763,
+      "cost_usd_list_price_estimate": 0.00350745,
+      "error": null
+    },
+    {
+      "task": "planning.criteria",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 22140,
+      "output_tokens": 3399,
+      "cost_usd_list_price_estimate": 0.0504625,
+      "error": null
+    },
+    {
+      "task": "planning.contract",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 11,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "planning.plan",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 11,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "delivery.decompose",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 10,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "delivery.engine.implement",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 39394,
+      "output_tokens": 6875,
+      "cost_usd_list_price_estimate": 0.1331935,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 25107,
+      "output_tokens": 4277,
+      "cost_usd_list_price_estimate": 0.0936715,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt": 2,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 16915,
+      "output_tokens": 1792,
+      "cost_usd_list_price_estimate": 0.06467719999999999,
+      "error": null
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": "claude-haiku-5-5",
+      "status": "succeeded",
+      "wall_ms": 37755,
+      "output_tokens": 9635,
+      "cost_usd_list_price_estimate": 0.00602217,
+      "error": null
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "AC-CONTRACT",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-FRESH-PROPULSION",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-POLICY-FDE",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-SLA-QUALITY",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "fail",
+        "pass"
+      ]
+    }
+  ],
+  "rework": [
+    {
+      "task": "delivery.report.implement",
+      "why": "independent acceptance failed: AC-SLA-QUALITY (latest verdict is fail: this did not hold: \"an unmeasured dataset shows unknown and a dash\" — it got: syn-ncr_dispositions | unknown | n/a | 720 | unknown)"
+    }
+  ],
+  "integration_failures": 0,
+  "acceptance_failures": 1,
+  "harness_denials": [
+    {
+      "task": "delivery.engine.implement",
+      "count": 1,
+      "denials": [
+        {
+          "tool": "Bash",
+          "target": "mkdir -p src/engine test/engine\ncat > src/engine/evaluate.ts <<'EOF'\nimport { minutesBetween } from '../lib/time.ts';\n\nexport type Fields = Record<string, string>;\nexport interface Observation { dataset_id: string; owner_team: string; last_"
+        }
+      ]
+    },
+    {
+      "task": "delivery.report.implement",
+      "count": 1,
+      "denials": [
+        {
+          "tool": "Bash",
+          "target": "sed -i \"s/'n\\/a'/'—'/\" src/report/report.ts && sed -i 's/n\\\\\\/a/—/' test/report/report.test.ts && grep -n \"—\" src/report/report.ts test/report/report.test.ts; node --test test/report/*.test.ts 2>&1 | tail -12"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "kind": "scope_change",
+      "status": "open",
+      "owner": "chief_of_staff",
+      "question": "Discovery left syn-req-002 (syn-ben-supplychain, Supply Chain Analytics) out of \"Shared dataset-health capability\": Inference: syn-req-002 asks about schema drift against a contract, not time-based freshness. It shares a monitoring pattern (declared expectation versus observed state) but not the sam"
+    },
+    {
+      "kind": "outward_action",
+      "status": "open",
+      "owner": "chief_of_staff",
+      "question": "Approve the integrated result of \"Shared dataset-health capability\" for merge into the protected branch?"
+    }
+  ],
+  "waiting_for_a_person": 2,
+  "budget": {
+    "spent": {
+      "model_calls": 6,
+      "worker_invocations": 14,
+      "tokens": 31777,
+      "cost_usd_est": 0.351535,
+      "wall_ms": 168659
+    },
+    "limit": {
+      "model_calls": 120,
+      "worker_invocations": 120,
+      "tokens": 4000000,
+      "cost_usd_est": 20,
+      "wall_ms": 1800000
+    }
+  },
+  "events": 202,
+  "event_chain_intact": true
+}

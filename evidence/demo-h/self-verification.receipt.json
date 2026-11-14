@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgqmkjd7f204fc37f",
-  "experiment_id": "exp_0mwgql9daka879f8bc6",
+  "receipt_id": "rcpt_0mwgs413g7fd6aa93a7",
+  "experiment_id": "exp_0mwgs2pgwka0859bdb7",
   "level": "coordination",
   "problem": {
     "statement": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
@@ -31,10 +31,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/coordination",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:26:05.614Z",
+    "frozen_at": "2026-11-14T19:07:39.248Z",
     "workload_refs": [
       "mission-episodes:missions-A",
-      "snapshot:f3c318cf39c3ccf81a844c215f0f56d95dbadfb2ff63ddb478cb86c03385edc9"
+      "snapshot:8374880c942f1f27bccbf9a25e8e67b5f4d7293f5688718659d18855d1a2e07c"
     ],
     "holdout_set": "missions-A",
     "executor": "mission-episodes",
@@ -47,14 +47,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T18:27:06.745Z",
+      "at": "2026-11-14T19:08:40.972Z",
       "cases": 8,
       "note": "one evaluation on missions-A"
     }
   ],
   "resource_use": {
     "experiment_units": 183,
-    "wall_ms": 61128,
+    "wall_ms": 61721,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -123,18 +123,18 @@
       "metric": "completion_ms",
       "unit": "milliseconds from start to a reviewable result",
       "higher_is_better": false,
-      "candidate": 2995,
-      "incumbent": 4092,
-      "baseline": 4092,
-      "diff_vs_incumbent": -1097,
+      "candidate": 3010.625,
+      "incumbent": 4143.875,
+      "baseline": 4143.875,
+      "diff_vs_incumbent": -1133.25,
       "ci95_vs_incumbent": [
-        -1535.125,
-        -580.25
+        -1558.25,
+        -576.875
       ],
-      "diff_vs_baseline": -1097,
+      "diff_vs_baseline": -1133.25,
       "ci95_vs_baseline": [
-        -1535.125,
-        -580.25
+        -1558.25,
+        -576.875
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
@@ -307,7 +307,7 @@
   "decision": "reject",
   "justification": "Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:27:06.745Z",
+  "decided_at": "2026-11-14T19:08:40.972Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -323,5 +323,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "d4591eef6b17579bf49cce6c38995b5beff2a212d98d91700407fa95790f2301"
+  "receipt_hash": "3a791f3376d186b4137739f53c52ae21866448edc0300f2dff3501933a595c5a"
 }

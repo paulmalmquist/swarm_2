@@ -1,0 +1,27 @@
+{
+  "task": "planning.criteria",
+  "attempt": 1,
+  "summary": "Wrote 4 executable acceptance criteria (AC-FRESH-PROPULSION, AC-SLA-QUALITY, AC-POLICY-FDE, AC-CONTRACT) covering syn-req-001, 003, 004 plus the shared record interface. syn-req-002 (schema drift) is deferred because the overlap report marks it unrelated and no stakeholder id or decision exists for it. Nothing was run; these are criteria, not verifications.",
+  "criteria_claims": [
+    {
+      "criterion_id": "P-CRITERIA",
+      "claimed": "met",
+      "note": "Checked by inspection: all three distinct needs map to a criterion and syn-req-002 is explicitly deferred with a reason. No code was run."
+    }
+  ],
+  "remaining_uncertainty": [
+    "Whether syn-req-002 should be included now; if so, a stakeholder id and AC-SCHEMA-SUPPLY criterion are needed.",
+    "Behavior at exactly the threshold (age == 60 min) is undefined.",
+    "NCR table list, owner-team source of truth and NCR thresholds are unknown.",
+    "Whether the pre-review check is a hard gate or warning; AC-FRESH-PROPULSION only requires on-demand invocation and correct status.",
+    "Delivery channel for reports and alerts is undecided.",
+    "Whether no-timestamp and never-checked datasets both map to unknown is assumed (both unknown), not confirmed."
+  ],
+  "questions": [
+    {
+      "to": "human product owner",
+      "question": "Should syn-req-002 (schema drift) be included in this plan with its own criterion AC-SCHEMA-SUPPLY, and who is the stakeholder?",
+      "blocking": false
+    }
+  ]
+}

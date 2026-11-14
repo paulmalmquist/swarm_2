@@ -6,7 +6,7 @@ Release **r1** (retired; evidence basis: baseline; parent none)
 | coordination | v1 | `a2731e7d2ba012c8` |
 | evolution | v1 | `d81a4b43a3303a68` |
 
-Policy hash `a79f643c873bbd0d`; evaluation snapshot —; receipt —; manifest hash `859dadf9dd91973a`.
+Policy hash `a79f643c873bbd0d`; evaluation snapshot —; receipt —; manifest hash `896e691298dd2430`.
 
 ---
 
@@ -18,4 +18,4 @@ Release **r2** (active; evidence basis: fixture; parent r1)
 | coordination | v1 | `a2731e7d2ba012c8` |
 | evolution | v1 | `d81a4b43a3303a68` |
 
-Policy hash `a79f643c873bbd0d`; evaluation snapshot `ea9332a0924db78a`; receipt rcpt_0mwgqkpe19sb575e895; manifest hash `77df01f0bdecbd03`.
+Policy hash `a79f643c873bbd0d`; evaluation snapshot `64d9281d50c8252a`; receipt rcpt_0mwgs24d29s998359dd; manifest hash `1ccecd238ee578d8`.

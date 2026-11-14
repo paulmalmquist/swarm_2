@@ -15,12 +15,12 @@
   "steps": [
     {
       "n": 1,
-      "at": "2026-11-14T18:28:31.229Z",
+      "at": "2026-11-14T19:10:09.446Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "build",
@@ -33,12 +33,12 @@
     },
     {
       "n": 2,
-      "at": "2026-11-14T18:28:31.438Z",
+      "at": "2026-11-14T19:10:09.656Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "pilot",
@@ -52,12 +52,12 @@
     },
     {
       "n": 3,
-      "at": "2026-11-14T18:28:31.856Z",
+      "at": "2026-11-14T19:10:10.106Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "submit",
@@ -65,17 +65,17 @@
       },
       "outcome": "accept on holdout-A; r3 is qualified for a canary",
       "cost": 281,
-      "experiment_id": "exp_0mwgqodxe32f1ba5097",
-      "receipt_id": "rcpt_0mwgqoe7j3674753955"
+      "experiment_id": "exp_0mwgs5xka32986b5273",
+      "receipt_id": "rcpt_0mwgs5xvc36581b14e5"
     },
     {
       "n": 4,
-      "at": "2026-11-14T18:28:31.900Z",
+      "at": "2026-11-14T19:10:10.155Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "build",
@@ -88,12 +88,12 @@
     },
     {
       "n": 5,
-      "at": "2026-11-14T18:28:32.109Z",
+      "at": "2026-11-14T19:10:10.350Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "pilot",
@@ -107,12 +107,12 @@
     },
     {
       "n": 6,
-      "at": "2026-11-14T18:28:32.528Z",
+      "at": "2026-11-14T19:10:10.769Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "submit",
@@ -120,17 +120,17 @@
       },
       "outcome": "reject on holdout-B",
       "cost": 281,
-      "experiment_id": "exp_0mwgqoeg63bd4689370",
-      "receipt_id": "rcpt_0mwgqoeq73f80a6921b"
+      "experiment_id": "exp_0mwgs5y3k3b9df4615c",
+      "receipt_id": "rcpt_0mwgs5yds3f58b2e1cd"
     },
     {
       "n": 7,
-      "at": "2026-11-14T18:28:32.580Z",
+      "at": "2026-11-14T19:10:10.822Z",
       "policy": {
         "release_id": "r2",
         "evolution_version": 2,
         "id": "expected-value",
-        "canary_id": "can_0mwgqodnk1p2f04ae0d"
+        "canary_id": "can_0mwgs5xa31pbe5deea2"
       },
       "action": {
         "type": "stop",
@@ -162,8 +162,8 @@
       },
       "submitted": true,
       "result": "accept",
-      "experiment_id": "exp_0mwgqodxe32f1ba5097",
-      "receipt_id": "rcpt_0mwgqoe7j3674753955",
+      "experiment_id": "exp_0mwgs5xka32986b5273",
+      "receipt_id": "rcpt_0mwgs5xvc36581b14e5",
       "release_id": "r3",
       "failed_approach_memory_id": null,
       "cost_so_far": 333
@@ -208,10 +208,10 @@
       },
       "submitted": true,
       "result": "reject",
-      "experiment_id": "exp_0mwgqoeg63bd4689370",
-      "receipt_id": "rcpt_0mwgqoeq73f80a6921b",
+      "experiment_id": "exp_0mwgs5y3k3b9df4615c",
+      "receipt_id": "rcpt_0mwgs5yds3f58b2e1cd",
       "release_id": null,
-      "failed_approach_memory_id": "mem_0mwgqoeq83hc3a62ba7",
+      "failed_approach_memory_id": "mem_0mwgs5ydt3hd3391eb5",
       "cost_so_far": 323
     },
     {

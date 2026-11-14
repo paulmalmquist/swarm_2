@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgql5s2ae1a879837",
-  "experiment_id": "exp_0mwgql5rxaa9eb96ef6",
+  "receipt_id": "rcpt_0mwgs2lixaeee0abbb5",
+  "experiment_id": "exp_0mwgs2liraa538bc868",
   "level": "execution",
   "problem": {
     "statement": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
@@ -36,10 +36,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T18:26:00.957Z",
+    "frozen_at": "2026-11-14T19:07:34.131Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:40ea526942e1505b1cd5ec4992d027dd5e4b51f832af9d0ddd71588c56bc2dcc"
+      "snapshot:a8800e83c01df29237d2ff12e1e7021d80aa681af5995237fd452e19a6d730a9"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,14 +52,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T18:26:00.962Z",
+      "at": "2026-11-14T19:07:34.138Z",
       "cases": 0,
       "note": "candidate was not executed on held-out cases"
     }
   ],
   "resource_use": {
     "experiment_units": 0,
-    "wall_ms": 1,
+    "wall_ms": 2,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -201,7 +201,7 @@
   "decision": "reject",
   "justification": "Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:26:00.962Z",
+  "decided_at": "2026-11-14T19:07:34.138Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -217,5 +217,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "b6836d5ff86712805020765e190ca761eb97e8dac1324770f174c0c54e1482ed"
+  "receipt_hash": "f24f36f7a126cd224bddbe5de09353fdab99ce9dabca1f00cab2b0ca087b06b1"
 }
