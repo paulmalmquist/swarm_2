@@ -1,0 +1,41 @@
+{
+  "policy_id": "promotion-policy",
+  "version": 1,
+  "note": "PROTECTED. The rules a candidate is approved under. A proposal to change this file is a separate decision routed to the chief of staff; no candidate can change the rules used to approve itself.",
+  "levels": {
+    "execution": {
+      "workload": "review",
+      "holdout_cases": 80,
+      "minimum_samples": 40,
+      "repeats_when_stochastic": 3,
+      "primary_metric": "accuracy",
+      "non_inferiority_margin": 0.02,
+      "false_alarm_margin": 0.05,
+      "required_steps": { "change-review": ["tests_present"] },
+      "max_cost_ratio": 5
+    },
+    "coordination": {
+      "workload": "mission-episodes",
+      "holdout_episodes": 8,
+      "minimum_samples": 6,
+      "primary_metric": "verified_success",
+      "non_inferiority_margin": 0.0
+    },
+    "evolution": {
+      "workload": "improvement-arena",
+      "holdout_episodes": 30,
+      "minimum_samples": 20,
+      "budget_units": 420,
+      "primary_metric": "validated_benefit",
+      "non_inferiority_margin": 0.0
+    }
+  },
+  "forbidden_capabilities": ["node:fs", "node:child_process", "node:net", "node:http", "node:https", "node:worker_threads", "node:vm", "child_process", "process.binding", "process.env", "eval(", "new Function(", "fetch(", "require("],
+  "holdout": { "max_uses_per_lineage": 1 },
+  "canary": { "max_missions": 3, "fresh_cases": 60, "rollback_if": { "accuracy_drop_gt": 0.05, "escaped_defect_rate_increase_gt": 0.02, "acceptance_failures_gt": 0 } },
+  "decision_rule": {
+    "accept": "Every hard gate PASSED, and the 95% interval of the paired difference in the primary metric against the incumbent lies above zero. A declared simplification is accepted when it is non-inferior within the margin and its cost interval lies below zero.",
+    "reject": "Any hard gate FAILED, or the 95% interval of the paired difference lies below zero.",
+    "inconclusive": "Anything else, including a hard gate that is REMAINING. Reported as no demonstrated improvement; the candidate and its results are kept."
+  }
+}

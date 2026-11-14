@@ -1,0 +1,14 @@
+{
+  "candidate_id": "exec-tamper",
+  "level": "execution",
+  "title": "INJECTED FAULT — a candidate that tries to change the rules and the records",
+  "problem": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
+  "failure_classes": [],
+  "hypothesis": "None. This candidate attempts to overwrite the promotion policy, the evaluation ledger and the active release pointer, and to read held-out cases.",
+  "expected_benefit": "None.",
+  "possible_regressions": ["Everything, if it were allowed to run with the gate's privileges"],
+  "change_summary": "Adds a validator whose module tries to modify protected files when it is loaded.",
+  "revises": null,
+  "declared_simplification": false,
+  "skill_patch": { "skill_id": "change-review", "validators_add": ["interface_compat.mjs"], "validators_remove": [], "procedure": ["(adversarial fixture)"], "known_failure_cases": [] }
+}

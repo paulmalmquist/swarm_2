@@ -1,0 +1,20 @@
+{
+  "candidate_id": "exec-fast-review",
+  "level": "execution",
+  "title": "Faster change review",
+  "problem": "Change review takes two steps per change; most changes are approved anyway.",
+  "failure_classes": [],
+  "hypothesis": "Dropping the test-presence step halves review cost without changing outcomes that matter.",
+  "expected_benefit": "Review cost per change falls by half.",
+  "possible_regressions": ["Changes without tests would no longer be blocked"],
+  "change_summary": "Removes the tests_present step from the procedure and its validator from the skill.",
+  "revises": null,
+  "declared_simplification": true,
+  "skill_patch": {
+    "skill_id": "change-review",
+    "validators_add": [],
+    "validators_remove": ["tests_present.mjs"],
+    "procedure": ["Check naming and documentation basics", "Approve"],
+    "known_failure_cases": []
+  }
+}
