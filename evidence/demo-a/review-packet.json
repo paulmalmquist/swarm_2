@@ -1,0 +1,254 @@
+{
+  "mission_id": "msn_0mwgs1usx07efa05d3e",
+  "title": "Shared dataset-health capability",
+  "cold_read": [
+    "This packet covers \"Shared dataset-health capability\". 5 of 5 acceptance criteria passed independent verification.",
+    "Decide whether to approve the merge request draft. Approval records your decision; it does not merge anything."
+  ],
+  "context": "Give every team one policy-driven way to see which datasets are stale, drifting or unmeasured, and who owns them.",
+  "requests": [
+    {
+      "id": "syn-req-001",
+      "stakeholder": "syn-ana-propulsion",
+      "team": "Propulsion Test",
+      "text": "Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_test_runs dataset is stale, with a 60 minute threshold, before every review."
+    },
+    {
+      "id": "syn-req-002",
+      "stakeholder": "syn-ben-supplychain",
+      "team": "Supply Chain Analytics",
+      "text": "The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check that compares each table schema against its declared contract and reports drift by field."
+    },
+    {
+      "id": "syn-req-003",
+      "stakeholder": "syn-chloe-quality",
+      "team": "Manufacturing Quality",
+      "text": "For the weekly ops review I need an SLA report on the freshness of our NCR tables, grouped by owner team. If a dataset has never been measured it must say unknown, not look fresh."
+    },
+    {
+      "id": "syn-req-004",
+      "stakeholder": "syn-dev-fde",
+      "team": "Forward Deployed Engineering",
+      "text": "Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresholds. We want one shared, reusable capability where thresholds are policy configuration, not code."
+    }
+  ],
+  "overlap": {
+    "shared_capability": "A shared, policy-driven dataset-health capability: freshness against per-dataset thresholds and schema conformance against declared fields, with an SLA report and alerts",
+    "distinct_needs": [
+      {
+        "stakeholder": "syn-ana-propulsion",
+        "need": "Know when a dataset is older than its own threshold, and be alerted before a review",
+        "criterion_id": "AC-FRESH-PROPULSION",
+        "status": "satisfied"
+      },
+      {
+        "stakeholder": "syn-ben-supplychain",
+        "need": "Detect schema drift against a declared contract and name the fields involved",
+        "criterion_id": "AC-SCHEMA-SUPPLY",
+        "status": "satisfied"
+      },
+      {
+        "stakeholder": "syn-chloe-quality",
+        "need": "An SLA report grouped by owner team that shows an unmeasured dataset as unknown",
+        "criterion_id": "AC-SLA-QUALITY",
+        "status": "satisfied"
+      },
+      {
+        "stakeholder": "syn-dev-fde",
+        "need": "One shared capability whose thresholds are policy configuration rather than code",
+        "criterion_id": "AC-POLICY-FDE",
+        "status": "satisfied"
+      }
+    ]
+  },
+  "exact_changes": {
+    "ref": "integration",
+    "base_commit": "658c558a2faee5a7b94e38a5a7735188f00e1113",
+    "head_commit": "d77b2811661c923f00c0f06ef4a9cc571d1fc7ba",
+    "files": [
+      {
+        "status": "A",
+        "path": "contracts/health-record.schema.json"
+      },
+      {
+        "status": "A",
+        "path": "src/engine/evaluate.ts"
+      },
+      {
+        "status": "A",
+        "path": "src/report/report.ts"
+      },
+      {
+        "status": "A",
+        "path": "test/engine/evaluate.test.ts"
+      },
+      {
+        "status": "A",
+        "path": "test/report/report.test.ts"
+      }
+    ]
+  },
+  "acceptance": [
+    {
+      "criterion_id": "AC-FRESH-PROPULSION",
+      "description": "A dataset older than its own threshold is reported stale and raises an alert",
+      "mandatory": true,
+      "stakeholder": "syn-ana-propulsion",
+      "verdict": "pass",
+      "independent": true,
+      "evidence_ids": [
+        "evd_0mwgs1wym6ga49bb7dc"
+      ]
+    },
+    {
+      "criterion_id": "AC-SCHEMA-SUPPLY",
+      "description": "An upstream column rename is reported as schema drift naming the missing and unexpected fields",
+      "mandatory": true,
+      "stakeholder": "syn-ben-supplychain",
+      "verdict": "pass",
+      "independent": true,
+      "evidence_ids": [
+        "evd_0mwgs1wym6ga49bb7dc"
+      ]
+    },
+    {
+      "criterion_id": "AC-SLA-QUALITY",
+      "description": "The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh",
+      "mandatory": true,
+      "stakeholder": "syn-chloe-quality",
+      "verdict": "pass",
+      "independent": true,
+      "evidence_ids": [
+        "evd_0mwgs1wym6ga49bb7dc"
+      ]
+    },
+    {
+      "criterion_id": "AC-POLICY-FDE",
+      "description": "Thresholds come from policy configuration; changing only the policy changes the result",
+      "mandatory": true,
+      "stakeholder": "syn-dev-fde",
+      "verdict": "pass",
+      "independent": true,
+      "evidence_ids": [
+        "evd_0mwgs1wym6ga49bb7dc"
+      ]
+    },
+    {
+      "criterion_id": "AC-CONTRACT",
+      "description": "Every health record conforms to the pinned HealthRecord contract",
+      "mandatory": true,
+      "stakeholder": null,
+      "verdict": "pass",
+      "independent": true,
+      "evidence_ids": [
+        "evd_0mwgs1wym6ga49bb7dc"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "key": "intake/requests",
+      "version_no": 1,
+      "content_hash": "e2eda7fe1a8454323cfe07c388f82fbbedb331b0a0dec3047f317eae59865698",
+      "currency": "current",
+      "kind": "report"
+    },
+    {
+      "key": "discovery/overlap-report",
+      "version_no": 1,
+      "content_hash": "a7eff5848ca4ecfcb0247dfb4630814887f13837388a1dc475a65c67f2f5df68",
+      "currency": "current",
+      "kind": "report"
+    },
+    {
+      "key": "plan/acceptance-criteria",
+      "version_no": 1,
+      "content_hash": "e734cc997ed6eccb1235624901a3a9dc739a42e114f648b697854083572f3fce",
+      "currency": "current",
+      "kind": "plan"
+    },
+    {
+      "key": "contract/health-record",
+      "version_no": 1,
+      "content_hash": "c1e5d895129fee4cb109d6c8459e43351ab30d56b1707fa17671d57f631874fb",
+      "currency": "current",
+      "kind": "contract"
+    },
+    {
+      "key": "plan/work-graph",
+      "version_no": 1,
+      "content_hash": "3cd76eefc7b80e4f38b5e9d6a784d6e1560b8f7ce7802a3f1f334a3e35702b1c",
+      "currency": "current",
+      "kind": "plan"
+    },
+    {
+      "key": "plan/delivery-decomposition",
+      "version_no": 1,
+      "content_hash": "87b13d9e3005f4504df44e97aabb5c8af51d4fce05051a70fa540f196ba1e63d",
+      "currency": "current",
+      "kind": "plan"
+    },
+    {
+      "key": "code/engine",
+      "version_no": 1,
+      "content_hash": "0da17b4bd409e0bc8649a5da02287845876730e051ea3e919805c1bc2350ee3b",
+      "currency": "current",
+      "kind": "code"
+    },
+    {
+      "key": "code/report",
+      "version_no": 1,
+      "content_hash": "8d8d3ec71c868d01d764fb64810fdddbb76a0fbb6e858e1411248aad90933a0e",
+      "currency": "current",
+      "kind": "code"
+    },
+    {
+      "key": "code/integrated",
+      "version_no": 1,
+      "content_hash": "661d4a9f674c3081566c8b4b2018ba602c5e8f72d64ea5e1e383716ae7e8a39b",
+      "currency": "current",
+      "kind": "code"
+    },
+    {
+      "key": "knowledge/mission-notes",
+      "version_no": 1,
+      "content_hash": "c5bb53f43a93e843f5d6d69cc86e603d434a001fadcdee0d294a5c5e9013582b",
+      "currency": "current",
+      "kind": "report"
+    }
+  ],
+  "decisions": [],
+  "remaining_concerns": [
+    "Drift detection compares declared and observed type names literally",
+    "Actual load cadences are not given; thresholds are taken from the requests where stated",
+    "Whether an alert should page someone or only appear in a report is not stated",
+    "No request says how long drift may persist before it matters",
+    "The contract carries no severity ranking; the weekly review may want one",
+    "Thresholds in the criteria come from the requests and have not been confirmed by dataset owners",
+    "Open question from agt_0mwgs1ute0u06bdb2cb: Should a stale-data alert page someone, or only appear in the report? No request says."
+  ],
+  "decision_requested": {
+    "decision_id": "dec_0mwgs1x5i7k0b0d87fe",
+    "question": "Approve the integrated result of \"Shared dataset-health capability\" for merge into the protected branch?",
+    "options": [
+      "approve",
+      "request_changes",
+      "reject"
+    ],
+    "consequence": "Approval marks the merge request draft approved. The merge itself stays with the existing protected path.",
+    "reversible": true
+  },
+  "resource_use": {
+    "model_calls": 0,
+    "worker_invocations": 10,
+    "tokens": 0,
+    "cost_usd_est": 0,
+    "wall_ms": 1083,
+    "cost_basis": "none",
+    "usage_completeness": "complete"
+  },
+  "release_id": "r1",
+  "provider_mode": "fixture",
+  "data_class": "synthetic",
+  "generated_at": "2026-11-14T19:07:02.552Z"
+}

@@ -1,0 +1,230 @@
+[
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "type_changed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-007",
+      "title": "Store part_no more compactly.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r894f3dc7bc4",
+    "signature": "escaped_defect:type_changed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_removed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-008",
+      "title": "Clean up unused attributes on syn.ncr_event.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r895b0608f2a",
+    "signature": "escaped_defect:field_removed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_renamed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-009",
+      "title": "Naming consistency pass on syn.part_measurement.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r8967ccb85d4",
+    "signature": "escaped_defect:field_renamed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "required_added",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-012",
+      "title": "Track the originating system on syn.health_record.",
+      "severity": 3,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r897796e93c5",
+    "signature": "escaped_defect:required_added",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_renamed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-013",
+      "title": "Naming consistency pass on syn.test_run.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r898973c820a",
+    "signature": "escaped_defect:field_renamed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "type_changed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-014",
+      "title": "Store run_id more compactly.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r8994eecbacb",
+    "signature": "escaped_defect:type_changed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "required_added",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-017",
+      "title": "Track the originating system on syn.ncr_event.",
+      "severity": 3,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89a2730dfad",
+    "signature": "escaped_defect:required_added",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "enum_value_removed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-024",
+      "title": "Retire a rarely used severity value.",
+      "severity": 3,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89bd656cc2e",
+    "signature": "escaped_defect:enum_value_removed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_removed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-025",
+      "title": "Clean up unused attributes on syn.test_run.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89c736c898d",
+    "signature": "escaped_defect:field_removed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "type_changed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-026",
+      "title": "Store part_no more compactly.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89dd6f6f0b7",
+    "signature": "escaped_defect:type_changed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_removed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-031",
+      "title": "Clean up unused attributes on syn.test_run.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89ee2582ac5",
+    "signature": "escaped_defect:field_removed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  },
+  {
+    "mission_id": null,
+    "task_id": null,
+    "kind": "escaped_defect",
+    "failure_class": "field_removed",
+    "certainty": "verified",
+    "details": {
+      "case_id": "observed-work-1-032",
+      "title": "Clean up unused attributes on syn.supplier_delivery.",
+      "severity": 5,
+      "outcome": "a breaking change was approved"
+    },
+    "component": "execution:change-review",
+    "release_id": "r1",
+    "source": "fixture",
+    "id": "obs_0mwgs23r89f22f643cb",
+    "signature": "escaped_defect:field_removed",
+    "created_at": "2026-11-14T19:07:11.108Z"
+  }
+]

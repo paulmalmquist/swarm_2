@@ -1,0 +1,23 @@
+{
+  "candidate_id": "evo-expected-value",
+  "level": "evolution",
+  "title": "Prioritize improvement work by expected value, pilot before submitting, and stop when nothing is worth its cost",
+  "problem": "Improvement campaigns spend their budget on whatever is reported most often. Frequent complaints that were never verified, and fixes that would have failed a cheap check, consume budget that higher-value problems needed.",
+  "failure_classes": [],
+  "hypothesis": "If the improvement process ranks problems by verified failures times severity per unit of cost, pilots a built fix on observed cases before paying for a held-out evaluation, and stops when no remaining problem is worth its cost, then with the same budget on unseen failure episodes it will deliver more independently validated harm reduction and spend less on experiments that fail.",
+  "expected_benefit": "More validated harm reduction per fixed experiment budget; lower cost of failed experiments.",
+  "possible_regressions": ["Pilots cost budget that could have funded another submission", "A problem with few verified failures but high latent harm is ranked low", "Stopping early leaves budget unused"],
+  "change_summary": "Replaces the frequency-first improvement policy with an expected-value policy: prioritization, a pilot step, pruning and a stopping rule all change.",
+  "revises": null,
+  "declared_simplification": false,
+  "definition_patch": {
+    "policy_module": "policy.mjs",
+    "params": { "prior_success": 0.55, "pilot_cases": 12, "min_value_per_unit": 0.01 },
+    "problem_finding": "Group failure observations by class; count verified failures separately from unverified reports.",
+    "hypothesis_generation": "Consider every available fix for an open problem, cheapest plausible first.",
+    "prioritization": "Expected value: verified failures times severity, times the estimated chance the fix passes, divided by the cost still to be paid.",
+    "exploration_budget": "A small pilot on observed cases before any held-out submission.",
+    "stopping": "Drop a fix whose pilot breaks something or fixes nothing; stop the campaign when no remaining step is worth its cost.",
+    "generalization_check": "The pilot includes cases the current skill already handles, to catch a fix that breaks them."
+  }
+}

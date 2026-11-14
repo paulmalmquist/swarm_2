@@ -1,0 +1,394 @@
+{
+  "receipt_id": "rcpt_0mwgrtvmf0ja5028598",
+  "experiment_id": "exp_0mwgrtv940faffd3d44",
+  "level": "execution",
+  "problem": {
+    "statement": "Reviews with release r1 got 13 of 40 development reviews wrong: type_changed×3, field_removed×4, field_renamed×3, required_added×2, enum_value_removed×1.",
+    "observation_ids": [
+      "obs_0mwgrrubw014f36b082",
+      "obs_0mwgrrubw02bc72a0f7",
+      "obs_0mwgrruby03bf3a9e45",
+      "obs_0mwgrrubz044d1a236e",
+      "obs_0mwgrrubz05d316b65c",
+      "obs_0mwgrrubz06080b1071",
+      "obs_0mwgrrubz07b0705918",
+      "obs_0mwgrrubz08e66b6929",
+      "obs_0mwgrrubz0965a92549",
+      "obs_0mwgrrubz0a754c95a0",
+      "obs_0mwgrruc00b2f2455be",
+      "obs_0mwgrruc00c0603bebd",
+      "obs_0mwgrruc00dba1df4f7"
+    ],
+    "observed_failure_count": 13
+  },
+  "hypothesis": "If the change-review skill also runs interface_compat (a recursive structural diff of contract_before vs contract_after that blocks removed/renamed fields, type changes, unit/format/constraint changes, enum value removals, and requiredness changes while treating annotation-only changes and new optional fields as safe), then breaking interface changes (type_changed, field_removed, field_renamed, required_added, enum_value_removed and similar unseen kinds such as unit or nested-field changes) will be sent back with the correct dot-path field, raising accuracy above the current ~0.675 without increasing blocked safe changes; this is falsified if held-out accuracy does not rise, any breaking change is approved, or safe changes are blocked beyond the margin.",
+  "expected_benefit": "Fewer approved breaking changes, with safe changes still approved.",
+  "possible_regressions": [
+    "Safe changes could be blocked",
+    "Each review runs one more step",
+    "The development cases only contain top-level field changes; nested-path handling (e.g. tolerance.lower) is untested against labels",
+    "Held-out change kinds (unit changes, nullability, bound changes, enum additions, format changes) have unknown labels; severity choices for them are judgment calls",
+    "The list of meaning-bearing x- extensions is a heuristic; unrecognised extensions that change meaning would only be advisory"
+  ],
+  "parent": {
+    "component": "execution",
+    "version": 1,
+    "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+  },
+  "change": {
+    "summary": "Added candidate/validators/interface_compat.mjs (id 'interface_compat'). It walks both schemas recursively through properties and items, building dot paths from the contract root. Blocking: field removed (reported as field_renamed if an added field has an identical schema), type set changed (including nullable), enum value removed / enum added / enum dropped, const changed, field became required or new required field, field became optional, and changes to non-annotation keywords such as x-unit, format, minimum/maximum, length, pattern, additionalProperties, plus x- extensions whose names suggest meaning (unit, scale, precision, timezone, currency, etc.). Advisory only: optional field added, enum value added, default changed, other x- extensions. Ignored: description, title, examples, deprecated and similar annotations. Development check: accuracy 1.0 (60/60), 0 of 38 breaking approved, 0 of 22 safe blocked, no errors.",
+    "files": [
+      {
+        "path": "execution.json",
+        "before_hash": "623fb23304c6a4433e7da52b8aaca03d2c79de82363ba7f740994db42a24c693",
+        "after_hash": "93db22b784c8fa8d46fc3a89671b555ee417798a71fbe299a1054bf0b1543416"
+      },
+      {
+        "path": "validators/interface_compat.mjs",
+        "before_hash": null,
+        "after_hash": "f3f93d03d7d77bb0c076574c4504b646e2b15c6dcbe91192702326909584f075"
+      }
+    ],
+    "candidate_hash": "3e2726574083d63d311dcb45d679ed192177a09ac3b99aa79e063f05c3fdf386"
+  },
+  "evaluation": {
+    "protocol_id": "promotion-policy@1/execution",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T19:00:46.840Z",
+    "workload_refs": [
+      "review:holdout-A",
+      "snapshot:1f54b82a3df3a22a1907cb83fbcf05af3eb300df9944b1489913d3d710c77e6d"
+    ],
+    "holdout_set": "holdout-A",
+    "executor": "validator-executor",
+    "execution_kind": "rerun",
+    "repeats": 1,
+    "deterministic": true,
+    "source": "fixture"
+  },
+  "attempts": [
+    {
+      "attempt_no": 1,
+      "kind": "development",
+      "at": "2026-11-14T19:00:46.942Z",
+      "cases": 40,
+      "note": "development check by the candidate author"
+    },
+    {
+      "attempt_no": 2,
+      "kind": "holdout",
+      "at": "2026-11-14T19:00:47.319Z",
+      "cases": 80,
+      "note": "one evaluation on holdout-A"
+    }
+  ],
+  "resource_use": {
+    "experiment_units": 281,
+    "wall_ms": 376,
+    "model_calls": 0,
+    "cost_usd_est": null
+  },
+  "comparisons": [
+    {
+      "metric": "accuracy",
+      "unit": "share of reviews with the right verdict and the affected field named",
+      "higher_is_better": true,
+      "candidate": 0.9625,
+      "incumbent": 0.5,
+      "baseline": 0.5,
+      "diff_vs_incumbent": 0.4625,
+      "ci95_vs_incumbent": [
+        0.3375,
+        0.5875
+      ],
+      "diff_vs_baseline": 0.4625,
+      "ci95_vs_baseline": [
+        0.3375,
+        0.5875
+      ],
+      "n": 80,
+      "method": "paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 40 better, 3 worse, 37 same, p=0"
+    },
+    {
+      "metric": "harm_per_review",
+      "unit": "severity-weighted cost of wrong verdicts",
+      "higher_is_better": false,
+      "candidate": 0.0375,
+      "incumbent": 2.5,
+      "baseline": 2.5,
+      "diff_vs_incumbent": -2.4625,
+      "ci95_vs_incumbent": [
+        -3.075,
+        -1.8625
+      ],
+      "diff_vs_baseline": -2.4625,
+      "ci95_vs_baseline": [
+        -3.0875,
+        -1.8625
+      ],
+      "n": 80,
+      "method": "paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 3 better, 40 worse, 37 same, p=0"
+    },
+    {
+      "metric": "escaped_defect_rate",
+      "unit": "share of breaking changes approved",
+      "higher_is_better": false,
+      "candidate": 0,
+      "incumbent": 0.8,
+      "baseline": 0.8,
+      "diff_vs_incumbent": -0.8,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": -0.8,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "observed rate on the held-out set"
+    },
+    {
+      "metric": "false_alarm_rate",
+      "unit": "share of safe changes blocked",
+      "higher_is_better": false,
+      "candidate": 0.1,
+      "incumbent": 0,
+      "baseline": 0,
+      "diff_vs_incumbent": 0.1,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": 0.1,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "observed rate on the held-out set"
+    },
+    {
+      "metric": "steps_per_review",
+      "unit": "validator steps (counted by the gate)",
+      "higher_is_better": false,
+      "candidate": 3,
+      "incumbent": 2,
+      "baseline": 2,
+      "diff_vs_incumbent": 1,
+      "ci95_vs_incumbent": [
+        1,
+        1
+      ],
+      "diff_vs_baseline": 1,
+      "ci95_vs_baseline": [
+        1,
+        1
+      ],
+      "n": 80,
+      "method": "exact count; no sampling"
+    },
+    {
+      "metric": "wall_ms_per_review",
+      "unit": "milliseconds, measured outside the candidate process",
+      "higher_is_better": false,
+      "candidate": 0.193,
+      "incumbent": 0.141,
+      "baseline": 0.153,
+      "diff_vs_incumbent": 0.052,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": 0.04,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "single timing of the whole batch; indicative only"
+    }
+  ],
+  "gates": [
+    {
+      "id": "protected_integrity",
+      "name": "Rules and records are intact",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation."
+    },
+    {
+      "id": "no_forbidden_capabilities",
+      "name": "No forbidden capabilities",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "findings",
+      "comparison_operator": "=",
+      "threshold": 0,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The candidate code uses no file, process, network or dynamic-code capability."
+    },
+    {
+      "id": "holdout_not_reused",
+      "name": "Held-out cases are unseen by this lineage",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Scored on holdout-A, which this candidate lineage has not been scored on before."
+    },
+    {
+      "id": "required_steps_present",
+      "name": "Required verification steps are performed",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 1,
+      "measurement_unit": "steps",
+      "comparison_operator": ">=",
+      "threshold": 1,
+      "samples": 1,
+      "minimum_samples": 1,
+      "weight": null,
+      "meaning": "Every step that may not be omitted fired on its probe case."
+    },
+    {
+      "id": "minimum_samples",
+      "name": "Enough scored cases",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 80,
+      "measurement_unit": "cases",
+      "comparison_operator": ">=",
+      "threshold": 40,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "80 cases scored; at least 40 are required."
+    },
+    {
+      "id": "escaped_defects_not_worse",
+      "name": "No more defects escape",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "rate",
+      "comparison_operator": "<=",
+      "threshold": 0.8,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Share of breaking changes approved: candidate 0.0%, incumbent 80.0%."
+    },
+    {
+      "id": "false_alarms_within_margin",
+      "name": "Safe changes are not blocked",
+      "kind": "HARD_GATE",
+      "verdict": "FAILED",
+      "measurement_value": 0.1,
+      "measurement_unit": "rate",
+      "comparison_operator": "<=",
+      "threshold": 0.05,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Share of safe changes blocked: candidate 10.0%, incumbent 0.0%; allowed margin 5.0%."
+    },
+    {
+      "id": "no_regression_vs_baseline",
+      "name": "No cumulative regression against the original baseline",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0.9625,
+      "measurement_unit": "accuracy",
+      "comparison_operator": ">=",
+      "threshold": 0.48,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Accuracy: candidate 96.3%, original baseline 50.0%."
+    },
+    {
+      "id": "cost_within_bound",
+      "name": "Cost stays within bound",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 3,
+      "measurement_unit": "steps",
+      "comparison_operator": "<=",
+      "threshold": 10,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Steps per review: candidate 3, incumbent 2; at most 5× is allowed."
+    },
+    {
+      "id": "accuracy_gain",
+      "name": "Review accuracy",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": 0.4625,
+      "measurement_unit": "accuracy difference",
+      "comparison_operator": ">",
+      "threshold": 0,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": 0.6,
+      "meaning": "Accuracy changed by 0.4625 (95% interval 0.3375 to 0.5875)."
+    },
+    {
+      "id": "harm_reduction",
+      "name": "Severity-weighted harm",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": -2.4625,
+      "measurement_unit": "harm difference",
+      "comparison_operator": "<",
+      "threshold": 0,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": 0.25,
+      "meaning": "Harm per review changed by -2.4625."
+    },
+    {
+      "id": "cost",
+      "name": "Cost per review",
+      "kind": "WEIGHTED",
+      "verdict": "FAILED",
+      "measurement_value": 1,
+      "measurement_unit": "steps",
+      "comparison_operator": "<=",
+      "threshold": 0,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": 0.15,
+      "meaning": "Steps per review changed by 1."
+    }
+  ],
+  "known_regressions": [
+    "nullability_added: 3/6 correct, down from 6/6 under the incumbent",
+    "Each review runs 1 more step(s)"
+  ],
+  "limitations": [
+    "Evaluated by executing the skill's validators on synthetic change-review cases. No model was run, so this says nothing about how a model worker would use the procedure text.",
+    "One deterministic pass over 80 cases: the interval reflects which cases were drawn, not run-to-run variation.",
+    "Fixture evidence does not certify live use."
+  ],
+  "decision": "reject",
+  "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 10.0%, incumbent 0.0%; allowed margin 5.0%.",
+  "decided_by": "release-gate",
+  "decided_at": "2026-11-14T19:00:47.319Z",
+  "release_manifest": null,
+  "rollback_target": null,
+  "isolation": {
+    "mode": "enforced",
+    "uid_separation": true,
+    "candidate_uid": 65534,
+    "node_permission_model": true,
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "intact": true,
+    "notes": [
+      "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+    ]
+  },
+  "evidence_basis": "fixture",
+  "receipt_hash": "f9a7f9e995e570f31a7aa034675aede20780360bd9e918b45fa390e89b51f052"
+}

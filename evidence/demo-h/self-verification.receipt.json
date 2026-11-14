@@ -1,0 +1,327 @@
+{
+  "receipt_id": "rcpt_0mwgs413g7fd6aa93a7",
+  "experiment_id": "exp_0mwgs2pgwka0859bdb7",
+  "level": "coordination",
+  "problem": {
+    "statement": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
+    "observation_ids": [],
+    "observed_failure_count": 0
+  },
+  "hypothesis": "If the independent verification swarm is retired and delivery's own integration tests are trusted, missions will finish with fewer worker invocations and less time, with no more defects escaping.",
+  "expected_benefit": "Fewer worker invocations and a shorter completion time per mission.",
+  "possible_regressions": [
+    "A defect that delivery's own tests do not cover would reach the review packet unverified"
+  ],
+  "parent": {
+    "component": "coordination",
+    "version": 1,
+    "content_hash": "a2731e7d2ba012c81f7188f9200610300a2ba49c33a1b4681c3f42924b04a9bc"
+  },
+  "change": {
+    "summary": "Sets independent_verification to false: no verification swarm is formed and the integrated result is accepted on delivery's own combined tests.",
+    "files": [
+      {
+        "path": "coordination.json",
+        "before_hash": "bfb286e494c74c8dae04af8cd60983bf27db5808d4d4ea7865d6d43f8fc45f8f",
+        "after_hash": "a6c56b7dc9a1a186703722525e0136ba09272e3fc6ff1d956c1ba4d70cdaace4"
+      }
+    ],
+    "candidate_hash": "5326ad2f80a9e2b5ce7f2cdec755810ffa67ffe386a2c7c77d58eb058ca53046"
+  },
+  "evaluation": {
+    "protocol_id": "promotion-policy@1/coordination",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T19:07:39.248Z",
+    "workload_refs": [
+      "mission-episodes:missions-A",
+      "snapshot:8374880c942f1f27bccbf9a25e8e67b5f4d7293f5688718659d18855d1a2e07c"
+    ],
+    "holdout_set": "missions-A",
+    "executor": "mission-episodes",
+    "execution_kind": "rerun",
+    "repeats": 1,
+    "deterministic": false,
+    "source": "fixture"
+  },
+  "attempts": [
+    {
+      "attempt_no": 1,
+      "kind": "holdout",
+      "at": "2026-11-14T19:08:40.972Z",
+      "cases": 8,
+      "note": "one evaluation on missions-A"
+    }
+  ],
+  "resource_use": {
+    "experiment_units": 183,
+    "wall_ms": 61721,
+    "model_calls": 0,
+    "cost_usd_est": null
+  },
+  "comparisons": [
+    {
+      "metric": "truly_correct_missions",
+      "unit": "share of missions whose accepted result passes every acceptance criterion",
+      "higher_is_better": true,
+      "candidate": 0.375,
+      "incumbent": 1,
+      "baseline": 1,
+      "diff_vs_incumbent": -0.625,
+      "ci95_vs_incumbent": [
+        -0.875,
+        -0.25
+      ],
+      "diff_vs_baseline": -0.625,
+      "ci95_vs_baseline": [
+        -0.875,
+        -0.25
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 5 worse, 3 same, p=0.0625"
+    },
+    {
+      "metric": "escaped_defects_per_mission",
+      "unit": "acceptance criteria failing on an accepted result",
+      "higher_is_better": false,
+      "candidate": 0.625,
+      "incumbent": 0,
+      "baseline": 0,
+      "diff_vs_incumbent": 0.625,
+      "ci95_vs_incumbent": [
+        0.25,
+        0.875
+      ],
+      "diff_vs_baseline": 0.625,
+      "ci95_vs_baseline": [
+        0.25,
+        0.875
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 5 better, 0 worse, 3 same, p=0.0625"
+    },
+    {
+      "metric": "worker_invocations_per_mission",
+      "unit": "worker invocations",
+      "higher_is_better": false,
+      "candidate": 10,
+      "incumbent": 12.875,
+      "baseline": 12.875,
+      "diff_vs_incumbent": -2.875,
+      "ci95_vs_incumbent": [
+        -3.625,
+        -1.75
+      ],
+      "diff_vs_baseline": -2.875,
+      "ci95_vs_baseline": [
+        -3.625,
+        -1.75
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
+    },
+    {
+      "metric": "completion_ms",
+      "unit": "milliseconds from start to a reviewable result",
+      "higher_is_better": false,
+      "candidate": 3010.625,
+      "incumbent": 4143.875,
+      "baseline": 4143.875,
+      "diff_vs_incumbent": -1133.25,
+      "ci95_vs_incumbent": [
+        -1558.25,
+        -576.875
+      ],
+      "diff_vs_baseline": -1133.25,
+      "ci95_vs_baseline": [
+        -1558.25,
+        -576.875
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
+    },
+    {
+      "metric": "rework_per_mission",
+      "unit": "times work was sent back",
+      "higher_is_better": false,
+      "candidate": 0,
+      "incumbent": 0.625,
+      "baseline": 0.625,
+      "diff_vs_incumbent": -0.625,
+      "ci95_vs_incumbent": [
+        -0.875,
+        -0.25
+      ],
+      "diff_vs_baseline": -0.625,
+      "ci95_vs_baseline": [
+        -0.875,
+        -0.25
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 5 worse, 3 same, p=0.0625"
+    },
+    {
+      "metric": "integration_failures_per_mission",
+      "unit": "times the combined result failed at integration",
+      "higher_is_better": false,
+      "candidate": 0,
+      "incumbent": 0,
+      "baseline": 0,
+      "diff_vs_incumbent": 0,
+      "ci95_vs_incumbent": [
+        0,
+        0
+      ],
+      "diff_vs_baseline": 0,
+      "ci95_vs_baseline": [
+        0,
+        0
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 0 worse, 8 same, p=1"
+    }
+  ],
+  "gates": [
+    {
+      "id": "protected_integrity",
+      "name": "Rules and records are intact",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation."
+    },
+    {
+      "id": "no_forbidden_capabilities",
+      "name": "No forbidden capabilities",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "A coordination policy is data; the bundle contains no code that uses a forbidden capability."
+    },
+    {
+      "id": "holdout_not_reused",
+      "name": "Episodes are unseen by this lineage",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Run on episode set missions-A."
+    },
+    {
+      "id": "minimum_samples",
+      "name": "Enough episodes",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 8,
+      "measurement_unit": "episodes",
+      "comparison_operator": ">=",
+      "threshold": 6,
+      "samples": 8,
+      "minimum_samples": 6,
+      "weight": null,
+      "meaning": "8 episodes per arm; at least 6 are required."
+    },
+    {
+      "id": "missions_complete",
+      "name": "Every mission reaches review",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "missions",
+      "comparison_operator": "=",
+      "threshold": 0,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "0 missions did not reach a reviewable state."
+    },
+    {
+      "id": "escaped_defects_not_worse",
+      "name": "No more defects escape",
+      "kind": "HARD_GATE",
+      "verdict": "FAILED",
+      "measurement_value": 5,
+      "measurement_unit": "escaped defects",
+      "comparison_operator": "<=",
+      "threshold": 0,
+      "samples": 8,
+      "minimum_samples": 6,
+      "weight": null,
+      "meaning": "Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes."
+    },
+    {
+      "id": "correctness",
+      "name": "Truly correct missions",
+      "kind": "WEIGHTED",
+      "verdict": "FAILED",
+      "measurement_value": -0.625,
+      "measurement_unit": "share",
+      "comparison_operator": ">=",
+      "threshold": 0,
+      "samples": 8,
+      "minimum_samples": 6,
+      "weight": 0.7,
+      "meaning": "Share of missions that are truly correct changed by -0.625."
+    },
+    {
+      "id": "cost",
+      "name": "Worker invocations per mission",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": -2.875,
+      "measurement_unit": "invocations",
+      "comparison_operator": "<=",
+      "threshold": 0,
+      "samples": 8,
+      "minimum_samples": 6,
+      "weight": 0.3,
+      "meaning": "Worker invocations per mission changed by -2.875."
+    }
+  ],
+  "known_regressions": [
+    "5 more defects reached an accepted result than under the incumbent"
+  ],
+  "limitations": [
+    "Each episode is a complete fixture mission: the runtime, worker processes, merges and tests are real, the work content is scripted.",
+    "A defect is injected into one worker's first attempt in about 50% of episodes. That rate is an assumption of this testbed; the size of any effect depends on it.",
+    "The oracle is the same protected acceptance suite the verification swarm uses, so this measures what happens when nobody runs it — not whether it is a complete specification.",
+    "8 episodes per arm: intervals are wide.",
+    "Where a policy has no interface agreement, the consuming workstream misreads the shared record in about 50% of episodes. That rate is also an assumption of this testbed. What the runtime measures is what each such mismatch costs and what the agreement step costs."
+  ],
+  "decision": "reject",
+  "justification": "Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
+  "decided_by": "release-gate",
+  "decided_at": "2026-11-14T19:08:40.972Z",
+  "release_manifest": null,
+  "rollback_target": null,
+  "isolation": {
+    "mode": "enforced",
+    "uid_separation": true,
+    "candidate_uid": 65534,
+    "node_permission_model": true,
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "intact": true,
+    "notes": [
+      "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+    ]
+  },
+  "evidence_basis": "fixture",
+  "receipt_hash": "3a791f3376d186b4137739f53c52ae21866448edc0300f2dff3501933a595c5a"
+}

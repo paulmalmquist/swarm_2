@@ -1,0 +1,30 @@
+de38423 Integrate delivery.engine.implement
+e7e4413 delivery.engine.implement: The engine in src/engine/evaluate.ts already existed and wa…
+ test/engine/evaluate.test.ts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+d195391 Integrate delivery.report.implement
+3242306 Integrate delivery.engine.implement
+23a665d delivery.engine.implement: Implemented src/engine/evaluate.ts (exports evaluateHealth(…
+ src/engine/evaluate.ts       | 43 ++++++++++++++++++++++++++++++++
+ test/engine/evaluate.test.ts | 59 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+)
+52fc09b delivery.report.implement: Implemented src/report/report.ts (renderSlaReport, alertPay…
+ src/report/report.ts       | 67 ++++++++++++++++++++++++++++++++++++++++++++++
+ test/report/report.test.ts | 40 +++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+)
+e04679e Seed fixture application
+ .gitignore                        |  2 ++
+ README.md                         | 10 ++++++++++
+ data/datasets.json                | 11 +++++++++++
+ data/policies.json                | 11 +++++++++++
+ package.json                      |  1 +
+ src/lib/time.ts                   |  4 ++++
+ test/integration/pipeline.test.ts | 41 +++++++++++++++++++++++++++++++++++++++
+ test/support/validate.ts          | 19 ++++++++++++++++++
+ 8 files changed, 99 insertions(+)
+8e562ab Pin inputs for delivery.engine.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+0de5ea2 Pin inputs for delivery.report.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)

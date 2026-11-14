@@ -1,0 +1,91 @@
+{
+  "demo": "a",
+  "title": "Cross-swarm delivery",
+  "labels": [
+    "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
+    "SYNTHETIC DATA — every request, team, dataset and value is invented"
+  ],
+  "steps": [
+    {
+      "claim": "Overlapping requests are nominated and the unrelated one is left out",
+      "observed": "one cluster of syn-req-001, syn-req-002, syn-req-003, syn-req-004; syn-req-005 (licensing) not included",
+      "ok": true
+    },
+    {
+      "claim": "The mission runs to a reviewable state",
+      "observed": "coordinator idle; mission review_ready; 18/18 tasks accepted",
+      "ok": true
+    },
+    {
+      "claim": "At least three swarm capabilities take part",
+      "observed": "5 participated: discovery, planning, delivery, verification, reliability",
+      "ok": true
+    },
+    {
+      "claim": "The organization uses three delegated layers and no more",
+      "observed": "deepest task is at layer 3; subordinate teams: Implement the evaluation engine that produces HealthRecords / Implement the SLA report and alerts that consume HealthRecords",
+      "ok": true
+    },
+    {
+      "claim": "Each stakeholder keeps a distinct need tied to its own acceptance criterion",
+      "observed": "syn-ana-propulsion→AC-FRESH-PROPULSION (satisfied); syn-ben-supplychain→AC-SCHEMA-SUPPLY (satisfied); syn-chloe-quality→AC-SLA-QUALITY (satisfied); syn-dev-fde→AC-POLICY-FDE (satisfied)",
+      "ok": true
+    },
+    {
+      "claim": "Two workstreams execute concurrently",
+      "observed": "engine leased #91 2026-11-14T19:07:00.738Z → submitted #94; report leased #92 2026-11-14T19:07:00.848Z → submitted #97",
+      "ok": true
+    },
+    {
+      "claim": "Workers actually execute as separate processes in isolated worktrees",
+      "observed": "8 worker attempts in 8 distinct processes; worktree branches: task/delivery-engine-implement/g1a1, task/delivery-report-implement/g1a1",
+      "ok": true
+    },
+    {
+      "claim": "The workstreams meet at a real integration boundary",
+      "observed": "delivery.engine.implement merged as 356c3adfc8; delivery.report.implement merged as d77b281166",
+      "ok": true
+    },
+    {
+      "claim": "The integrated result is verified independently of its authors",
+      "observed": "AC-FRESH-PROPULSION=pass, AC-SCHEMA-SUPPLY=pass, AC-SLA-QUALITY=pass, AC-POLICY-FDE=pass, AC-CONTRACT=pass by the verification swarm, on tests delivery never saw",
+      "ok": true
+    },
+    {
+      "claim": "Handoffs carry the artifact version, acceptance evidence and remaining uncertainty",
+      "observed": "3 handoffs, all accepted by the next owner; 1 carried stated uncertainty",
+      "ok": true
+    },
+    {
+      "claim": "A review packet and the decision it needs are waiting for the chief of staff",
+      "observed": "decision: Approve the integrated result of \"Shared dataset-health capability\" for merge into the protected branch? | draft: Merge request: Shared dataset-health capability",
+      "ok": true
+    },
+    {
+      "claim": "Resource accounting reconciles across the whole task tree",
+      "observed": "24 accounts reconcile; 11 worker invocations and 1103 ms of worker time used",
+      "ok": true
+    },
+    {
+      "claim": "Everything shown comes from the persisted, hash-chained event log",
+      "observed": "158 events, chain intact",
+      "ok": true
+    },
+    {
+      "claim": "Approval is recorded and nothing is merged or sent by the system",
+      "observed": "mission completed; draft approved; sent_by_swarm=false",
+      "ok": true
+    }
+  ],
+  "files": [
+    "review-packet.md",
+    "review-packet.json",
+    "organization.json",
+    "lineage.json",
+    "outcome.json",
+    "timeline.txt",
+    "README.md"
+  ],
+  "ok": true,
+  "ms": 3397
+}

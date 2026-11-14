@@ -1,0 +1,10 @@
+{
+  "note": "SYNTHETIC FIXTURE. Invented requests in the shape a Slack or Jira connector would deliver. Identifiers begin with syn-.",
+  "requests": [
+    { "id": "syn-req-001", "source": "local-fixture:slack", "stakeholder": "syn-ana-propulsion", "team": "Propulsion Test", "received_at": "2026-11-09T15:02:00Z", "text": "Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_test_runs dataset is stale, with a 60 minute threshold, before every review." },
+    { "id": "syn-req-002", "source": "local-fixture:jira", "stakeholder": "syn-ben-supplychain", "team": "Supply Chain Analytics", "received_at": "2026-11-09T17:40:00Z", "text": "The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check that compares each table schema against its declared contract and reports drift by field." },
+    { "id": "syn-req-003", "source": "local-fixture:slack", "stakeholder": "syn-chloe-quality", "team": "Manufacturing Quality", "received_at": "2026-11-10T09:15:00Z", "text": "For the weekly ops review I need an SLA report on the freshness of our NCR tables, grouped by owner team. If a dataset has never been measured it must say unknown, not look fresh." },
+    { "id": "syn-req-004", "source": "local-fixture:jira", "stakeholder": "syn-dev-fde", "team": "Forward Deployed Engineering", "received_at": "2026-11-10T10:30:00Z", "text": "Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresholds. We want one shared, reusable capability where thresholds are policy configuration, not code." },
+    { "id": "syn-req-005", "source": "local-fixture:slack", "stakeholder": "syn-eli-it", "team": "IT Operations", "received_at": "2026-11-10T11:05:00Z", "text": "Can someone confirm how many Power BI license seats are up for renewal next quarter and who approves the procurement invoice?" }
+  ]
+}

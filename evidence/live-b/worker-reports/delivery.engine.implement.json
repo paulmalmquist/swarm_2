@@ -1,0 +1,19 @@
+{
+  "task": "delivery.engine.implement",
+  "attempt": 1,
+  "summary": "Implemented src/engine/evaluate.ts (exports evaluateHealth(datasets, policies, asOf), plus thresholdFor, evaluateFreshness, evaluateSchema) and test/engine/evaluate.test.ts. `node --test test/engine/*.test.ts` passes 4/4.",
+  "criteria_claims": [
+    {
+      "criterion_id": "U-ENGINE",
+      "claimed": "met",
+      "note": "Own unit tests pass (4/4) with the exact required command."
+    }
+  ],
+  "remaining_uncertainty": [
+    "The integration test and src/report were not run; the report workstream is not mine.",
+    "The acceptance-criteria text mentions record fields dataset/status/threshold/measured_at, but the pinned HealthRecord contract uses dataset_id/freshness.*/checked_at. I followed the pinned contract.",
+    "A dataset with no policy entry and no default throws; that is a choice, not specified.",
+    "Exactly-at-threshold is treated as fresh; not stated in the inputs."
+  ],
+  "questions": []
+}

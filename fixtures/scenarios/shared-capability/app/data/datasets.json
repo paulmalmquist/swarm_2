@@ -1,0 +1,11 @@
+{
+  "note": "SYNTHETIC",
+  "as_of": "2026-11-10T12:00:00Z",
+  "datasets": [
+    { "dataset_id": "syn-engine_test_runs", "owner_team": "Propulsion Test", "last_loaded_at": "2026-11-07T11:00:00Z", "observed_fields": { "run_id": "string", "engine_sn": "string", "thrust_kn": "number", "started_at": "timestamp" } },
+    { "dataset_id": "syn-bom_cost_rollup", "owner_team": "Supply Chain Analytics", "last_loaded_at": "2026-11-10T11:30:00Z", "observed_fields": { "part_no": "string", "unit_cost": "number", "supplier_code": "string" } },
+    { "dataset_id": "syn-ncr_events", "owner_team": "Manufacturing Quality", "last_loaded_at": "2026-11-10T06:00:00Z", "observed_fields": { "ncr_id": "string", "part_no": "string", "opened_at": "timestamp", "disposition": "string" } },
+    { "dataset_id": "syn-ncr_dispositions", "owner_team": "Manufacturing Quality", "last_loaded_at": null, "observed_fields": null },
+    { "dataset_id": "syn-fde_site_metrics", "owner_team": "Forward Deployed Engineering", "last_loaded_at": "2026-11-10T11:55:00Z", "observed_fields": { "site": "string", "metric": "string", "value": "number" } }
+  ]
+}

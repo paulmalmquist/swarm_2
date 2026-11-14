@@ -1,0 +1,59 @@
+{
+  "shared_capability": "A single reusable dataset freshness check, with staleness thresholds set as policy configuration, that reports per-dataset status (including 'unknown' for never-measured datasets) and can be consumed by dashboards, pre-review gates and grouped SLA reports.",
+  "consolidated_request_ids": ["syn-req-001", "syn-req-003", "syn-req-004"],
+  "unrelated_request_ids": ["syn-req-002"],
+  "distinct_needs": [
+    {
+      "request_id": "syn-req-001",
+      "stakeholder": "syn-ana-propulsion",
+      "team": "Propulsion Test",
+      "need": "Know when the engine_test_runs dataset is stale, using a 60-minute threshold, before every hotfire review, so the dashboard does not silently show old test data."
+    },
+    {
+      "request_id": "syn-req-003",
+      "stakeholder": "syn-chloe-quality",
+      "team": "Manufacturing Quality",
+      "need": "A weekly ops-review SLA report on the freshness of the NCR tables, grouped by owner team, where a dataset that has never been measured is reported as 'unknown' and not as fresh."
+    },
+    {
+      "request_id": "syn-req-004",
+      "stakeholder": "syn-dev-fde",
+      "team": "Forward Deployed Engineering",
+      "need": "One shared, reusable freshness capability to replace three hand-rolled per-engineer checks with differing thresholds, where thresholds are policy configuration rather than code."
+    }
+  ],
+  "symptoms": [
+    {"request_id": "syn-req-001", "symptom": "The hotfire review dashboard silently showed three-day-old engine test data last week."},
+    {"request_id": "syn-req-002", "symptom": "The BOM cost dashboard broke after an upstream column rename and nobody noticed for days."},
+    {"request_id": "syn-req-003", "symptom": "No SLA view of NCR table freshness exists for the weekly ops review; the request insists unmeasured datasets must not look fresh."},
+    {"request_id": "syn-req-004","symptom": "Three forward deployed engineers each built their own freshness checks with different thresholds."}
+  ],
+  "underlying_problem": "Dataset staleness and schema changes are not monitored by any shared, policy-driven mechanism. Each team builds ad hoc checks, or none, so stale or changed data reaches reviews and dashboards before anyone notices, and unmeasured datasets have no defined status.",
+  "observed_facts": [
+    "syn-req-001: The hotfire review dashboard silently showed three-day-old engine test data last week.",
+    "syn-req-001: The requester wants to know when engine_test_runs is stale, with a 60-minute threshold, before every review.",
+    "syn-req-002: The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days.",
+    "syn-req-002: The requester wants a check that compares each table schema against its declared contract and reports drift by field.",
+    "syn-req-003: The requester needs an SLA report on freshness of NCR tables for the weekly ops review, grouped by owner team.",
+    "syn-req-003: If a dataset has never been measured it must say unknown, not look fresh.",
+    "syn-req-004: Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresholds.",
+    "syn-req-004: The requester wants one shared, reusable capability where thresholds are policy configuration, not code."
+  ],
+  "interpretations": [
+    "INFERENCE: syn-req-001, syn-req-003 and syn-req-004 all depend on measuring how old a dataset is against a threshold, so they share one capability; syn-req-001 needs a pre-review gate, syn-req-003 a grouped report, and syn-req-004 a reusable library.",
+    "INFERENCE: syn-req-002 checks schema against a contract, not age against a threshold. It shares only the broader goal of catching silent data-health problems, so it is left out of the freshness capability. It could later sit on the same monitoring substrate as a sibling capability.",
+    "INFERENCE: The word 'silently' in syn-req-001 and 'nobody noticed' in syn-req-002 point to a missing alerting or status signal rather than missing data.",
+    "INFERENCE: The 'unknown' rule in syn-req-003 is a design requirement that should also hold for syn-req-001 and syn-req-004. A dataset with no measurement must not pass a freshness check.",
+    "INFERENCE: Per-dataset thresholds, such as the 60-minute value for engine_test_runs, are likely policy data rather than code, which matches syn-req-004."
+  ],
+  "unknowns": [
+    "Which datasets are in scope: only engine_test_runs and the NCR tables are named; no complete list is given.",
+    "What signal defines 'freshness' (a last-loaded timestamp, a source-system timestamp, or a row-count change) is not stated in any request.",
+    "Who owns the shared capability and the threshold policy is not stated.",
+    "Whether a stale result should block the review, raise an alert, or only display a status is not stated.",
+    "Where owner-team mapping for the SLA grouping comes from is not stated.",
+    "Whether the existing hand-rolled checks from syn-req-004 use thresholds that must be preserved during migration is not stated.",
+    "Whether syn-req-002 should be folded into this capability or kept as a separate schema-contract capability is not stated and needs a decision.",
+    "How often freshness must be measured (scheduled interval) is not stated; syn-req-001 requires a check before every review."
+  ]
+}

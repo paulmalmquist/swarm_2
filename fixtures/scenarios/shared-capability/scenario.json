@@ -1,0 +1,8 @@
+{
+  "name": "shared-capability",
+  "description": "SYNTHETIC SCENARIO. Overlapping engineering requests reveal the need for one shared dataset-health capability. All people, teams, datasets and requests are invented.",
+  "app_seed": "app",
+  "acceptance_dir": "acceptance",
+  "materialize": { "contract/health-record": "contracts/health-record.schema.json" },
+  "synthetic": true
+}

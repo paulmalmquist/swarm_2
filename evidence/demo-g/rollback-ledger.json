@@ -1,0 +1,114 @@
+[
+  {
+    "seq": 15,
+    "experiment_id": "exp_0mwgs2mf5bfcb3594c2",
+    "kind": "canary_started",
+    "at": "2026-11-14T19:07:35.690Z",
+    "payload": {
+      "canary_id": "can_0mwgs2mq2bl49a6f2ea",
+      "release_id": "r2",
+      "prior_release_id": "r1",
+      "scope": {
+        "max_missions": 2,
+        "data_class": "synthetic",
+        "scenario": "shared-capability"
+      }
+    },
+    "hash": "b9176bb6cdfc4f17e63ab315e27479d506fe5ef4e5bdb34fbf2bfa265baa69b7"
+  },
+  {
+    "seq": 16,
+    "experiment_id": "exp_0mwgs2mf5bfcb3594c2",
+    "kind": "canary_observation",
+    "at": "2026-11-14T19:07:39.134Z",
+    "payload": {
+      "canary_id": "can_0mwgs2mq2bl49a6f2ea",
+      "observations": [
+        {
+          "at": "2026-11-14T19:07:39.068Z",
+          "metric": "accuracy_drop_vs_approval",
+          "value": 0,
+          "threshold": 0.05,
+          "breached": false,
+          "injected": false
+        },
+        {
+          "at": "2026-11-14T19:07:39.068Z",
+          "metric": "escaped_defect_rate_increase",
+          "value": 0,
+          "threshold": 0.02,
+          "breached": false,
+          "injected": false
+        },
+        {
+          "at": "2026-11-14T19:07:39.068Z",
+          "metric": "canary_missions_with_acceptance_failures",
+          "value": 0,
+          "threshold": 0,
+          "breached": false,
+          "injected": false
+        }
+      ],
+      "injected_regression": null
+    },
+    "hash": "af46874fde53ed416d016d4f0cfa2e1c3662bf0789a510ac87c530deafd5d8c4"
+  },
+  {
+    "seq": 17,
+    "experiment_id": "exp_0mwgs2mf5bfcb3594c2",
+    "kind": "canary_observation",
+    "at": "2026-11-14T19:07:39.199Z",
+    "payload": {
+      "canary_id": "can_0mwgs2mq2bl49a6f2ea",
+      "observations": [
+        {
+          "at": "2026-11-14T19:07:39.135Z",
+          "metric": "accuracy_drop_vs_approval",
+          "value": 0.1333,
+          "threshold": 0.05,
+          "breached": true,
+          "injected": true
+        },
+        {
+          "at": "2026-11-14T19:07:39.135Z",
+          "metric": "escaped_defect_rate_increase",
+          "value": 0,
+          "threshold": 0.02,
+          "breached": false,
+          "injected": true
+        },
+        {
+          "at": "2026-11-14T19:07:39.135Z",
+          "metric": "canary_missions_with_acceptance_failures",
+          "value": 0,
+          "threshold": 0,
+          "breached": false,
+          "injected": false
+        }
+      ],
+      "injected_regression": {
+        "class": "unit_annotation_added",
+        "weight": 6
+      }
+    },
+    "hash": "5adceaf194ed0c79060d0279e6dad29244aa73f5586dfa262dd7ad0f8982448f"
+  },
+  {
+    "seq": 18,
+    "experiment_id": "exp_0mwgs2mf5bfcb3594c2",
+    "kind": "rollback",
+    "at": "2026-11-14T19:07:39.203Z",
+    "payload": {
+      "canary_id": "can_0mwgs2mq2bl49a6f2ea",
+      "release_id": "r2",
+      "restored": "r1",
+      "reason": "canary breach: accuracy_drop_vs_approval=0.1333 (limit 0.05)",
+      "dependents": {
+        "missions": 2,
+        "artifacts": 12,
+        "memories": 4
+      }
+    },
+    "hash": "592cd456f29ba06fecb2d2f7c11614a9b735b6e0dfa441ee34d3e4c88c347396"
+  }
+]

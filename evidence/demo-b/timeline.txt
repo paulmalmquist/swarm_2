@@ -1,0 +1,90 @@
+#9 fault_plan_installed
+#10 recovery_completed
+#22 mission_status_changed to=active
+#23 task_leased key=discovery.analyze token=g1a1
+#27 verification_recorded key=discovery.analyze verdict=pass criterion_id=D-OVERLAP
+#28 verification_recorded key=discovery.analyze verdict=pass criterion_id=D-EPISTEMICS
+#35 task_leased key=planning.criteria token=g1a1
+#39 verification_recorded key=planning.criteria verdict=pass criterion_id=P-CRITERIA
+#42 task_leased key=planning.contract token=g1a1
+#46 verification_recorded key=planning.contract verdict=pass criterion_id=P-CONTRACT
+#50 task_leased key=planning.plan token=g1a1
+#55 verification_recorded key=planning.plan verdict=pass criterion_id=P-PLAN
+#75 task_leased key=delivery.decompose token=g1a1
+#79 verification_recorded key=delivery.decompose verdict=pass criterion_id=L-DECOMP
+#93 task_leased key=delivery.engine.implement token=g1a1
+#94 task_leased key=delivery.report.implement token=g1a1
+#95 fault_injected key=delivery.engine.implement fault=worker process killed
+#96 attempt_failed key=delivery.engine.implement token=g1a1 status=killed
+#97 task_requeued key=delivery.engine.implement code=worker_killed
+#98 task_leased key=delivery.engine.implement token=g1a2
+#99 fault_injected key=delivery.report.implement fault=stall_then_submit:3500
+#104 verification_recorded key=delivery.engine.implement verdict=pass criterion_id=U-ENGINE
+#108 lease_expired key=delivery.report.implement token=g1a1
+#109 task_requeued key=delivery.report.implement code=lease_expired
+#110 task_leased key=delivery.report.implement token=g1a2
+#115 verification_recorded key=delivery.report.implement verdict=pass criterion_id=U-REPORT
+#120 task_leased key=delivery.integrate token=g1a1
+#124 integration_merged workstream=delivery.engine.implement
+#127 integration_merged workstream=delivery.report.implement
+#132 task_leased key=verification.acceptance token=g1a1
+#135 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-FRESH-PROPULSION
+#136 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SCHEMA-SUPPLY
+#137 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SLA-QUALITY
+#138 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-POLICY-FDE
+#139 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-CONTRACT
+#149 task_leased key=reliability.knowledge token=g1a1
+#151 fault_injected key=reliability.knowledge fault=slow:8000
+#152 stale_result_rejected key=delivery.report.implement reason=task is accepted presented=g1a1
+#153 fault_injected fault=coordinator process killed mid-mission
+#154 attempt_orphaned key=reliability.knowledge
+#155 recovery_completed
+#157 task_leased key=reliability.knowledge token=g1a2
+#161 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
+#167 task_leased key=review.packet token=g1a1
+#175 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready
+#176 duplicate_delivery_ignored
+#177 duplicate_delivery_ignored
+#178 duplicate_delivery_ignored
+#179 duplicate_delivery_ignored
+#180 duplicate_delivery_ignored
+#181 duplicate_delivery_ignored key=demo-b-submit
+#182 idempotency_conflict_quarantined key=demo-b-submit
+#184 task_invalidated key=delivery.engine.implement reason=input contract/health-record changed to v2 action=rerun_required
+#185 task_invalidated key=delivery.integrate reason=input code/engine needs revalidation action=downstream_blocked
+#186 task_invalidated key=reliability.knowledge reason=input contract/health-record changed to v2 action=rerun_required
+#187 task_invalidated key=review.packet reason=prerequisite reliability reopened action=downstream_blocked
+#188 task_invalidated key=delivery.report.implement reason=input contract/health-record changed to v2 action=rerun_required
+#189 impact_recorded
+#190 upstream_change_applied key=contract/health-record reason=the weekly review needs a severity ranking
+#191 decision_superseded
+#192 mission_status_changed reason=reopened by change to contract/health-record to=active
+#193 recovery_completed
+#196 budget_reopened key=delivery.engine.implement
+#197 task_leased key=delivery.engine.implement token=g2a3
+#199 budget_reopened key=delivery.report.implement
+#200 task_leased key=delivery.report.implement token=g2a3
+#203 task_invalidated key=delivery.integrate reason=input code/engine changed to v2 action=rerun_required
+#204 task_invalidated key=reliability.knowledge reason=prerequisite delivery.integrate needs revalidation action=downstream_blocked
+#205 impact_recorded
+#209 task_invalidated key=delivery.integrate reason=input code/report changed to v2 action=rerun_required
+#210 task_invalidated key=reliability.knowledge reason=prerequisite delivery.integrate needs revalidation action=downstream_blocked
+#211 impact_recorded
+#215 verification_recorded key=delivery.engine.implement verdict=pass criterion_id=U-ENGINE
+#219 verification_recorded key=delivery.report.implement verdict=pass criterion_id=U-REPORT
+#223 budget_reopened key=delivery.integrate
+#224 task_leased key=delivery.integrate token=g4a2
+#227 integration_merged workstream=delivery.engine.implement
+#230 integration_merged workstream=delivery.report.implement
+#236 budget_reopened key=verification.acceptance
+#237 task_leased key=verification.acceptance token=g2a2
+#240 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-FRESH-PROPULSION
+#241 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SCHEMA-SUPPLY
+#242 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SLA-QUALITY
+#243 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-POLICY-FDE
+#244 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-CONTRACT
+#253 task_leased key=reliability.knowledge token=g4a3
+#259 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
+#264 budget_reopened key=review.packet
+#266 task_leased key=review.packet token=g2a2
+#274 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready

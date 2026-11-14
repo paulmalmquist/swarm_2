@@ -1,0 +1,12 @@
+2026-11-14T18:50:59.155Z bootstrapped mission msn_0mwgrh9s207170f3b82 with a hierarchical plan
+2026-11-14T18:50:59.166Z dispatched discovery.analyze (claude-cli, token g1a1)
+2026-11-14T18:51:22.345Z dispatched planning.criteria (claude-cli, token g1a1)
+2026-11-14T18:51:41.728Z dispatched planning.contract (fixture, token g1a1)
+2026-11-14T18:51:42.243Z dispatched planning.plan (fixture, token g1a1)
+2026-11-14T18:51:43.023Z dispatched delivery.decompose (fixture, token g1a1)
+2026-11-14T18:51:43.649Z dispatched delivery.engine.implement (claude-cli, token g1a1)
+2026-11-14T18:51:43.719Z dispatched delivery.report.implement (claude-cli, token g1a1)
+2026-11-14T18:52:24.724Z dispatched delivery.engine.implement (claude-cli, token g2a2)
+2026-11-14T18:52:24.766Z dispatched delivery.report.implement (claude-cli, token g2a2)
+2026-11-14T18:52:49.891Z dispatched delivery.report.implement (claude-cli, token g3a3)
+2026-11-14T18:53:08.655Z step failed on delivery.integrate: workstream delivery.report.implement is not accepted

@@ -1,0 +1,14 @@
+{
+  "candidate_id": "coord-self-verification",
+  "level": "coordination",
+  "title": "Retire the independent verification swarm",
+  "problem": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
+  "failure_classes": [],
+  "hypothesis": "If the independent verification swarm is retired and delivery's own integration tests are trusted, missions will finish with fewer worker invocations and less time, with no more defects escaping.",
+  "expected_benefit": "Fewer worker invocations and a shorter completion time per mission.",
+  "possible_regressions": ["A defect that delivery's own tests do not cover would reach the review packet unverified"],
+  "change_summary": "Sets independent_verification to false: no verification swarm is formed and the integrated result is accepted on delivery's own combined tests.",
+  "revises": null,
+  "declared_simplification": true,
+  "definition_patch": { "reviewer_assignment": { "independent_verification": false } }
+}

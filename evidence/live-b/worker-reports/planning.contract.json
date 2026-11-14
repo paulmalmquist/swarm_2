@@ -1,0 +1,10 @@
+{
+  "task": "planning.contract",
+  "attempt": 1,
+  "summary": "Defined HealthRecord contract version 1 as the interface both workstreams pin",
+  "criteria_claims": [],
+  "remaining_uncertainty": [
+    "The contract carries no severity ranking; the weekly review may want one"
+  ],
+  "questions": []
+}

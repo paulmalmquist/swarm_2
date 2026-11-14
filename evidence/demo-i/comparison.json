@@ -1,0 +1,28 @@
+{
+  "note": "ONE campaign per policy on the same observations and budget. This is a case study of the two policies operating the real release gate. It is not a statistical comparison; Demonstration D is.",
+  "budget": 900,
+  "control_frequency_first": {
+    "spent": 712,
+    "accepted": [
+      "guard_removed_toplevel"
+    ],
+    "not_accepted": [
+      "style_strict (inconclusive)"
+    ],
+    "units_on_experiments_not_accepted": 301,
+    "units_on_builds_never_submitted": 90,
+    "held_out_evaluations_used": 2
+  },
+  "trial_expected_value": {
+    "spent": 656,
+    "accepted": [
+      "guard_removed_toplevel"
+    ],
+    "not_accepted": [
+      "guard_type_strict (rejected)"
+    ],
+    "units_on_experiments_not_accepted": 323,
+    "units_on_builds_never_submitted": 0,
+    "held_out_evaluations_used": 2
+  }
+}

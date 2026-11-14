@@ -1,0 +1,32 @@
+688422c Integrate delivery.report.implement
+bc6d1b6 Integrate delivery.engine.implement
+1c7456e delivery.report.implement: Fixed the rejection: the SLA report now renders a dash (—) …
+ src/report/report.ts       | 2 +-
+ test/report/report.test.ts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+7bb48e3 Integrate delivery.report.implement
+3a0db4a Integrate delivery.engine.implement
+a401cc5 delivery.engine.implement: Implemented src/engine/evaluate.ts, exporting evaluateHealt…
+ src/engine/evaluate.ts       | 49 +++++++++++++++++++++++++++++++++++++
+ test/engine/evaluate.test.ts | 57 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+634f30d delivery.report.implement: Implemented src/report/report.ts (renderSlaReport, alertPay…
+ src/report/report.ts       | 68 ++++++++++++++++++++++++++++++++++++++++++++++
+ test/report/report.test.ts | 38 ++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+3ee2dc4 Seed fixture application
+ .gitignore                        |  2 ++
+ README.md                         | 10 ++++++++++
+ data/datasets.json                | 11 +++++++++++
+ data/policies.json                | 11 +++++++++++
+ package.json                      |  1 +
+ src/lib/time.ts                   |  4 ++++
+ test/integration/pipeline.test.ts | 41 +++++++++++++++++++++++++++++++++++++++
+ test/support/validate.ts          | 19 ++++++++++++++++++
+ 8 files changed, 99 insertions(+)
+1c20053 Pin inputs for delivery.engine.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+925bfc1 Pin inputs for delivery.report.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)

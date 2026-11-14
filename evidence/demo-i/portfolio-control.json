@@ -1,0 +1,364 @@
+{
+  "note": "Baseline release r1, policy frequency-first. SYNTHETIC workload and fix library.",
+  "tally": {
+    "spent": 712,
+    "accepted": [
+      "guard_removed_toplevel"
+    ],
+    "not_accepted": [
+      "style_strict (inconclusive)"
+    ],
+    "units_on_experiments_not_accepted": 301,
+    "units_on_builds_never_submitted": 90,
+    "held_out_evaluations_used": 2
+  },
+  "steps": [
+    {
+      "n": 1,
+      "at": "2026-11-14T19:09:46.938Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "style_strict"
+      },
+      "outcome": "built on r1",
+      "cost": 20,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 2,
+      "at": "2026-11-14T19:09:47.336Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "submit",
+        "candidate_id": "style_strict"
+      },
+      "outcome": "inconclusive on holdout-A",
+      "cost": 281,
+      "experiment_id": "exp_0mwgs5g160z94475cca",
+      "receipt_id": "rcpt_0mwgs5gav13883a5511"
+    },
+    {
+      "n": 3,
+      "at": "2026-11-14T19:09:47.383Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_removed_toplevel"
+      },
+      "outcome": "built on r1",
+      "cost": 40,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 4,
+      "at": "2026-11-14T19:09:47.811Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "submit",
+        "candidate_id": "guard_removed_toplevel"
+      },
+      "outcome": "accept on holdout-B; r2 is qualified for a canary",
+      "cost": 281,
+      "experiment_id": "exp_0mwgs5gdl18c3e2ac5f",
+      "receipt_id": "rcpt_0mwgs5go11c119a7a57"
+    },
+    {
+      "n": 5,
+      "at": "2026-11-14T19:09:47.855Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_type_strict"
+      },
+      "outcome": "built on r1",
+      "cost": 30,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 6,
+      "at": "2026-11-14T19:09:47.909Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_required"
+      },
+      "outcome": "built on r1",
+      "cost": 30,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 7,
+      "at": "2026-11-14T19:09:47.949Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_enum"
+      },
+      "outcome": "built on r1",
+      "cost": 30,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 8,
+      "at": "2026-11-14T19:09:47.988Z",
+      "policy": {
+        "release_id": "r1",
+        "evolution_version": 1,
+        "id": "frequency-first",
+        "canary_id": null
+      },
+      "action": {
+        "type": "stop",
+        "reason": "no affordable step remains"
+      },
+      "outcome": "stopped: no affordable step remains",
+      "cost": 0,
+      "experiment_id": null,
+      "receipt_id": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "guard_removed_toplevel",
+      "problem_ids": [
+        "field_removed",
+        "field_renamed"
+      ],
+      "statement": "If change review also runs guard_removed_toplevel, verified failures of field_removed, field_renamed will be blocked without blocking safe changes.",
+      "status": "accepted",
+      "parent_release": "r1",
+      "build_cost": 40,
+      "built": true,
+      "pilot": null,
+      "submitted": true,
+      "result": "accept",
+      "experiment_id": "exp_0mwgs5gdl18c3e2ac5f",
+      "receipt_id": "rcpt_0mwgs5go11c119a7a57",
+      "release_id": "r2",
+      "failed_approach_memory_id": null,
+      "cost_so_far": 321
+    },
+    {
+      "id": "guard_removed_recursive",
+      "problem_ids": [
+        "nested_field_renamed",
+        "field_removed",
+        "field_renamed"
+      ],
+      "statement": "If change review also runs guard_removed_recursive, verified failures of nested_field_renamed, field_removed, field_renamed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 70,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_type_strict",
+      "problem_ids": [
+        "type_changed",
+        "nullability_removed"
+      ],
+      "statement": "If change review also runs guard_type_strict, verified failures of type_changed, nullability_removed will be blocked without blocking safe changes.",
+      "status": "built",
+      "parent_release": "r1",
+      "build_cost": 30,
+      "built": true,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 30
+    },
+    {
+      "id": "guard_type_narrowing",
+      "problem_ids": [
+        "type_changed",
+        "nullability_removed"
+      ],
+      "statement": "If change review also runs guard_type_narrowing, verified failures of type_changed, nullability_removed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 50,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_required",
+      "problem_ids": [
+        "required_added"
+      ],
+      "statement": "If change review also runs guard_required, verified failures of required_added will be blocked without blocking safe changes.",
+      "status": "built",
+      "parent_release": "r1",
+      "build_cost": 30,
+      "built": true,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 30
+    },
+    {
+      "id": "guard_enum",
+      "problem_ids": [
+        "enum_value_removed"
+      ],
+      "statement": "If change review also runs guard_enum, verified failures of enum_value_removed will be blocked without blocking safe changes.",
+      "status": "built",
+      "parent_release": "r1",
+      "build_cost": 30,
+      "built": true,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 30
+    },
+    {
+      "id": "guard_unit",
+      "problem_ids": [
+        "unit_changed"
+      ],
+      "statement": "If change review also runs guard_unit, verified failures of unit_changed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 60,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "style_strict",
+      "problem_ids": [
+        "style_nit"
+      ],
+      "statement": "If change review also runs style_strict, verified failures of style_nit will be blocked without blocking safe changes.",
+      "status": "inconclusive",
+      "parent_release": "r1",
+      "build_cost": 20,
+      "built": true,
+      "pilot": null,
+      "submitted": true,
+      "result": "inconclusive",
+      "experiment_id": "exp_0mwgs5g160z94475cca",
+      "receipt_id": "rcpt_0mwgs5gav13883a5511",
+      "release_id": null,
+      "failed_approach_memory_id": "mem_0mwgs5gaw1576aad0aa",
+      "cost_so_far": 301
+    }
+  ],
+  "problems": [
+    {
+      "id": "enum_value_removed",
+      "verified_count": 1,
+      "observed_count": 1,
+      "severity": 3,
+      "resolved": false
+    },
+    {
+      "id": "field_removed",
+      "verified_count": 4,
+      "observed_count": 4,
+      "severity": 5,
+      "resolved": true
+    },
+    {
+      "id": "field_renamed",
+      "verified_count": 3,
+      "observed_count": 3,
+      "severity": 5,
+      "resolved": true
+    },
+    {
+      "id": "required_added",
+      "verified_count": 2,
+      "observed_count": 2,
+      "severity": 3,
+      "resolved": false
+    },
+    {
+      "id": "style_nit",
+      "verified_count": 0,
+      "observed_count": 30,
+      "severity": 0,
+      "resolved": false
+    },
+    {
+      "id": "type_changed",
+      "verified_count": 3,
+      "observed_count": 3,
+      "severity": 5,
+      "resolved": false
+    }
+  ]
+}

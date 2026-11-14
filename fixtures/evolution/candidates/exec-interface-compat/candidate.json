@@ -1,0 +1,25 @@
+{
+  "candidate_id": "exec-interface-compat",
+  "level": "execution",
+  "title": "Recursive interface compatibility step for change review",
+  "problem": "Reviews approve changes that break the shared contract. A first attempt blocked top-level breaks but also blocked safe additions.",
+  "failure_classes": ["field_removed", "field_renamed", "type_changed", "required_added", "enum_value_removed"],
+  "hypothesis": "If the comparison walks nested fields and treats only removals, narrowing type changes, newly required fields, removed enum values and unit changes as breaking, breaking changes will be blocked without blocking safe additions.",
+  "expected_benefit": "Fewer approved breaking changes with no increase in blocked safe changes.",
+  "possible_regressions": ["An unanticipated kind of safe change could still be blocked", "Each review runs one more step"],
+  "change_summary": "Replaces the top-level comparison with a recursive one that distinguishes breaking from safe differences.",
+  "revises": "exec-interface-compat-naive",
+  "declared_simplification": false,
+  "skill_patch": {
+    "skill_id": "change-review",
+    "validators_add": ["interface_compat.mjs"],
+    "validators_remove": [],
+    "procedure": [
+      "Confirm the change adds or updates tests",
+      "Compare the contract before and after the change at every depth; block on a removed or renamed field, a narrowed type, a newly required field, a removed enum value or a changed unit, naming the field",
+      "Check naming and documentation basics",
+      "Request changes if any check reports a blocking finding; otherwise approve"
+    ],
+    "known_failure_cases": ["A unit annotation added where there was none is reported as a unit change"]
+  }
+}

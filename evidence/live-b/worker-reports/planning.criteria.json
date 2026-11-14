@@ -1,0 +1,32 @@
+{
+  "task": "planning.criteria",
+  "attempt": 1,
+  "summary": "Wrote plan/acceptance-criteria with four executable criteria (AC-FRESH-PROPULSION, AC-SLA-QUALITY, AC-POLICY-FDE, shared AC-CONTRACT). All three distinct needs in the overlap report map to a criterion. syn-req-002 (schema drift) is deferred because the overlap report excludes it from the freshness capability and its fold-in decision is open. Nothing was run; these are criteria definitions only.",
+  "criteria_claims": [
+    {
+      "criterion_id": "P-CRITERIA",
+      "claimed": "met",
+      "note": "By inspection: all three distinct needs map to a criterion; syn-req-002 is explicitly deferred with a reason. Nothing was executed."
+    }
+  ],
+  "remaining_uncertainty": [
+    "The freshness signal (last-loaded timestamp, source timestamp or row count) is undefined, so the criteria test status against a measured_at value only.",
+    "The full list of NCR tables and their owner-team source is unknown; the SLA criterion uses fixtures.",
+    "It is not stated whether a stale result should block the review or only display a status; AC-FRESH-PROPULSION requires visible stale status, not blocking.",
+    "Measurement frequency and the owner of the policy config are not stated.",
+    "Whether the three existing hand-rolled thresholds must be preserved in migration is not stated.",
+    "Whether syn-req-002 joins this capability is undecided, so AC-SCHEMA-SUPPLY is not yet defined."
+  ],
+  "questions": [
+    {
+      "to": "human product owner",
+      "question": "Should syn-req-002 (schema drift against contract) be folded into the freshness capability or built as a separate sibling capability? If yes, who is its stakeholder, so AC-SCHEMA-SUPPLY can be written?",
+      "blocking": false
+    },
+    {
+      "to": "human product owner",
+      "question": "Should a stale engine_test_runs result block the hotfire review or only display a status?",
+      "blocking": false
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+var/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+.DS_Store

@@ -1,0 +1,32 @@
+{
+  "task": "reliability.knowledge",
+  "attempt": 1,
+  "summary": "Produced knowledge/mission-notes as a JSON document of 14 provenance-tagged notes (facts, decisions, interpretations, one candidate procedure) drawn only from the three pinned inputs. No files written (write scope none). No executable checks were run; the only verification is inspection of the emitted notes. The main finding is that the AC-CONTRACT record fields do not match contract/health-record v1, which must be reconciled before that criterion can be verified.",
+  "criteria_claims": [
+    {
+      "criterion_id": "K-PROVENANCE",
+      "claimed": "met",
+      "note": "Checked by inspecting the emitted knowledge/mission-notes JSON: all 14 notes have kind, scope (non-empty array), source_refs (non-empty, naming input artifact keys) and certainty. No executable check was run."
+    }
+  ],
+  "remaining_uncertainty": [
+    "No failed approaches are recorded in the inputs, so no failed_approach note was written.",
+    "The 60-minute boundary behaviour (exactly 60 minutes) is not specified.",
+    "AC-CONTRACT field names do not match contract/health-record v1; reconciliation is needed before that criterion can be verified.",
+    "The contract is labelled SYNTHETIC, so it may not reflect a real production schema.",
+    "The NCR threshold, NCR table list, owner-team mapping and threshold policy owner are all unknown.",
+    "Freshness values are short-lived (7 to 30 days) and the notes should be re-checked as the open unknowns are resolved."
+  ],
+  "questions": [
+    {
+      "to": "plan owner",
+      "question": "Should the AC-CONTRACT field names be reconciled to contract/health-record v1 (dataset_id, freshness.status, schema-version property), or should the contract be revised?",
+      "blocking": false
+    },
+    {
+      "to": "syn-ana-propulsion",
+      "question": "Is the 60-minute engine_test_runs check a hard gate that blocks the dashboard, or a warning flag?",
+      "blocking": false
+    }
+  ]
+}

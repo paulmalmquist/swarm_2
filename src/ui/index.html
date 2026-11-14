@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="swarm2-token" content="__SWARM2_TOKEN__">
+<title>swarm_2 review</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark" aria-hidden="true"></span><h1>swarm_2</h1><span class="sub">execution and improvement layer</span></div>
+  <div class="chips" id="chips" aria-live="polite"></div>
+</header>
+<nav class="rail" aria-label="Views">
+  <button data-view="planning"><span class="n">1</span>Planning<span class="count" id="count-planning"></span></button>
+  <button data-view="doing"><span class="n">2</span>Doing<span class="count" id="count-doing"></span></button>
+  <button data-view="reviewing"><span class="n">3</span>Reviewing<span class="count" id="count-reviewing"></span></button>
+  <button data-view="evolution"><span class="n">4</span>Evolution</button>
+</nav>
+<section id="attention" class="attention" aria-label="Needs a person"></section>
+<main id="main" tabindex="-1"></main>
+<dialog id="drawer" aria-label="Detail"><div class="drawer-head"><h2 id="drawer-title"></h2><button id="drawer-close" aria-label="Close detail">Close</button></div><div id="drawer-body"></div></dialog>
+<footer class="foot"><span id="updated"></span><span>Reads persisted events and state only. Loopback only; not an authenticated service.</span></footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

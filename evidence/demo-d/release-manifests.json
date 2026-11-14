@@ -1,0 +1,54 @@
+[
+  {
+    "release_id": "r1",
+    "parent_release_id": null,
+    "components": {
+      "execution": {
+        "version": 1,
+        "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+      },
+      "coordination": {
+        "version": 1,
+        "content_hash": "a2731e7d2ba012c81f7188f9200610300a2ba49c33a1b4681c3f42924b04a9bc"
+      },
+      "evolution": {
+        "version": 1,
+        "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
+      }
+    },
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "evaluation_snapshot_hash": null,
+    "receipt_id": null,
+    "rollback_target": null,
+    "status": "active",
+    "evidence_basis": "baseline",
+    "created_at": "2026-11-14T19:07:11.999Z",
+    "manifest_hash": "db6b32b41bbf1de663a901e02d4a465421c137010131600260d6e856564d4235"
+  },
+  {
+    "release_id": "r2",
+    "parent_release_id": "r1",
+    "components": {
+      "execution": {
+        "version": 1,
+        "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+      },
+      "coordination": {
+        "version": 1,
+        "content_hash": "a2731e7d2ba012c81f7188f9200610300a2ba49c33a1b4681c3f42924b04a9bc"
+      },
+      "evolution": {
+        "version": 2,
+        "content_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363"
+      }
+    },
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "evaluation_snapshot_hash": "c7b20df435500458804e01b9043a32b4ac939fb1b47699554771b338dc4d0fc8",
+    "receipt_id": "rcpt_0mwgs2l73a2f16517c8",
+    "rollback_target": "r1",
+    "status": "canary",
+    "evidence_basis": "simulation",
+    "created_at": "2026-11-14T19:07:33.711Z",
+    "manifest_hash": "267fb1883c4eca62001eb823de8e98a4dadd42362e28d1054c651b3af6eb06a9"
+  }
+]

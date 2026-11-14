@@ -1,0 +1,43 @@
+{
+  "task": "discovery.analyze",
+  "attempt": 1,
+  "summary": "Four requests (syn-req-001 to 004) share one need: a shared, policy-configured dataset health check that surfaces stale or drifted data, and reports \"unknown\" when a dataset has never been measured. The three freshness requests (001, 003, 004) fit this directly. Request 002 is a schema-contract check rather than a freshness check, so it is consolidated but flagged as the weakest fit. No files were written (write scope is none) and no commands were run; the analysis was done by reading the pinned request inputs.",
+  "criteria_claims": [
+    {
+      "criterion_id": "D-OVERLAP",
+      "claimed": "met",
+      "note": "The shared capability is named in shared_capability. Each consolidated request (001, 002, 003, 004) has its own distinct_needs entry with stakeholder, team, and need in that stakeholder's terms. Verified by reading the output JSON against the four requests. The 002 fit is flagged as weak in interpretations and questions."
+    },
+    {
+      "criterion_id": "D-EPISTEMICS",
+      "claimed": "met",
+      "note": "observed_facts contains only literal statements from the requests, each citing its id. interpretations are labeled as inference. unknowns lists what no request states. Verified by reading the output. Blocking questions for the chief_of_staff are included for decisions only a person can make."
+    }
+  ],
+  "remaining_uncertainty": [
+    "Whether 002 belongs in the same capability as the freshness requests. This is a scoping decision for a person.",
+    "Whether the datasets share one platform and one freshness signal. No request says."
+  ],
+  "questions": [
+    {
+      "to": "chief_of_staff",
+      "question": "Should syn-req-002 (schema-contract drift) be consolidated into the same freshness-and-contract capability as 001, 003 and 004, or scoped as a separate capability?",
+      "blocking": true
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "Who owns and approves the policy configuration for thresholds and SLA targets: the data platform team, the forward deployed engineers, or each owner team?",
+      "blocking": true
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "Do the engine_test_runs, BOM, and NCR datasets all sit on one data platform that the shared check can read, and who can confirm this?",
+      "blocking": false
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "What is the priority order and target date for the four requests, given the weekly ops review in syn-req-003?",
+      "blocking": false
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "task": "discovery.analyze",
+  "attempt": 1,
+  "summary": "Four requests were reviewed against intake/requests (ver_0mwgs1r1z0g838a7bf8). Three of them (syn-req-001, syn-req-003, syn-req-004) share one need: a single, reusable dataset freshness capability with policy-configured thresholds that reports fresh, stale, or unknown. syn-req-002 asks for schema-contract drift checking, which is a different check type, so it is listed as unrelated to this capability and flagged for a scope decision. No files were written. The analysis was done by reading the pinned request text; no tools or data sources were queried.",
+  "criteria_claims": [
+    {
+      "criterion_id": "D-OVERLAP",
+      "claimed": "met",
+      "note": "shared_capability is named in one sentence. Each of the three consolidated requests (001, 003, 004) has its own distinct_needs entry in its own terms. syn-req-002 is listed as unrelated with a reason. Checked by reading the JSON document in artifacts. No tools were run."
+    },
+    {
+      "criterion_id": "D-EPISTEMICS",
+      "claimed": "met",
+      "note": "observed_facts only restate request text with ids. Interpretations are labeled as inference. Unknowns are listed, and the decision-level ones are also asked of chief_of_staff in questions[]. Checked by reading the document. No tools were run."
+    }
+  ],
+  "remaining_uncertainty": [
+    "Whether syn-req-002 belongs in this capability is a scope decision that the requests do not settle.",
+    "Threshold values for NCR tables and the policy owner are not stated.",
+    "The data sources for freshness timestamps and the NCR table list are unverified; no data was inspected."
+  ],
+  "questions": [
+    {
+      "to": "chief_of_staff",
+      "question": "Should syn-req-002 (schema contract drift by field) be folded into the same shared capability as the freshness requests (001, 003, 004), or kept as a separate capability that can reuse the same policy and reporting layer later?",
+      "blocking": false
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "Who owns and approves the freshness threshold policy values (for example, the 60-minute threshold for engine_test_runs and the thresholds for NCR tables)?",
+      "blocking": false
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "Which NCR tables are in scope for syn-req-003, and what is the authoritative source for owner-team mapping?",
+      "blocking": false
+    }
+  ]
+}

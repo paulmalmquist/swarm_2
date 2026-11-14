@@ -1,0 +1,25 @@
+{
+  "candidate_id": "exec-interface-compat-naive",
+  "level": "execution",
+  "title": "Add an interface compatibility step to change review",
+  "problem": "Reviews approve changes that break the shared contract: removed, renamed and retyped fields pass because the procedure never compares the contract before and after.",
+  "failure_classes": ["field_removed", "field_renamed", "type_changed", "required_added"],
+  "hypothesis": "If the review procedure compares the contract before and after the change, breaking interface changes will be blocked and review accuracy on fresh changes will rise.",
+  "expected_benefit": "Fewer approved breaking changes; higher review accuracy.",
+  "possible_regressions": ["Safe changes could be blocked if the comparison is too eager", "Each review runs one more step"],
+  "change_summary": "Adds validator interface_compat (top-level comparison of fields and types) and a procedure step that runs it.",
+  "revises": null,
+  "declared_simplification": false,
+  "skill_patch": {
+    "skill_id": "change-review",
+    "validators_add": ["interface_compat.mjs"],
+    "validators_remove": [],
+    "procedure": [
+      "Confirm the change adds or updates tests",
+      "Compare the contract before and after the change; any removed, renamed, retyped or added field is a blocking finding naming the field",
+      "Check naming and documentation basics",
+      "Request changes if any check reports a blocking finding; otherwise approve"
+    ],
+    "known_failure_cases": ["Compares top-level fields only", "Treats every added field as breaking"]
+  }
+}

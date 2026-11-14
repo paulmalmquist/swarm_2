@@ -1,0 +1,339 @@
+{
+  "swarms": [
+    {
+      "archetype": "discovery",
+      "purpose": "Establish what the requests have in common and what each stakeholder distinctly needs",
+      "deliverable": "An overlap report separating observed facts from interpretation",
+      "stopping_condition": "The report is accepted, or the reservation is exhausted",
+      "depth": 1,
+      "temporary": false,
+      "status": "completed"
+    },
+    {
+      "archetype": "planning",
+      "purpose": "Turn the understood need into acceptance criteria, an agreed interface and an executable plan",
+      "deliverable": "Acceptance criteria, a pinned interface contract and a validated work graph",
+      "stopping_condition": "The work graph is accepted and materialized, or the reservation is exhausted",
+      "depth": 1,
+      "temporary": false,
+      "status": "completed"
+    },
+    {
+      "archetype": "delivery",
+      "purpose": "Build the shared dataset-health capability",
+      "deliverable": "An integrated, tested capability on the integration branch",
+      "stopping_condition": "The integrated result is independently accepted, or the reservation is exhausted",
+      "depth": 1,
+      "temporary": false,
+      "status": "completed"
+    },
+    {
+      "archetype": "verification",
+      "purpose": "Independently verify the integrated result against the acceptance criteria",
+      "deliverable": "A verdict per acceptance criterion with evidence",
+      "stopping_condition": "Every criterion has a verdict for the current result",
+      "depth": 1,
+      "temporary": false,
+      "status": "completed"
+    },
+    {
+      "archetype": "reliability",
+      "purpose": "Preserve what this mission learned with provenance",
+      "deliverable": "Scoped memories and a candidate skill",
+      "stopping_condition": "Knowledge notes are accepted",
+      "depth": 1,
+      "temporary": false,
+      "status": "completed"
+    },
+    {
+      "archetype": "delivery",
+      "purpose": "Implement the evaluation engine that produces HealthRecords",
+      "deliverable": "src/engine with passing unit tests on its own branch",
+      "stopping_condition": "Unit tests pass and the branch is accepted, or the reservation is exhausted",
+      "depth": 2,
+      "temporary": true,
+      "status": "disbanded"
+    },
+    {
+      "archetype": "delivery",
+      "purpose": "Implement the SLA report and alerts that consume HealthRecords",
+      "deliverable": "src/report with passing unit tests on its own branch",
+      "stopping_condition": "Unit tests pass and the branch is accepted, or the reservation is exhausted",
+      "depth": 2,
+      "temporary": true,
+      "status": "disbanded"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "discovery",
+      "executor": "container",
+      "owner": "agt_0mwgs1utb0i86de7193",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 8,
+        "worker_invocations": 8,
+        "tokens": 288000,
+        "cost_usd_est": 1.44,
+        "wall_ms": 129600
+      }
+    },
+    {
+      "key": "planning",
+      "executor": "container",
+      "owner": "agt_0mwgs1utd0o1418c231",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 14,
+        "worker_invocations": 14,
+        "tokens": 480000,
+        "cost_usd_est": 2.4,
+        "wall_ms": 216000
+      }
+    },
+    {
+      "key": "discovery.analyze",
+      "executor": "worker",
+      "owner": "agt_0mwgs1ute0u06bdb2cb",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 7,
+        "worker_invocations": 7,
+        "tokens": 259200,
+        "cost_usd_est": 1.296,
+        "wall_ms": 116640
+      }
+    },
+    {
+      "key": "planning.criteria",
+      "executor": "worker",
+      "owner": "agt_0mwgs1utg0y0bfd9222",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 4,
+        "worker_invocations": 4,
+        "tokens": 144000,
+        "cost_usd_est": 0.72,
+        "wall_ms": 64800
+      }
+    },
+    {
+      "key": "planning.contract",
+      "executor": "worker",
+      "owner": "agt_0mwgs1utg0y0bfd9222",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 4,
+        "worker_invocations": 4,
+        "tokens": 144000,
+        "cost_usd_est": 0.72,
+        "wall_ms": 64800
+      }
+    },
+    {
+      "key": "planning.plan",
+      "executor": "worker",
+      "owner": "agt_0mwgs1uti157fe87d7d",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 4,
+        "worker_invocations": 4,
+        "tokens": 144000,
+        "cost_usd_est": 0.72,
+        "wall_ms": 64800
+      }
+    },
+    {
+      "key": "delivery",
+      "executor": "container",
+      "owner": "agt_0mwgs1vin2ne60a4819",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 43,
+        "worker_invocations": 43,
+        "tokens": 1440000,
+        "cost_usd_est": 7.2,
+        "wall_ms": 648000
+      }
+    },
+    {
+      "key": "verification",
+      "executor": "container",
+      "owner": "agt_0mwgs1vip2td4b52e66",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 14,
+        "worker_invocations": 14,
+        "tokens": 480000,
+        "cost_usd_est": 2.4,
+        "wall_ms": 216000
+      }
+    },
+    {
+      "key": "reliability",
+      "executor": "container",
+      "owner": "agt_0mwgs1viq2z69c7e65f",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 2,
+        "worker_invocations": 2,
+        "tokens": 80000,
+        "cost_usd_est": 0.4,
+        "wall_ms": 36000
+      }
+    },
+    {
+      "key": "delivery.decompose",
+      "executor": "worker",
+      "owner": "agt_0mwgs1viq354799a8e9",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 2,
+        "worker_invocations": 2,
+        "tokens": 86400,
+        "cost_usd_est": 0.432,
+        "wall_ms": 38880
+      }
+    },
+    {
+      "key": "delivery.integrate",
+      "executor": "runtime:integrate",
+      "owner": "agt_0mwgs1vir393631d2c7",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 4,
+        "worker_invocations": 4,
+        "tokens": 144000,
+        "cost_usd_est": 0.72,
+        "wall_ms": 64800
+      }
+    },
+    {
+      "key": "reliability.knowledge",
+      "executor": "worker",
+      "owner": "agt_0mwgs1vis3h146e66ed",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 1,
+        "worker_invocations": 1,
+        "tokens": 48000,
+        "cost_usd_est": 0.24,
+        "wall_ms": 21600
+      }
+    },
+    {
+      "key": "verification.acceptance",
+      "executor": "runtime:verify",
+      "owner": "agt_0mwgs1vir3d88473da0",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 7,
+        "worker_invocations": 7,
+        "tokens": 240000,
+        "cost_usd_est": 1.2,
+        "wall_ms": 108000
+      }
+    },
+    {
+      "key": "review.packet",
+      "executor": "runtime:review_packet",
+      "owner": "agt_0mwgs1vit3l00dc60b2",
+      "depth": 1,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 1,
+        "worker_invocations": 1,
+        "tokens": 60000,
+        "cost_usd_est": 0.3,
+        "wall_ms": 27000
+      }
+    },
+    {
+      "key": "delivery.engine",
+      "executor": "container",
+      "owner": "agt_0mwgs1vq0430dfaf9e0",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 17,
+        "worker_invocations": 17,
+        "tokens": 576000,
+        "cost_usd_est": 2.88,
+        "wall_ms": 259200
+      }
+    },
+    {
+      "key": "delivery.report",
+      "executor": "container",
+      "owner": "agt_0mwgs1vq349c39c59be",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 0,
+      "reservation": {
+        "model_calls": 17,
+        "worker_invocations": 17,
+        "tokens": 576000,
+        "cost_usd_est": 2.88,
+        "wall_ms": 259200
+      }
+    },
+    {
+      "key": "delivery.engine.implement",
+      "executor": "worker",
+      "owner": "agt_0mwgs1vq44fba91ad6c",
+      "depth": 3,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 15,
+        "worker_invocations": 15,
+        "tokens": 518400,
+        "cost_usd_est": 2.592,
+        "wall_ms": 233280
+      }
+    },
+    {
+      "key": "delivery.report.implement",
+      "executor": "worker",
+      "owner": "agt_0mwgs1vq44j1b9837c7",
+      "depth": 3,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 15,
+        "worker_invocations": 15,
+        "tokens": 518400,
+        "cost_usd_est": 2.592,
+        "wall_ms": 233280
+      }
+    }
+  ]
+}

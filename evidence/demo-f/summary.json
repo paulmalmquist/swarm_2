@@ -1,0 +1,56 @@
+{
+  "demo": "f",
+  "title": "Isolation of the rules and the records",
+  "labels": [
+    "INJECTED FAULT — an adversarial candidate fixture",
+    "ISOLATION MODE ON THIS HOST: enforced"
+  ],
+  "steps": [
+    {
+      "claim": "The host's actual separation was tested, not assumed",
+      "observed": "mode enforced: candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700",
+      "ok": true
+    },
+    {
+      "claim": "As submitted, the candidate is rejected before any of its code runs",
+      "observed": "The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
+      "ok": true
+    },
+    {
+      "claim": "Run anyway for this demonstration, every attempt on the rules and the records is denied",
+      "observed": "overwrite the promotion policy: denied (ERR_ACCESS_DENIED); overwrite the scoring rules: denied (ERR_ACCESS_DENIED); read the held-out cases: denied (ERR_ACCESS_DENIED); append to the evaluation ledger: denied (ERR_ACCESS_DENIED); rewrite the active release pointer: denied (ERR_ACCESS_DENIED); plant a recorded result: denied (ERR_ACCESS_DENIED)",
+      "ok": true
+    },
+    {
+      "claim": "The gate verifies for itself that nothing changed",
+      "observed": "protected digest 2536453dd42a6f44 before and after; active release r1; ledger chain intact",
+      "ok": true
+    },
+    {
+      "claim": "With Node's permission model removed, the operating system alone still denies every attempt",
+      "observed": "overwrite the promotion policy: denied (EACCES); read the held-out cases: denied (EACCES); append to the evaluation ledger: denied (EACCES); rewrite the active release pointer: denied (EACCES); modify its own bundle in custody: denied (EACCES)",
+      "ok": true
+    },
+    {
+      "claim": "A proposal to change the rules is routed to the chief of staff and applied by nobody",
+      "observed": "decision dec_0mwgs2ls5am09cb198c awaits a person; the policy file is unchanged",
+      "ok": true
+    },
+    {
+      "claim": "If the rules are altered out of band anyway, the gate notices and refuses to decide on them",
+      "observed": "INJECTED: the operator account edited the policy without approval → reject: The protected store or the candidate in custody changed. No decision can rest on this evaluation.. File restored; digest matches the seal again.",
+      "ok": true
+    }
+  ],
+  "files": [
+    "os-layer-attempts.json",
+    "tamper-screened.receipt.json",
+    "tamper-screened.receipt.md",
+    "tamper-forced-run.receipt.json",
+    "tamper-forced-run.receipt.md",
+    "isolation.json",
+    "README.md"
+  ],
+  "ok": true,
+  "ms": 736
+}

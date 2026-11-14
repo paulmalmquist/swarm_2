@@ -1,0 +1,13 @@
+{
+  "note": "SYNTHETIC FIXTURE. Pre-authored candidate fixes an improvement campaign can build. In live use a model author would write these; here the library stands in for hypothesis generation so that the improvement POLICY (which problem to work on, whether to pilot, when to stop) is the only thing that differs between campaigns. Some fixes are deliberately flawed or ineffective.",
+  "fixes": [
+    { "id": "guard_removed_toplevel", "file": "guard_removed_toplevel.mjs", "problem_ids": ["field_removed", "field_renamed"], "build_cost": 40 },
+    { "id": "guard_removed_recursive", "file": "guard_removed_recursive.mjs", "problem_ids": ["nested_field_renamed", "field_removed", "field_renamed"], "build_cost": 70 },
+    { "id": "guard_type_strict", "file": "guard_type_strict.mjs", "problem_ids": ["type_changed", "nullability_removed"], "build_cost": 30 },
+    { "id": "guard_type_narrowing", "file": "guard_type_narrowing.mjs", "problem_ids": ["type_changed", "nullability_removed"], "build_cost": 50 },
+    { "id": "guard_required", "file": "guard_required.mjs", "problem_ids": ["required_added"], "build_cost": 30 },
+    { "id": "guard_enum", "file": "guard_enum.mjs", "problem_ids": ["enum_value_removed"], "build_cost": 30 },
+    { "id": "guard_unit", "file": "guard_unit.mjs", "problem_ids": ["unit_changed"], "build_cost": 60 },
+    { "id": "style_strict", "file": "style_strict.mjs", "problem_ids": ["style_nit"], "build_cost": 20 }
+  ]
+}

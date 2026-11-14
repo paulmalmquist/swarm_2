@@ -1,0 +1,283 @@
+[
+  {
+    "seq": 1,
+    "experiment_id": null,
+    "kind": "protected_store_sealed",
+    "at": "2026-11-14T19:07:11.055Z",
+    "payload": {
+      "digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "isolation": "enforced"
+    },
+    "hash": "7b6ac4887add8dd718419ad69d0bfefcbcf517657f74b6ed01071b12170523bd"
+  },
+  {
+    "seq": 2,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "experiment_opened",
+    "at": "2026-11-14T19:07:11.111Z",
+    "payload": {
+      "level": "execution",
+      "title": "Add an interface compatibility step to change review",
+      "hypothesis": "If the review procedure compares the contract before and after the change, breaking interface changes will be blocked and review accuracy on fresh changes will rise.",
+      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
+      "revises": null,
+      "parent": {
+        "component": "execution",
+        "version": 1,
+        "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+      }
+    },
+    "hash": "79913252cd1c47761be7335de600ddc73a56394ef53c6d602093c6ac708ba4f2"
+  },
+  {
+    "seq": 3,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "protocol_frozen",
+    "at": "2026-11-14T19:07:11.111Z",
+    "payload": {
+      "protocol_id": "promotion-policy@1/execution",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "protected_digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "holdout_set": "holdout-A",
+      "workload": "review",
+      "cases": 80,
+      "frozen_at": "2026-11-14T19:07:11.111Z",
+      "executor": "validator-executor",
+      "budget_units": 2000,
+      "note": "frozen before any candidate was submitted"
+    },
+    "hash": "39a8b79f269f3924ace6842feb11136b53c12dc7bee1099bc63c2e9d8bc9caa1"
+  },
+  {
+    "seq": 4,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "candidate_submitted",
+    "at": "2026-11-14T19:07:11.182Z",
+    "payload": {
+      "candidate_id": "exec-interface-compat-naive",
+      "candidate_hash": "f0309264a641e273177570d2203676c1c1cd9740fc35cf12ab487c939d7d2c63",
+      "files": [
+        "execution.json",
+        "validators/interface_compat.mjs"
+      ]
+    },
+    "hash": "2ec7ecf636cf871869a5670f80bff64170008b3806a647621371c3905deecd79"
+  },
+  {
+    "seq": 5,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "development_attempt",
+    "at": "2026-11-14T19:07:11.182Z",
+    "payload": {
+      "note": "development check by the candidate author",
+      "cases": 40,
+      "accuracy": 0.875
+    },
+    "hash": "6707d8d85512862e54f0c5cc74598e58ce2d5ae07a9cc345e2f104c2c74f4ea2"
+  },
+  {
+    "seq": 6,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "holdout_evaluation",
+    "at": "2026-11-14T19:07:11.513Z",
+    "payload": {
+      "set": "holdout-A",
+      "cases": 80,
+      "units": 241,
+      "evaluation_snapshot_hash": "35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919",
+      "intact": true
+    },
+    "hash": "c0047724609cf7f2d171c37c29e6d64536561c1d7cca12f99ff74fbb8c377be9"
+  },
+  {
+    "seq": 7,
+    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "kind": "decision",
+    "at": "2026-11-14T19:07:11.513Z",
+    "payload": {
+      "decision": "reject",
+      "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.",
+      "receipt_id": "rcpt_0mwgs242g9mf2b19c90",
+      "receipt_hash": "482ef4cf929e467a912c8a99dd6f8e9d4155bf43ec0dcbd7df50454be4cb92ad",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "evaluation_snapshot_hash": "35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919",
+      "release_id": null
+    },
+    "hash": "993fdddbf0fd930b06b56105def9f2fabf5e088857f0c7ae9fab34b267cabf2d"
+  },
+  {
+    "seq": 8,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "experiment_opened",
+    "at": "2026-11-14T19:07:11.515Z",
+    "payload": {
+      "level": "execution",
+      "title": "Recursive interface compatibility step for change review",
+      "hypothesis": "If the comparison walks nested fields and treats only removals, narrowing type changes, newly required fields, removed enum values and unit changes as breaking, breaking changes will be blocked without blocking safe additions.",
+      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
+      "revises": "exp_0mwgs23ra9i4ff19a0e",
+      "parent": {
+        "component": "execution",
+        "version": 1,
+        "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+      }
+    },
+    "hash": "2f8a646a07da1c2d1efe897398cab30b67048b3a7cb223d8c707578cf9da346b"
+  },
+  {
+    "seq": 9,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "protocol_frozen",
+    "at": "2026-11-14T19:07:11.515Z",
+    "payload": {
+      "protocol_id": "promotion-policy@1/execution",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "protected_digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "holdout_set": "holdout-B",
+      "workload": "review",
+      "cases": 80,
+      "frozen_at": "2026-11-14T19:07:11.514Z",
+      "executor": "validator-executor",
+      "budget_units": 2000,
+      "note": "frozen before any candidate was submitted"
+    },
+    "hash": "b6a37789de512530aadbc498e8bcfe665cfa57c39f659b31bdb0e0ea9f6c578b"
+  },
+  {
+    "seq": 10,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "holdout_reclassified_as_development",
+    "at": "2026-11-14T19:07:11.515Z",
+    "payload": {
+      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
+      "set": "holdout-A",
+      "because": "experiment exp_0mwgs23ra9i4ff19a0e revealed results on it"
+    },
+    "hash": "dbffab85111fe85b35f8e76d653d2051ae780a08e3fc1f1f3f1cabbee84022d8"
+  },
+  {
+    "seq": 11,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "candidate_submitted",
+    "at": "2026-11-14T19:07:11.576Z",
+    "payload": {
+      "candidate_id": "exec-interface-compat",
+      "candidate_hash": "98c90f728966afbdb6f4af94f76ce6f06b4e96c773edb750ef0ce5ed480a9d43",
+      "files": [
+        "execution.json",
+        "validators/interface_compat.mjs"
+      ]
+    },
+    "hash": "b75f1d044b7e798c46dc37ae341cffe9a28516552e4268405607216943854945"
+  },
+  {
+    "seq": 12,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "development_attempt",
+    "at": "2026-11-14T19:07:11.576Z",
+    "payload": {
+      "note": "development check by the candidate author",
+      "cases": 40,
+      "accuracy": 1
+    },
+    "hash": "78a3be86ef6b01e0136020634a6bd484875e61a99cf0d90e5440fda7a4f7cdcc"
+  },
+  {
+    "seq": 13,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "holdout_evaluation",
+    "at": "2026-11-14T19:07:11.895Z",
+    "payload": {
+      "set": "holdout-B",
+      "cases": 80,
+      "units": 241,
+      "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
+      "intact": true
+    },
+    "hash": "8bfdc3facc8737d6bdbe33a75bf8feb531c9d76792ca5f119c2471f97b0aefde"
+  },
+  {
+    "seq": 14,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "decision",
+    "at": "2026-11-14T19:07:11.895Z",
+    "payload": {
+      "decision": "accept",
+      "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
+      "receipt_id": "rcpt_0mwgs24d29s998359dd",
+      "receipt_hash": "e977520a3330bd033ed85b9f45387029b6a3faa91d2533a9e28ea9caad4f5e7f",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
+      "release_id": "r2"
+    },
+    "hash": "5692c44b13b5c6521c07cbe72e73418e567a4052fbda7dd91ad50c4b7d72866a"
+  },
+  {
+    "seq": 15,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "canary_started",
+    "at": "2026-11-14T19:07:11.896Z",
+    "payload": {
+      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "release_id": "r2",
+      "prior_release_id": "r1",
+      "scope": {
+        "max_missions": 2,
+        "data_class": "synthetic",
+        "scenario": null
+      }
+    },
+    "hash": "3f02fb42e9712bbbaaabd11c5d84ae3a2afa86e18cc45c63beb4f553ec93703f"
+  },
+  {
+    "seq": 16,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "canary_observation",
+    "at": "2026-11-14T19:07:11.950Z",
+    "payload": {
+      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "observations": [
+        {
+          "at": "2026-11-14T19:07:11.897Z",
+          "metric": "accuracy_drop_vs_approval",
+          "value": 0,
+          "threshold": 0.05,
+          "breached": false,
+          "injected": false
+        },
+        {
+          "at": "2026-11-14T19:07:11.897Z",
+          "metric": "escaped_defect_rate_increase",
+          "value": 0,
+          "threshold": 0.02,
+          "breached": false,
+          "injected": false
+        },
+        {
+          "at": "2026-11-14T19:07:11.897Z",
+          "metric": "canary_missions_with_acceptance_failures",
+          "value": null,
+          "threshold": 0,
+          "breached": false,
+          "injected": false
+        }
+      ],
+      "injected_regression": null
+    },
+    "hash": "fc3f2fb199c2d5a4f6c623afe90e21be619909471a165ba708b3803b95f8603e"
+  },
+  {
+    "seq": 17,
+    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "kind": "canary_retained",
+    "at": "2026-11-14T19:07:11.952Z",
+    "payload": {
+      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "release_id": "r2",
+      "prior_release_id": "r1",
+      "missions": []
+    },
+    "hash": "b86d63f2513edf4d8cd285c02a7683372202f01aa377274a780d76542cd3811d"
+  }
+]

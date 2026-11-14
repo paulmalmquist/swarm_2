@@ -1,0 +1,13 @@
+{
+  "level": "evolution",
+  "version": 1,
+  "summary": "Initial improvement process: work on the most frequently reported failure first.",
+  "policy_module": "policy.mjs",
+  "params": {},
+  "problem_finding": "Group verified failure observations by failure class and count them.",
+  "hypothesis_generation": "Take the first available candidate fix for the chosen failure class.",
+  "prioritization": "Most frequently reported failure class first.",
+  "exploration_budget": "Spend until the experiment budget cannot cover the next step.",
+  "stopping": "A line of work stops only when its candidates are exhausted.",
+  "generalization_check": "None before submission; the release gate decides on held-out cases."
+}

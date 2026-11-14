@@ -1,0 +1,140 @@
+/* Visual grammar follows the Paul OS host rules found in the incumbent repositories:
+   purple marks a governed decision, teal marks comparison and progress, amber marks degraded or
+   incomplete states and always carries a mark and text, red is only for explicit stops, and
+   nominal states stay neutral. No green. No icon dependency. */
+:root {
+  --bg: #16151b; --surface: #1d1c24; --surface-2: #272631; --line: #35333f;
+  --text: #ecebf2; --text-2: #bdbacb; --muted: #918ea3;
+  --decision: #9578ff; --progress: #2f9d82; --warn: #f0b429; --stop: #e5484d;
+  --radius: 10px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #faf9f7; --surface: #ffffff; --surface-2: #f0eeef; --line: #dcd9df; --text: #17161c; --text-2: #4b4859; --muted: #736f86; --decision: #6d4fe0; --progress: #168a6c; --warn: #a66a00; --stop: #c62f35; color-scheme: light; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { max-width: 1240px; margin: 0 auto; padding: 0 16px 48px; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+h1 { font-size: 18px; } h2 { font-size: 17px; } h3 { font-size: 15px; } h4 { font-size: 13px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+p { margin: 0; }
+button { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--decision); outline-offset: 2px; }
+button.primary { background: var(--decision); border-color: var(--decision); color: #fff; }
+button.quiet { background: transparent; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+input, textarea, select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+textarea { width: 100%; min-height: 64px; }
+a { color: var(--text); text-decoration: underline; text-decoration-color: var(--muted); text-underline-offset: 3px; cursor: pointer; }
+code, .mono { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.num { font-variant-numeric: tabular-nums; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 0 10px; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand .mark { width: 10px; height: 10px; border-radius: 2px; background: var(--decision); display: inline-block; transform: translateY(-1px) rotate(45deg); }
+.brand .sub { color: var(--muted); font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--text-2); background: var(--surface); white-space: nowrap; }
+.chip b { color: var(--text); font-weight: 600; }
+.chip.warn { border-color: var(--warn); } .chip.stop { border-color: var(--stop); }
+
+.rail { display: flex; gap: 6px; border-bottom: 1px solid var(--line); padding-bottom: 0; overflow-x: auto; }
+.rail button { border: none; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: var(--text-2); padding: 10px 12px; white-space: nowrap; }
+.rail button .n { color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+.rail button[aria-current="page"] { color: var(--text); border-bottom-color: var(--decision); }
+.rail .count { margin-left: 8px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.attention { margin: 14px 0 0; }
+.attention:empty { display: none; }
+.need { border: 1px solid var(--decision); border-left-width: 4px; border-radius: var(--radius); background: var(--surface); padding: 12px 14px; margin-bottom: 8px; }
+.need .who { font-size: 12px; color: var(--text-2); }
+.need .q { font-weight: 600; margin: 2px 0 4px; }
+.need .opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.need details { margin-top: 8px; }
+.conseq { font-size: 13px; color: var(--text-2); margin: 6px 0 0 0; padding-left: 18px; }
+
+main { padding-top: 16px; }
+.cold { margin-bottom: 16px; }
+.cold p:first-child { font-size: 16px; }
+.cold p + p { color: var(--text-2); }
+.grid { display: grid; gap: 14px; }
+/* A grid item must be allowed to shrink, or a wide table inside it pushes the page sideways. */
+.grid > * { min-width: 0; }
+@media (min-width: 900px) { .grid.two { grid-template-columns: 1fr 1fr; } .grid.three { grid-template-columns: repeat(3, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.card > h3 { margin-bottom: 8px; }
+.card > h4 { margin: 14px 0 6px; }
+.card > h4:first-child { margin-top: 0; }
+.muted { color: var(--muted); } .sec { color: var(--text-2); } .small { font-size: 13px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.spread { justify-content: space-between; }
+.empty { color: var(--muted); padding: 18px 0; }
+.label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+ul.plain { list-style: none; margin: 0; padding: 0; }
+ul.plain li { padding: 6px 0; border-top: 1px solid var(--line); }
+ul.plain li:first-child { border-top: none; }
+
+/* status marks: always a shape plus words, never color alone */
+.st { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.st::before { content: ""; width: 9px; height: 9px; display: inline-block; flex: none; border: 2px solid var(--muted); border-radius: 50%; }
+.st.done::before { background: var(--muted); }
+.st.run::before { border-color: var(--progress); background: var(--progress); }
+.st.person::before { border-color: var(--decision); background: var(--decision); border-radius: 2px; transform: rotate(45deg); }
+.st.warn::before { border: none; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 10px solid var(--warn); border-radius: 0; }
+.st.stop::before { border-color: var(--stop); background: var(--stop); border-radius: 1px; }
+
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: left; font-weight: 600; color: var(--text-2); font-size: 12px; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+@media (max-width: 700px) { .scroll > table { min-width: 560px; } }
+
+.meter { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.meter .track { flex: 1; min-width: 80px; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.meter .fill { height: 100%; background: var(--progress); border-radius: 3px; }
+
+/* ownership graph */
+.graph { overflow-x: auto; padding-bottom: 4px; }
+.graph svg { display: block; }
+.graph .edge { stroke: var(--line); stroke-width: 1; fill: none; }
+.graph .node rect { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; rx: 7; }
+.graph .node { cursor: pointer; }
+.graph .node:hover rect, .graph .node:focus rect { stroke: var(--muted); }
+.graph .node text { fill: var(--text); font-size: 12px; }
+.graph .node text.o { fill: var(--muted); font-size: 10.5px; }
+.graph .node.run rect { stroke: var(--progress); stroke-width: 2; }
+.graph .node.person rect { stroke: var(--decision); stroke-width: 2; }
+.graph .node.warn rect { stroke: var(--warn); stroke-width: 2; }
+.graph .node.stop rect { stroke: var(--stop); stroke-width: 2; }
+.graph .node.done rect { fill: transparent; }
+.graph .node.done text { fill: var(--text-2); }
+.graph .m-run { fill: var(--progress); } .graph .m-person { fill: var(--decision); } .graph .m-warn { fill: var(--warn); } .graph .m-stop { fill: var(--stop); } .graph .m-done { fill: var(--muted); } .graph .m-wait { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+@media (prefers-reduced-motion: no-preference) {
+  /* Only work that is actually leased pulses. Nothing idle is animated. */
+  .graph .node.run .pulse { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--text-2); margin-top: 10px; }
+
+/* interval plot: one mark per row, each row on its own scale */
+.ivl { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(160px, 2fr) minmax(150px, 1.2fr); gap: 4px 12px; align-items: center; font-size: 13px; }
+.ivl .axis { position: relative; height: 26px; }
+.ivl svg { width: 100%; height: 26px; display: block; overflow: visible; }
+.ivl .zero { stroke: var(--muted); stroke-width: 1; }
+.ivl .base { stroke: var(--line); stroke-width: 1; }
+.ivl .bar { stroke: var(--progress); stroke-width: 2; stroke-linecap: round; }
+.ivl .dot { fill: var(--progress); stroke: var(--surface); stroke-width: 2; }
+@media (max-width: 700px) { .ivl { grid-template-columns: 1fr; } .ivl .axis { margin-bottom: 2px; } }
+
+dialog#drawer { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); width: min(880px, 96vw); max-height: 88vh; padding: 0; }
+dialog#drawer::backdrop { background: rgba(0, 0, 0, 0.5); }
+.drawer-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); }
+#drawer-body { padding: 14px 16px 20px; display: grid; gap: 14px; }
+pre { margin: 0; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; overflow: auto; max-height: 360px; font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 28px; font-size: 12px; color: var(--muted); }
+.banner { border: 1px solid var(--warn); border-radius: var(--radius); padding: 10px 14px; background: var(--surface); margin-bottom: 14px; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; font-size: 13.5px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
