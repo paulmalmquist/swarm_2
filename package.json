@@ -20,7 +20,8 @@
     "demo:f": "node --disable-warning=ExperimentalWarning demos/run.ts f",
     "demo:g": "node --disable-warning=ExperimentalWarning demos/run.ts g",
     "demo:all": "node --disable-warning=ExperimentalWarning demos/run.ts all",
-    "verify": "npm run typecheck && npm test && npm run demo:all",
+    "check:report": "node --disable-warning=ExperimentalWarning --test tests/report.test.ts",
+    "verify": "npm run typecheck && npm test && npm run demo:all && npm run check:report",
     "demo:h": "node --disable-warning=ExperimentalWarning demos/run.ts h",
     "demo:i": "node --disable-warning=ExperimentalWarning demos/run.ts i",
     "demo:live": "node --disable-warning=ExperimentalWarning demos/live.ts"

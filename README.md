@@ -29,7 +29,7 @@ It never sends, merges, deploys or commits anyone to anything. It prepares, veri
 Node 22.18 or later. Nothing to install or build; there are no runtime dependencies.
 
 ```
-npm test                 # 49 tests: coordination, recovery, isolation, rollback, limits, escalation
+npm test                 # 62 tests: coordination, recovery, isolation, rollback, limits, escalation, accounting
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
 ```
@@ -79,6 +79,9 @@ the reports:
   It says nothing about how well models do the work.
 - **Simulation**: a synthetic testbed (the improvement arena, mission episodes with assumed defect
   rates). It describes behaviour in the testbed, not rates in real work.
+
+`npm run check:report` rebuilds the figures the documents quote from the files under `evidence/`
+and fails when a document says something else.
 
 All requests, people, teams, datasets and review cases in this repository are invented and labeled
 as synthetic. No connector to Slack, Jira, GitLab, BigQuery, dbt, Power BI, OpenMetadata,

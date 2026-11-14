@@ -8,6 +8,11 @@ All seven increments of the build order are complete and merged into `main` (pul
 merged 2026-11-14). Follow-up work goes on branch `claude/swarm-2-agent-org-ffiy5j`, restarted from
 `main`, as a new pull request.
 
+Pull request #2 carries what auditing the evidence report turned up: three runtime defects fixed
+(two in spend accounting, one that stranded a result whose check had crashed), thirteen tests
+added, the report corrected, and a test that rebuilds the report's figures from `evidence/`
+(`docs/evidence-report.md`, sections 5 and 9).
+
 | Increment | State | Where to look |
 |---|---|---|
 | 1. Environment, integration boundaries, repository | Done | `docs/capability-matrix.md`, `docs/integration.md` |
@@ -25,7 +30,8 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 49 tests, about two minutes
+npm test                           # 62 tests, about two minutes
+npm run check:report               # the figures the documents quote, rebuilt from evidence/
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration
 SWARM2_LIVE=1 npm run demo:live    # cross-swarm mission on real model workers (uses the account)
@@ -50,6 +56,11 @@ node src/cli.ts serve --run        # interface + coordinator, http://127.0.0.1:4
   necessary for independent levels, but it cannot silently drop a promotion (see open items).
 - **In a live mission, planning templates stay scripted** and are recorded as fixture attempts.
   The work graph comes from the versioned coordination policy, not from a model.
+- **The documents' figures are checked by a test** (`tests/report.test.ts`). A figure that varies
+  from run to run is quoted approximately and checked as a band, so regenerating the evidence does
+  not break the check unless something real changed.
+- **Allowance moves between budget accounts; it is never booked as spending.** What a mission has
+  spent is what its attempts reported, and an attempt that reported nothing is counted as unknown.
 
 ## Open decisions for Paul
 
@@ -89,7 +100,8 @@ a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
   While it lasted, delegated agents and nested model workers returned HTTP 429; the build was done
   in one session and live runs were made afterwards.
 - The limit was hit again at about 19:25 UTC (reset stated as 21:50 UTC). It stopped an independent
-  audit of `docs/evidence-report.md` against `evidence/`. That audit is still owed: have a separate
-  agent check every figure in the report and the handoff against the bundle files, read-only.
+  audit of `docs/evidence-report.md` against `evidence/`. The audit by a separate agent is
+  still owed: read-only, every figure in the report and the handoff against the bundle files, and
+  a judgment of whether `tests/report.test.ts` is vacuous anywhere.
 - `swarm_design` was not read: attaching it was declined by the session's permission check.
 - State directories under `var/` are not committed. `evidence/` is.

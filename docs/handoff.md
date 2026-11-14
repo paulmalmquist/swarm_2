@@ -57,14 +57,16 @@ Through durable state and contracts, not conversation.
 
 - **Live, small:** three missions and two improvement runs with real models. Enough to show the
   organization works with real workers and where it broke; not enough to state any rate.
-- **Fixture:** nine demonstrations and 49 tests show the machinery — ownership, recovery,
+- **Fixture:** nine demonstrations and 62 tests show the machinery — ownership, recovery,
   invalidation, isolation, the gate, trial and rollback — behaves as designed with scripted workers.
 - **Simulation:** the coordination and improvement-process comparisons rest on testbeds with
   assumed rates, written by the same author as the candidates. One accepted result is narrow and
   disappears under a sensitivity check; the report says so.
 
-Running it with real workers found eleven defects that scripted workers never triggered. They
-are listed in the report with what was changed. Three things worth knowing before relying on it:
+Running it with real workers found eleven defects that scripted workers never triggered. Checking
+the report against its own evidence afterwards found three more: two in how spend was counted,
+and one that could leave a result waiting for good on a check that had crashed. All are listed in
+the report with what was changed. Three things worth knowing before relying on it:
 
 1. Acceptance tests in the scenario are pre-written. One of them demands something no requirement
    states, and that cost a live mission its repair limit. In real use, someone has to own the tests.
@@ -103,5 +105,5 @@ Stopping loses nothing: the next run resumes from stored state.
 4. **The promotion rules.** The thresholds in `protected/policy.json` are first settings.
    Changing them is your decision; no experiment can.
 
-Pull request #1, which carries everything described here, was merged into `main` on 2026-11-14.
-Later corrections arrive as separate pull requests.
+Pull request #1 was merged into `main` on 2026-11-14. Pull request #2 carries the corrections
+that came out of checking the report; anything later arrives the same way.

@@ -118,7 +118,9 @@ releases their reservations and keeps the artifacts already produced.
 
 - A mission's budget is a tree. A child reserves from its parent atomically and can never hold
   more than the parent has; spawning an agent creates no spending authority. Unspent reservations
-  return to the parent when work settles, and the tree is reconciled.
+  return to the parent when work settles. A retry its task cannot pay for draws on the recovery
+  reserve by moving allowance from one account to another; a move is never recorded as spending.
+  Consumption and limits are both reconciled against the ledger.
 - Capacity is set aside before delivery starts: 15% for verification, 10% for recovery, 5% for
   completion, and up to 10% for exploration. Delivery cannot spend them.
 - Limits are operator configuration (`src/config.ts`, `swarm2.config.json`, environment): 12
@@ -130,7 +132,10 @@ releases their reservations and keeps the artifacts already produced.
   The system prepares a draft with its supporting context; a person approves it; sending or
   merging stays with the existing protected path.
 - Usage is recorded as what it is: provider-reported tokens, a list-price cost *estimate*
-  (never called billing), runtime-measured wall time, or a declared fixture value.
+  (never called billing), runtime-measured wall time, or a declared fixture value. A model worker
+  stopped before it finishes reports nothing: the attempt is charged the invocation and the time
+  the runtime measured, its tokens and cost stay unknown, and every total that includes it is
+  shown as a lower bound.
 
 ## 6. Memory
 

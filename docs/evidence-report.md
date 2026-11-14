@@ -2,7 +2,8 @@
 
 What was built, what ran, what improved, what failed and what remains unverified.
 Recorded 2026-11-14. Every figure below comes from a file under `evidence/` or from the test
-suite, and can be reproduced with the commands in the last section.
+suite, except where a sentence says the run was not kept. `npm run check:report` rebuilds the
+quoted figures from those files and fails when this report says something else.
 
 ## How to read this
 
@@ -28,7 +29,7 @@ Strongbox or Paul OS was reachable (`docs/capability-matrix.md`).
 | Provider and chief-of-staff adapters | Built: a fixture provider, a live `claude -p` provider, a local chief-of-staff port over three transports | `src/providers/`, `src/cos/port.ts` |
 | Separation of real execution from fixtures | Built: provenance on every response, per-attempt provider, evidence basis on every release | `docs/architecture.md` §8 |
 | Executable evaluation and promotion mechanism | Built: release gate, held-out sets, receipts, canary, rollback | `src/gate/` |
-| Tests for coordination, recovery, isolation, rollback | 49 tests, all passing | `tests/` |
+| Tests for coordination, recovery, isolation, rollback | 62 tests, all passing | `tests/` |
 | Reproducible demonstration commands | Nine fixture demonstrations, two live drivers | `demos/`, `package.json` |
 | Example improvement receipts and release manifests | In every improvement bundle | `evidence/demo-c`, `-d`, `-e`, `-g`, `-h`, `-i`, `live-improve*` |
 | Architecture and integration documentation, operator guide | Written | `docs/` |
@@ -51,11 +52,13 @@ coordination policy. Integration, verification and the review packet are runtime
 | Run | Outcome | Elapsed | Model attempts | Rework | Integration failures | Acceptance criteria | Cost estimate | Waiting for a person |
 |---|---|---|---|---|---|---|---|---|
 | `live-a` | **Blocked** | 130 s | 7 | 4 | 0 | 4 of 5 passed; one failed three times | 0.62 USD | 1: what to do about the failed work |
-| `live-b` | **Blocked** | 193 s | 9 (3 timed out) | 2 | 0 | 4 of 4 passed after two repairs | 0.41 USD | 1: what to do about the failed work |
+| `live-b` | **Blocked** | 193 s | 9 (3 timed out) | 2 | 0 | 4 of 4 passed after two repairs | at least 0.41 USD | 1: what to do about the failed work |
 | `live-c` | **Reached review** | 150 s | 6 | 1 | 0 | 4 of 4 passed after one repair | 0.35 USD | 2: the scope change, and the merge approval |
 
-Cost figures are client-side list-price estimates, not billing. Models served were recorded per
-attempt: `claude-haiku-5-5` and `claude-sonnet-5-5`.
+Cost figures are client-side list-price estimates, not billing. `live-b`'s is a lower bound: it
+covers the six attempts that completed, and the three that were stopped at their deadline, after
+about 22 s each, never reported what they used. Models served were recorded per attempt:
+`claude-haiku-5-5` and `claude-sonnet-5-5`.
 
 What these three runs establish:
 
@@ -69,8 +72,11 @@ What these three runs establish:
   complaint, and removed the dash; after the repair limit the mission stopped and asked a person.
   With feedback stating the requirement as a requirement and showing what the work produced,
   `live-b` repaired it in two attempts and `live-c` in one.
-- **Workers reported honestly.** They marked claims `unknown` when they could not run tests, named
-  a wrong command in their own instructions, and listed guesses as guesses (`worker-reports/`).
+- **Workers said what they had not checked.** In the kept reports they named the tests they had
+  not run and called a guess a guess (`live-b`: "this change is a guess at what the failed
+  acceptance check wanted, so I'm not claiming AC-SLA-QUALITY is met"). They claimed only their
+  own task's criteria, never the hidden acceptance criteria. The bundles keep each task's last
+  report only (`worker-reports/`).
 - **The harness scope held.** Six tool uses were refused across the runs (compound shell commands
   such as `mkdir … && cat > …` and `sed -i …`); none targeted a path outside a worktree.
 - **A scope change reached a person.** In `live-b` and `live-c` discovery judged one authorized
@@ -89,14 +95,19 @@ Caveats that limit what these runs show:
   reference contract does not have, and a worker said so. A verdict refers to the executable check.
 - `live-b`'s bundle counts three acceptance failures; one of them is the knowledge task timing out,
   which is now recorded as an execution failure instead.
+- `live-b`'s bundle also misstates what the mission spent. Its `budget.spent` block reads 0.65 USD,
+  71,725 tokens and 8 model calls. Of that, 0.24 USD, 48,000 tokens and 2 calls are two transfers
+  from the recovery reserve that the runtime booked as spending, and the three stopped attempts
+  count as no model call at all. Both defects are fixed (section 5, items 14 and 15). The bundle
+  was not edited; the table above uses what the completed attempts reported.
 - `live-c`'s review packet opens with "4 of 4 acceptance criteria passed" and only further down
   shows the uncovered request. Packets now state uncovered requests in the first line; that bundle
   predates the change and was not edited.
 - No decision was made on Paul's behalf in any live run. `live-c` is waiting, not approved.
 
-Two earlier live runs were not kept as bundles: a one-agent mission (one sonnet call, 832 output
-tokens, 7 s, accepted on inspection), and a first cross-swarm attempt that stranded a task on a
-runtime defect described in section 5.
+Two earlier live runs were not kept as bundles, so nothing under `evidence/` backs what is said
+about them: a one-agent mission (one sonnet call, 830 output tokens, 7 s, accepted on inspection),
+and a first cross-swarm attempt that stranded a task on a runtime defect described in section 5.
 
 ### 2.2 A real model as improvement author (Level 1)
 
@@ -113,7 +124,9 @@ part in the judging.
 | `live-improve-2` | 2 (revision) | 1.00 | holdout-B | 0.4875 → 1.00 (difference 0.5125, 95% interval 0.40 to 0.625, n=80) | 0.95 → 0 | 0 → 0 | **Accept**, canary retained |
 
 - Both first candidates were perfect on development cases and were rejected: they blocked 10% of
-  safe changes of kinds the development cases do not contain. The allowed increase is 5%.
+  safe changes on held-out cases. The allowed increase is 5%. The held-out generator contains
+  kinds of safe change that the development cases do not; the receipts do not itemize which kinds
+  were blocked.
 - The revision was written from the gate's aggregate result only (the decision and three rates).
   It was scored on a different held-out set, as a revision must be. It was accepted, tried on fresh
   cases in a canary, and retained; the active release became `r2` in that state directory.
@@ -161,15 +174,18 @@ decision for a person and changed nothing. An out-of-band edit by the operator a
 detected by digest and the gate refused to decide.
 
 **G. Canary and rollback — 8 of 8.** An accepted release ran in a canary of two missions while
-earlier and later missions kept `r1`. An injected regression produced an accuracy drop of 0.2167
-against a limit of 0.05; the prior release was restored; 2 missions, 12 artifacts and 4 memories
+earlier and later missions kept `r1`. An injected regression produced an accuracy drop well above
+the limit of 0.05 (between 0.10 and 0.22 in the five runs whose bundles were committed, and 0.28
+in one that was not; a canary draws fresh cases every run, so the size varies); the prior release
+was restored; 2 missions, 12 artifacts and 4 memories
 that depended on the withdrawn release were identified and marked; one decision was opened about
 the mission still in flight.
 
-**Tests.** 49 tests pass in about two minutes: ownership and fencing, dependencies and
+**Tests.** 62 tests pass in about two minutes: ownership and fencing, dependencies and
 invalidation, budgets and authority, idempotency, cancellation, a full mission, five execution
 patterns, recovery, the gate, isolation, canary and rollback, the arena, communication, connectors
-and reconciled effects, limits, the portfolio, escalation and scope change, and the API.
+and reconciled effects, limits, the portfolio, escalation and scope change, spend accounting,
+stranded and blocked work, the API, and a check that this report quotes the evidence files.
 
 ## 4. Simulation and testbed results
 
@@ -228,7 +244,7 @@ assumptions of the testbed.
 
 | Simpler configuration | Cost | Quality | Decision |
 |---|---|---|---|
-| No independent verification swarm | Worker invocations per mission 12.9 → 10.0; completion about 4.1 s → 3.0 s | Defects reaching an accepted result per mission 0 → 0.625; truly correct missions 1.00 → 0.375 (difference −0.625, interval −0.875 to −0.25) | **Reject** |
+| No independent verification swarm | Worker invocations per mission 12.9 → 10.0; completion about 4 s → 3 s | Defects reaching an accepted result per mission 0 → 0.625; truly correct missions 1.00 → 0.375 (difference −0.625, interval −0.875 to −0.25) | **Reject** |
 | No interface agreement before parallel work | Invocations per mission 11.75 → 12.0 (difference +0.25, interval −0.5 to 0.75); integration failures per mission 0 → 0.625 | Truly correct missions 1.00 → 1.00 | **Inconclusive**: no worse, but nothing saved |
 
 For the interface agreement the measured costs are: the step costs one worker invocation per
@@ -242,8 +258,10 @@ workers both arrangements produce the same code, and no live comparison was run.
 
 ## 5. What failed
 
-Failures of the system, found by running it, in the order they were found. Each is fixed unless
-it says otherwise, and each has a test.
+Failures of the system, in the order they were found. Each is fixed unless it says otherwise,
+and each fix has a test that exercises the corrected behaviour. Items 1 to 11 were found by running real workers, 12 and 13 by reasoning
+while building, and 14 to 16 by checking this report against its evidence and against its own
+claims (section 9).
 
 1. **A worker-declared artifact path that was a directory stranded its task** (first live run).
    Workers now publish only contract-named outputs, code is taken from git, files must be regular
@@ -251,7 +269,7 @@ it says otherwise, and each has a test.
 2. **The coordinator went idle while leased work was still in flight.** It now stays up until the
    lease is renewed or reclaimed.
 3. **My instructions to live workers named a test command that fails on this Node version.**
-   A worker reported it. Corrected.
+   A worker reported it, in the first attempt, which was not kept. Corrected.
 4. **A worker that reported itself blocked waited on an agent that could not act.** Work with all
    outputs delivered now goes to verification; otherwise the question goes to a person.
 5. **A shapeless plan object crashed plan validation, and the check was retried without end.**
@@ -270,6 +288,19 @@ it says otherwise, and each has a test.
     Found by reasoning while building the portfolio. Now refused.
 13. **The versioned improvement policy drove only the testbed**, not the organization's own
     improvement work. The portfolio closes that.
+14. **A retry paid from the recovery reserve was booked as spending** (`live-b`). The mission's
+    spend included 0.24 USD and 48,000 tokens that nobody used, and the team above the retried
+    task held more than its own limit. Allowance is now moved between accounts instead of
+    consumed, and limits are reconciled against the ledger as consumption already was.
+15. **A model attempt stopped at its deadline was recorded as no model call, no time and no cost**
+    (`live-b`). It is now charged what the runtime measured, its tokens and cost are marked
+    unknown instead of zero, and status, the review packet and the interface say when a total is
+    a lower bound.
+16. **A check that threw left its result marked as being verified, and nothing looked at it
+    again.** The fix for item 5 covered a result still waiting for its check, not one whose check
+    had started, so the mission would have sat idle with nobody told. Found by writing the test
+    item 5 did not have. Such a result is now checked again, by the same coordinator or the next
+    one, and after three errors it goes back to its author and then to a person.
 
 Experiments that did not go the candidate's way, which is the gate working: the naive scripted
 check, the cheaper check that skipped a required step, the tampering candidate, both first
@@ -279,14 +310,13 @@ Dropping the interface agreement was inconclusive.
 Outside the system: the account's usage limit was hit at 16:05 UTC and cleared by 18:30 UTC. For
 that period delegated agents and nested workers returned HTTP 429, so the investigation and
 implementation I had delegated came back empty and the build was done in one session. The limit
-was hit again at about 19:25 UTC (reset stated as 21:50 UTC). That stopped an independent agent
-partway through auditing this report against the evidence files, so **this report has been
-checked against its sources by its author only**. The figures were read from the bundles when it
-was written; an independent check is still owed.
+was hit again at about 19:25 UTC (reset stated as 21:50 UTC), which stopped an independent agent
+partway through auditing this report. Section 9 says how the report has been checked since.
 
 ## 6. What remains unverified
 
-- **This report, independently.** See the end of section 5.
+- **This report, independently.** A separate agent's audit had not finished when this was
+  committed (section 9).
 - **Anything at scale.** Three live missions and two live authoring runs, one scenario each.
 - **Live coordination and improvement-policy experiments.** Levels 2 and 3 were evaluated on
   fixture episodes and a synthetic arena only.
@@ -327,7 +357,7 @@ Where each requested metric is measured, and its value in the evidence that exis
 | Completion time and critical-path waiting | Events; `criticalPath()` | 130 to 193 s | A: about 3 s (scripted durations) |
 | Integration failures and rework | Observations | 0 integration failures; 4, 2 and 1 reworks | H: 0.625 integration failures per mission without the agreement |
 | Repeated mistakes | Failure signatures across missions | The same criterion failed first in all three runs | Not measured |
-| Recovery success | Demonstration B, recovery tests | In the first, unrecorded attempt a restarted coordinator fenced and re-dispatched one stranded attempt | B: 9 of 9 checks |
+| Recovery success | Demonstration B, recovery tests | Not exercised in a kept run. In the first attempt, which was not kept, a restarted coordinator fenced and re-dispatched one stranded attempt | B: 9 of 9 checks |
 | Useful improvements per fixed experiment budget | Receipts; exploration allocation | 1 accepted of 3 model-written candidates, for about 1.1 USD of author time | D: 177.6 against 165.0 per 420 units |
 | Downstream regressions after promotion | Canary observations, rollbacks | None observed in one canary | G: injected regression rolled back |
 
@@ -337,12 +367,39 @@ the interface's metrics; it is not used as a measure of success anywhere.
 ## 8. Reproduce
 
 ```
-npm test                                     # 49 tests
+npm test                                     # 62 tests
 npm run demo:all                             # demonstrations A–I; rewrites evidence/demo-*
+npm run check:report                         # the figures quoted here, rebuilt from evidence/
 SWARM2_LIVE=1 node demos/live.ts live-x      # a live mission; writes evidence/live-x
 SWARM2_LIVE=1 node demos/live-improve.ts live-improve-x
 ```
 
-Fixture demonstrations are deterministic in outcome; timings vary. Live runs are not repeatable
-in detail: the same command gave a blocked mission twice and a reviewable one once, for the
-reasons in section 5.
+Fixture demonstrations are deterministic in outcome. Timings vary from run to run, and so does
+the size of the regression that demonstration G measures, because a canary draws fresh cases every
+time. Between the two most recent runs of all nine, nothing else in any bundle's summary changed
+except identifiers, hashes and timestamps. Live runs are not repeatable in detail: the same
+command gave a blocked mission twice and a reviewable one once, for the reasons in section 5.
+
+## 9. How this report was checked
+
+1. **By its author when it was written.** Figures were read from the bundles, and several were
+   corrected then (six refused tool uses, not eight, for example).
+2. **By its author again after the merge, reading every figure back from the files.** That pass
+   found:
+   - a stale figure: demonstration G's regression was quoted as 0.2167 where the committed bundle
+     said 0.1333, because the figure varies by run and the report had not said so;
+   - a sentence crediting workers with behaviour (claims marked `unknown`, a wrong command
+     reported) that the kept bundles do not contain;
+   - `live-b`'s cost given without saying that three stopped attempts are missing from it, and
+     behind that the two accounting defects in section 5, items 14 and 15;
+   - "each has a test", which was untrue for five of the fixes. The tests were then written, and
+     one of them failed: item 16;
+   - 832 output tokens that were 830, and a description of the rejected candidates' false alarms
+     that the receipts do not itemize.
+3. **Mechanically, from now on.** `tests/report.test.ts` rebuilds ninety quoted figures from the
+   evidence files and requires this report, the handoff and the operator guide to contain them.
+   Five planted errors were each caught. The check establishes that a figure is the evidence's
+   figure. It cannot establish that a sentence is a fair reading of it.
+4. **Independently.** Not yet. A separate agent's audit is the remaining step. Until its result
+   is recorded here, items 1 to 3 are all the checking this report has had, and the first two are
+   the author's own.
