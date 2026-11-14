@@ -295,6 +295,15 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
           effect = 'correction recorded; mission held for rework';
         }
+      } else if (decision.kind === 'failure_escalation' && decision.chosen === 'retry' && decision.task_id) {
+        const t = store.tasks.must(decision.task_id);
+        if (t.status === 'failed') {
+          kernel.reviveTask(t.id, cmd.actor, cmd.data.rationale);
+          // What a person said about failed work is a correction: it is kept as evidence and as memory.
+          this.recordCorrection({ command: 'recordCorrection', actor: cmd.actor, key: `${cmd.key}:correction`, data: { mission_id: m.id, task_key: t.key, correction: cmd.data.rationale, failure_class: 'guidance_after_failure' } });
+          if (m.status === 'blocked') kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: `"${t.title}" sent back with guidance` });
+          effect = 'failed work sent back for one more repair with your guidance';
+        }
       } else if (decision.kind === 'blocked_work' && decision.chosen === 'retry' && decision.task_id) {
         const t = store.tasks.must(decision.task_id);
         if (t.status === 'blocked') {

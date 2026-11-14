@@ -188,19 +188,22 @@ export class Workspaces {
  * Failing tests with the first lines of what each assertion reported. That is enough for an
  * author to repair the work without being shown the test's code.
  */
-export function tapFailures(out: string, maxChars = 320): { name: string; message: string }[] {
+export function tapFailures(out: string, maxChars = 520): { name: string; message: string }[] {
   const lines = out.split('\n');
   const failures: { name: string; message: string }[] = [];
+  const clip = (t: string, n: number): string => (t.length > n ? t.slice(0, n - 1) + '…' : t);
   for (let i = 0; i < lines.length; i++) {
     const m = /^\s*not ok \d+ - (.*)$/.exec(lines[i]!);
     if (!m) continue;
     const name = (m[1] ?? '').replace(/ # .*$/, '').trim();
-    let message = '';
+    // The diagnostic block that follows: what the assertion said, what it expected, what it got.
+    const field: Record<string, string> = {};
     for (let j = i + 1; j < lines.length && !/^\s*\.\.\.\s*$/.test(lines[j]!) && !/^\s*(not ok|ok) \d+ - /.test(lines[j]!); j++) {
-      const e = /^(\s*)error:\s*(.*)$/.exec(lines[j]!);
-      if (!e) continue;
+      const e = /^(\s*)(error|expected|actual):\s*(.*)$/.exec(lines[j]!);
+      if (!e || field[e[2]!] !== undefined) continue;
       const indent = e[1]!.length;
-      if (e[2] && !/^[|>][-+]?$/.test(e[2].trim())) message = e[2].trim().replace(/^'|'$/g, '');
+      let value = '';
+      if (e[3] && !/^[|>][-+]?$/.test(e[3].trim())) value = e[3].trim().replace(/^'|'$/g, '');
       else {
         const body: string[] = [];
         for (let k = j + 1; k < lines.length; k++) {
@@ -208,12 +211,16 @@ export function tapFailures(out: string, maxChars = 320): { name: string; messag
           if (l.trim() !== '' && l.length - l.trimStart().length <= indent) break;
           body.push(l.trim());
         }
-        message = body.filter(Boolean).join(' ');
+        value = body.filter(Boolean).join(' ');
       }
-      break;
+      field[e[2]!] = value.replace(/\s+/g, ' ');
     }
-    message = message.replace(/\s+/g, ' ');
-    failures.push({ name, message: message.length > maxChars ? message.slice(0, maxChars - 1) + '…' : message });
+    // An assertion message usually states the requirement. Saying that it "did not hold" keeps an
+    // author from reading the requirement as the complaint.
+    const parts = [field.error ? `this did not hold: "${clip(field.error, 240)}"` : ''];
+    if (field.expected) parts.push(`the check expected: ${clip(field.expected, 120)}`);
+    if (field.actual) parts.push(`it got: ${clip(field.actual, 160)}`);
+    failures.push({ name, message: clip(parts.filter(Boolean).join(' — '), maxChars) });
   }
   return failures;
 }

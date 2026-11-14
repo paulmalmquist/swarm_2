@@ -223,6 +223,40 @@ export class Kernel {
     });
   }
 
+  /**
+   * A person sends failed work back for one more repair, with guidance. Agents cannot do this:
+   * the repair limit is a ceiling for them, and only a human decision lifts it, once.
+   */
+  reviveTask(task_id: string, actor: string, guidance: string): Task {
+    return this.store.db.tx(() => {
+      const task = this.store.tasks.must(task_id);
+      assert(task.status === 'failed', 'bad_transition', `Only failed work can be sent back by a person; ${task.key} is ${task.status}`, { status: task.status });
+      const prior = this.store.getMeta<{ reason: string }>(`task:${task.id}:rework`);
+      task.status = 'ready';
+      task.blocked_reason = null;
+      task.repairs = Math.max(0, this.limits.max_repair_attempts - 1);
+      task.retries = 0;
+      this.store.setMeta(`task:${task.id}:rework`, { reason: truncate(`A person reviewed the failure and gave this guidance: ${guidance}. The last rejection was: ${prior?.reason ?? 'not recorded'}`, 1600), failure_class: 'human_guidance', repairs: task.repairs, at: this.clock.iso() });
+      this.touch(task, this.nextAction(task.owner_id, 'agent', `Repair with guidance: ${task.title}`));
+      // Teams that settled as failed because of this task are working again, with their budgets.
+      let parent = task.parent_task_id ? this.store.tasks.get(task.parent_task_id) : undefined;
+      while (parent) {
+        if (parent.status === 'failed' || parent.status === 'accepted') {
+          const from = parent.status;
+          parent.status = 'active';
+          this.touch(parent, null);
+          this.budget.reopen(parent.budget_account_id);
+          const swarm = parent.swarm_id ? this.store.swarms.get(parent.swarm_id) : undefined;
+          if (swarm && swarm.status !== 'active') this.store.swarms.put({ ...swarm, status: 'active' });
+          this.store.emit({ type: 'task_status_changed', mission_id: parent.mission_id, task_id: parent.id, actor_id: actor, actor_kind: 'human', payload: { key: parent.key, from, to: 'active', reopened_by: task.key } });
+        }
+        parent = parent.parent_task_id ? this.store.tasks.get(parent.parent_task_id) : undefined;
+      }
+      this.store.emit({ type: 'task_revived', mission_id: task.mission_id, task_id, actor_id: actor, actor_kind: 'human', payload: { key: task.key, guidance: truncate(guidance, 400), repairs_left: this.limits.max_repair_attempts - task.repairs }, release_id: task.contract.release_id });
+      return task;
+    });
+  }
+
   /** Whether a submission published a version of every output the contract requires. */
   private deliveredEverything(task: Task, version_ids: string[]): boolean {
     if (task.contract.required_outputs.length === 0) return false;
@@ -1220,6 +1254,12 @@ export class Kernel {
       this.store.setMeta(`task:${task.id}:rework`, { reason: truncate(reason, 1200), failure_class, repairs: task.repairs, at: this.clock.iso() });
       this.observe({ mission_id: task.mission_id, task_id, kind: 'rework', failure_class, certainty: 'verified', details: { reason: truncate(reason, 400), repairs: task.repairs }, component: 'execution', release_id: task.contract.release_id, source: this.sourceOf(task.mission_id) });
       if (task.repairs > this.limits.max_repair_attempts) {
+        // Work that had been accepted and is now failed takes its team with it: the team is no
+        // longer done, so nothing that waits on the team may start.
+        if (task.status === 'accepted') {
+          task.generation += 1;
+          this.reopenAncestors(task);
+        }
         task.status = 'failed';
         this.touch(task, this.nextAction(task.contract.escalation.path[0] ?? 'chief_of_staff', 'agent', `Repair limit reached: ${task.title}`));
         this.budget.close(task.budget_account_id);

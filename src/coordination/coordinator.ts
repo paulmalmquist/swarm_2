@@ -499,16 +499,18 @@ export class Coordinator {
     }
     const failed = tasks.filter((t) => t.status === 'failed');
     if (failed.length) {
-      const f = failed[0]!;
-      if (!store.decisions.first(`"mission_id" = ? AND "kind" = 'failure_escalation' AND "task_id" = ?`, mission_id, f.id)) {
+      // The question is about the work that actually failed, not about the teams that contain it.
+      const f = (failed.filter((t) => t.executor !== 'container')[0] ?? failed[0])!;
+      if (!store.decisions.first(`"mission_id" = ? AND "kind" = 'failure_escalation' AND "task_id" = ? AND "status" IN ('open', 'escalated')`, mission_id, f.id)) {
         comms.openDecision({
           mission_id,
           task_id: f.id,
           kind: 'failure_escalation',
-          question: `"${f.title}" could not be completed within its retry and repair limits. What should happen?`,
+          question: `"${f.title}" could not be completed within its retry and repair limits. Last rejection: ${truncate(store.getMeta<{ reason: string }>(`task:${f.id}:rework`)?.reason ?? 'not recorded', 500)} What should happen?`,
           owner_id: 'chief_of_staff',
           owner_kind: 'chief_of_staff',
           options: [
+            { id: 'retry', label: 'Send it back once more, with your guidance', evidence_ids: [], consequences: ['One more repair attempt, told what you wrote as your rationale', 'Your guidance is recorded as a correction from a person'], proposed_by: 'runtime' },
             { id: 'cancel', label: 'Cancel the mission and keep its artifacts', evidence_ids: [], consequences: ['Remaining reservations are released', 'Completed artifacts stay available'], proposed_by: 'runtime' },
             { id: 'hold', label: 'Hold for a human to investigate', evidence_ids: [], consequences: ['Nothing further runs on this mission'], proposed_by: 'runtime' },
           ],

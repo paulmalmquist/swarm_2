@@ -1,0 +1,32 @@
+{
+  "task": "planning.criteria",
+  "attempt": 1,
+  "summary": "Wrote five executable acceptance criteria (one per stakeholder need plus shared AC-CONTRACT). All four needs are mapped; none deferred. Nothing was run; criteria are unverified definitions.",
+  "criteria_claims": [
+    {
+      "criterion_id": "P-CRITERIA",
+      "claimed": "met",
+      "note": "Checked by inspection of the document I wrote: all four need request_ids appear in needs_map with a criterion; deferred_needs is empty. Nothing was executed."
+    }
+  ],
+  "remaining_uncertainty": [
+    "Whether syn-req-002 stays in this capability or is split out (blocking question open).",
+    "Who owns and approves the threshold policy config.",
+    "Whether datasets have declared contracts or freshness expectations today, and where the freshness signal comes from, so fixtures may need adjusting.",
+    "The 'before every review' trigger is modeled as a non-zero exit code command; the actual enforcement (schedule, gate, or manual) is undecided.",
+    "The SLA targets for NCR tables are not stated, so AC-SLA-QUALITY verifies grouping and unknown handling only.",
+    "Alerting and notification are not covered because no request asks for them."
+  ],
+  "questions": [
+    {
+      "to": "chief_of_staff",
+      "question": "Should syn-req-002 (schema drift) stay in this capability or be split out? If split, AC-SCHEMA-SUPPLY moves to the new capability.",
+      "blocking": true
+    },
+    {
+      "to": "chief_of_staff",
+      "question": "Who owns and approves the threshold and SLA policy configuration?",
+      "blocking": true
+    }
+  ]
+}

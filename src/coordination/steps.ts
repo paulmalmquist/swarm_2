@@ -259,7 +259,12 @@ export class Steps {
       let position = 0;
       for (const key of params.merge_order) {
         const src = store.tasks.first('"mission_id" = ? AND "key" = ?', m.id, key);
-        if (!src || src.status !== 'accepted') throw new SwarmError('integration_input_missing', `workstream ${key} is not accepted`);
+        if (!src || src.status !== 'accepted') {
+          // Not an error and not a retry: integration simply waits until every workstream is accepted.
+          workspaces.resetIntegration(m.id, base_commit);
+          kernel.defer(task.id, task.owner_id, `workstream ${key} is not accepted yet`);
+          return null;
+        }
         const branch = kernel.attemptFor(src.id, src.attempt)?.workspace?.branch;
         if (!branch) throw new SwarmError('integration_input_missing', `workstream ${key} has no branch`);
         const now = store.clock.iso();
