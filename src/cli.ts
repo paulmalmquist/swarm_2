@@ -52,6 +52,8 @@ const HELP = `swarm2 — an organization of agent swarms beneath your chief of s
   priority <mission_id> <n>              change a mission's priority
   cancel <mission_id> --reason "..."     cancel a mission and everything under it
   revise <mission_id> <artifact_key> <file> --reason "..."   apply an upstream change
+  connectors                             what is connected, and what each real integration needs
+  export [--dir D]                       analytical history as newline-delimited JSON
   stop | resume                          kill switch for all coordinators on this home
   serve [--port N] [--run]               review interface and API (--run also runs the coordinator)
   gate <subcommand>                      release gate (see docs/operator-guide.md)
@@ -153,6 +155,20 @@ async function main(): Promise<void> {
         const res = applyUpstreamChange(rt, { command: 'applyUpstreamChange', actor: 'chief_of_staff', key: key('revise'), data: { mission_id: id, key: artifact, content: readFileSync(file, 'utf8'), reason: flag('reason') ?? 'upstream change' } });
         for (const pid of res.pids_to_stop) try { process.kill(pid, 'SIGKILL'); } catch { /* gone */ }
         return print(res);
+      }
+      case 'connectors': {
+        const { connectorStatus } = await import('./connectors/ports.ts');
+        return print(connectorStatus());
+      }
+      case 'export': {
+        const { LocalJsonlWarehouse, exportAnalytics } = await import('./connectors/ports.ts');
+        const { Gate } = await import('./gate/gate.ts');
+        const gate = new Gate(rt);
+        try {
+          return print(exportAnalytics(rt, gate, new LocalJsonlWarehouse(rt, flag('dir'))));
+        } finally {
+          gate.close();
+        }
       }
       case 'stop': {
         writeFileSync(join(rt.paths.home, 'STOP'), `stopped at ${new Date().toISOString()}\n`);

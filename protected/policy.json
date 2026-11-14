@@ -23,7 +23,8 @@
       "holdout_episodes": 8,
       "minimum_samples": 6,
       "primary_metric": "verified_success",
-      "non_inferiority_margin": 0.0
+      "non_inferiority_margin": 0.0,
+      "defect_rate": 0.5
     },
     "evolution": {
       "workload": "improvement-arena",
@@ -76,5 +77,9 @@
     "accept": "Every hard gate PASSED, and the 95% interval of the paired difference in the primary metric against the incumbent lies above zero. A declared simplification is accepted when it is non-inferior within the margin and its cost interval lies below zero.",
     "reject": "Any hard gate FAILED, or the 95% interval of the paired difference lies below zero.",
     "inconclusive": "Anything else, including a hard gate that is REMAINING. Reported as no demonstrated improvement; the candidate and its results are kept."
+  },
+  "exploration": {
+    "budget_units": 250000,
+    "note": "Total experiment units all experiments together may use. An experiment that would exceed it is not opened; raising it is a decision for the chief of staff."
   }
 }

@@ -16,6 +16,7 @@ function out(summary: string, extra: Partial<WorkOutput> = {}): WorkOutput {
 }
 
 interface StoredOutput {
+  questions?: WorkOutput['questions'];
   summary: string;
   criteria_claims: WorkOutput['criteria_claims'];
   remaining_uncertainty: string[];
@@ -221,6 +222,11 @@ export class Steps {
     if (stored?.plan && !store.getMeta<string>(`task:${task.id}:plan_hash`)) {
       materializePlan(kernel, m, stored.plan, task);
       store.setMeta(`task:${task.id}:plan_hash`, hashOf(stored.plan));
+    }
+    // Questions a worker raised are routed to their addressee and stay open until someone answers.
+    if (!store.getMeta<boolean>(`task:${task.id}:questions_routed:g${task.generation}`)) {
+      for (const q of stored?.questions ?? []) comms.post({ mission_id: m.id, task_id: task.id, from_id: task.owner_id, to: q.to, kind: 'question', body: q.question.slice(0, 1500) });
+      store.setMeta(`task:${task.id}:questions_routed:g${task.generation}`, true);
     }
     // Structured handoff to each downstream owner: artifact version, acceptance evidence, what is still uncertain.
     const evidence_ids = store.verifications.where('"task_id" = ? AND "generation" = ?', task.id, task.generation).flatMap((v) => v.evidence_ids);

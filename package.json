@@ -4,7 +4,9 @@
   "private": true,
   "description": "A persistent, coordinated organization of agent swarms with a protected self-improvement loop. Execution and improvement layer beneath an existing chief of staff.",
   "type": "module",
-  "engines": { "node": ">=22.18" },
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/**/*.test.ts\"",
@@ -18,7 +20,8 @@
     "demo:f": "node --disable-warning=ExperimentalWarning demos/run.ts f",
     "demo:g": "node --disable-warning=ExperimentalWarning demos/run.ts g",
     "demo:all": "node --disable-warning=ExperimentalWarning demos/run.ts all",
-    "verify": "npm run typecheck && npm test && npm run demo:all"
+    "verify": "npm run typecheck && npm test && npm run demo:all",
+    "demo:h": "node --disable-warning=ExperimentalWarning demos/run.ts h"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

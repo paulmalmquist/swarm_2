@@ -2,7 +2,7 @@
  * Demonstrations A–G. Each one runs the real runtime against a fresh state directory and writes
  * an evidence bundle built from persisted events and records.
  *
- *   node demos/run.ts a|b|c|d|e|f|g|all
+ *   node demos/run.ts a|b|c|d|e|f|g|h|all
  *
  * Unless SWARM2_LIVE=1 and `--live` are both given, every demonstration uses the DETERMINISTIC
  * FIXTURE PROVIDER on SYNTHETIC data. Injected faults are labeled as such in the event log.
@@ -488,9 +488,44 @@ async function demoG(): Promise<DemoResult> {
   }
 }
 
+// ───────────────────────────── H: targeted comparison against a simpler configuration ─────────────────────────────
+
+async function demoH(): Promise<DemoResult> {
+  const t0 = Date.now();
+  const rep = new Report(join(EVIDENCE, 'demo-h'));
+  const rt = freshHome(home('h'));
+  const gate = new Gate(rt);
+  installArena(gate);
+  try {
+    gate.init();
+    const r = await runExperiment(rt, gate, 'coord-self-verification');
+    const rec = r.receipt;
+    const get = (m: string) => rec.comparisons.find((c) => c.metric === m)!;
+    const correct = get('truly_correct_missions');
+    const escaped = get('escaped_defects_per_mission');
+    const inv = get('worker_invocations_per_mission');
+    const time = get('completion_ms');
+    rep.check('The simpler configuration is a coordination-level candidate with its own version', rec.level === 'coordination' && rec.change.files.some((f) => f.path === 'coordination.json'), `coordination v${rec.parent.version} → candidate: ${rec.change.summary}`);
+    rep.check('Both configurations run the same seeded missions end to end', correct.n === 8, `${correct.n} complete fixture missions per configuration from held-out set ${rec.evaluation.holdout_set}; a defect is injected into a first attempt in about half of them`);
+    rep.check('The simpler configuration really is cheaper and faster', inv.diff_vs_incumbent! < 0 && time.diff_vs_incumbent! < 0, `worker invocations per mission ${inv.incumbent} → ${inv.candidate}; completion ${Math.round(time.incumbent!)} ms → ${Math.round(time.candidate!)} ms`);
+    rep.check('What it gives up is measured by an oracle, not assumed', escaped.candidate !== null, `defects reaching an accepted result per mission ${escaped.incumbent} → ${escaped.candidate}; truly correct missions ${correct.incumbent} → ${correct.candidate} (difference ${correct.diff_vs_incumbent}, 95% interval ${correct.ci95_vs_incumbent![0]} to ${correct.ci95_vs_incumbent![1]})`);
+    rep.check('The decision follows the frozen rule', rec.decision !== 'accept' || escaped.candidate! <= escaped.incumbent!, `${rec.decision}: ${rec.justification}`);
+    saveReceipt(rep, 'self-verification', rec);
+    const snap = JSON.parse(readFileSync(join(rt.paths.protected, 'evaluations', `${r.experiment.id}.json`), 'utf8')) as { snapshot: { incumbent: unknown; candidate: unknown } };
+    rep.file('episodes.json', { note: 'Per-episode results. Injected defects are labeled.', incumbent_independent_verification: snap.snapshot.incumbent, candidate_self_verification: snap.snapshot.candidate });
+    return finish('h', 'Targeted comparison against a simpler configuration', [...FIXTURE_LABELS, 'INJECTED DEFECTS — in about half of the episodes one worker\'s first attempt carries a defect its own tests do not catch', 'The defect rate is an assumption of this testbed. The comparison shows what the verification swarm catches when such defects occur, and what it costs; it does not show how often they occur in real work.'], rep, t0, [
+      'Does the independent verification swarm earn its cost? The question is put to the release gate as a coordination-level simplification: retire the verification swarm and trust delivery\'s own combined tests.',
+      'Each configuration runs the same eight seeded missions on the real runtime. Afterwards an oracle runs the protected acceptance suite on whatever each mission accepted.',
+    ]);
+  } finally {
+    gate.close();
+    rt.close();
+  }
+}
+
 // ───────────────────────────── runner ─────────────────────────────
 
-const DEMOS: Record<string, () => Promise<DemoResult>> = { a: demoA, b: demoB, c: demoC, d: demoD, e: demoE, f: demoF, g: demoG };
+const DEMOS: Record<string, () => Promise<DemoResult>> = { a: demoA, b: demoB, c: demoC, d: demoD, e: demoE, f: demoF, g: demoG, h: demoH };
 
 async function main(): Promise<void> {
   const which = (process.argv[2] ?? 'all').toLowerCase();

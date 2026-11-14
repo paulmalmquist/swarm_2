@@ -223,6 +223,35 @@ export class Kernel {
     });
   }
 
+  /**
+   * How long a mission has actually been running: time spent in `planning` or `active`.
+   * Time spent waiting for a person (blocked, review) does not count. Computed from the event
+   * log, so it survives restarts.
+   */
+  runningMs(mission_id: string): number {
+    const m = this.store.missions.must(mission_id);
+    const running = (s: string): boolean => s === 'planning' || s === 'active';
+    let total = 0;
+    let since: number | null = Date.parse(m.created_at);
+    for (const e of this.store.events({ mission_id, type: 'mission_status_changed', limit: 10_000 })) {
+      const at = Date.parse(e.ts);
+      const to = String(e.payload.to);
+      if (since !== null && !running(to)) {
+        total += at - since;
+        since = null;
+      } else if (since === null && running(to)) {
+        since = at;
+      }
+    }
+    if (since !== null && running(m.status)) total += this.clock.now() - since;
+    return total;
+  }
+
+  /** The wall-clock ceiling for a mission: operator configuration plus any extension a person granted. */
+  wallLimitMs(mission_id: string): number {
+    return this.limits.max_wall_ms + (this.store.getMeta<number>(`mission:${mission_id}:wall_extension_ms`) ?? 0);
+  }
+
   changePriority(cmd: Command<{ mission_id: string; priority: number }>): Mission {
     return this.store.idempotent(cmd.key, 'changePriority', cmd.data, () => {
       const m = this.store.missions.must(cmd.data.mission_id);
@@ -748,7 +777,7 @@ export class Kernel {
             observed_at: this.clock.iso(),
           });
         }
-        this.store.setMeta(`task:${task.id}:output:g${task.generation}`, { summary: output.summary, criteria_claims: output.criteria_claims, remaining_uncertainty: output.remaining_uncertainty, proposals: output.proposals, plan: output.plan ?? null, version_ids, attempt_no: token.attempt });
+        this.store.setMeta(`task:${task.id}:output:g${task.generation}`, { summary: output.summary, criteria_claims: output.criteria_claims, remaining_uncertainty: output.remaining_uncertainty, proposals: output.proposals, questions: output.questions ?? [], plan: output.plan ?? null, version_ids, attempt_no: token.attempt });
 
         if (output.status === 'failed') {
           this.requeueOrFail(task, 'worker_reported_failure', output.summary);

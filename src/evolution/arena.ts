@@ -9,6 +9,7 @@ import { rng, seedFrom } from '../lib/util.ts';
 import { type LabeledCase, type Mutation, type ReviewOutput, clone, generate, str } from '../../fixtures/evolution/review-cases.ts';
 import { HOLDOUT_MUTATIONS, HOLDOUT_WEIGHTS } from '../../protected/cases/review-holdout.ts';
 import { episodeSeeds } from '../../protected/cases/arena-holdout.ts';
+import { evaluateCoordination } from './episodes.ts';
 import { type CaseScore, scoreReview } from '../../protected/checkers/review.ts';
 
 /**
@@ -374,6 +375,8 @@ export async function evaluateEvolution(gate: Gate, exp: Experiment): Promise<Le
   };
 }
 
+/** Install the evaluators for coordination-level and evolution-level candidates. */
 export function installArena(gate: Gate): void {
   gate.evaluators.evolution = evaluateEvolution;
+  gate.evaluators.coordination = evaluateCoordination;
 }

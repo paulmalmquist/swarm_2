@@ -287,9 +287,16 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
           effect = 'correction recorded; mission held for rework';
         }
-      } else if (decision.kind === 'failure_escalation' && decision.chosen === 'cancel') {
-        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after failure: ${cmd.data.rationale}` } });
+      } else if (['failure_escalation', 'limit_reached'].includes(decision.kind) && decision.chosen === 'cancel') {
+        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : 'failure'}: ${cmd.data.rationale}` } });
         effect = 'mission cancelled; artifacts kept';
+      } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
+        // Only a person can extend a ceiling. The extension is one more period of the configured length.
+        const key = `mission:${m.id}:wall_extension_ms`;
+        store.setMeta(key, (store.getMeta<number>(key) ?? 0) + this.rt.limits.max_wall_ms);
+        store.emit({ type: 'limit_extended', mission_id: m.id, actor_id: cmd.actor, actor_kind: 'chief_of_staff', payload: { limit: 'wall_clock', added_ms: this.rt.limits.max_wall_ms, decision_id: decision.id } });
+        kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'time limit extended by the chief of staff' });
+        effect = 'time limit extended by one period; mission resumed';
       }
     }
     return this.env({ decision, effect }, this.sourceOf(decision.mission_id));

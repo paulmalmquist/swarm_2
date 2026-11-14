@@ -89,6 +89,8 @@ export const behaviors: Record<string, Behavior> = {
         ...report.interpretations.map((i) => ({ kind: 'analysis', statement: i, epistemic: 'interpretation' as const, origin: 'agent' as const, refs: [] })),
       ],
       remaining_uncertainty: report.unknowns,
+      // An unknown only a person can settle is asked, not assumed.
+      questions: [{ to: 'chief_of_staff', question: 'Should a stale-data alert page someone, or only appear in the report? No request says.', blocking: false }],
     });
   },
 

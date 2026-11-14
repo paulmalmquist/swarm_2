@@ -457,6 +457,27 @@ export class Coordinator {
       kernel.setMissionStatus(mission_id, 'blocked', 'runtime', { reason: `task ${f.key} failed` });
       return true;
     }
+    // A hard ceiling cannot be extended by an agent: past it, the mission stops for a person.
+    const limit = kernel.wallLimitMs(mission_id);
+    if (kernel.runningMs(mission_id) > limit && tasks.some((t) => !['accepted', 'cancelled', 'not_selected', 'failed'].includes(t.status))) {
+      const minutes = Math.round((limit / 60000) * 10) / 10;
+      comms.openDecision({
+        mission_id,
+        kind: 'limit_reached',
+        question: `"${m.title}" has run past its wall-clock limit of ${minutes} minutes. What should happen?`,
+        owner_id: 'chief_of_staff',
+        owner_kind: 'chief_of_staff',
+        requires_human: true,
+        options: [
+          { id: 'cancel', label: 'Cancel the mission and keep its artifacts', evidence_ids: [], consequences: ['Reservations are released', 'Finished artifacts stay available'], proposed_by: 'runtime' },
+          { id: 'extend', label: 'Allow one more period of the same length', evidence_ids: [], consequences: ['The mission resumes where it stopped', 'Work that was interrupted is retried from its last durable state'], proposed_by: 'runtime' },
+          { id: 'hold', label: 'Hold it for investigation', evidence_ids: [], consequences: ['Nothing further runs on this mission'], proposed_by: 'runtime' },
+        ],
+      });
+      this.stopMissionWorkers(mission_id);
+      kernel.setMissionStatus(mission_id, 'blocked', 'runtime', { reason: 'wall-clock limit reached', limit_ms: limit });
+      return true;
+    }
     const top = tasks.filter((t) => t.parent_task_id === null);
     if (top.length && top.every((t) => t.status === 'accepted') && tasks.every((t) => ['accepted', 'not_selected', 'cancelled'].includes(t.status))) {
       recordOutcome(this.rt, mission_id);
@@ -465,6 +486,12 @@ export class Coordinator {
       return true;
     }
     return false;
+  }
+
+  private stopMissionWorkers(mission_id: string): void {
+    for (const [id, r] of this.running) {
+      if (this.rt.store.tasks.get(r.task_id)?.mission_id === mission_id) this.killAttempt(id, r.handle.pid);
+    }
   }
 
   /** Stop every worker this coordinator started. */

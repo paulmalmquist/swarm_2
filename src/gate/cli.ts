@@ -23,7 +23,7 @@ export async function gateCli(group: string, args: string[], home?: string): Pro
           return print(gate.init());
         case 'status':
           gate.init();
-          return print({ isolation: gate.iso, integrity: gate.integrity(), ledger: gate.verifyLedger(), active_release: rt.registry.active(), releases: rt.registry.list().map((m) => ({ id: m.release_id, status: m.status, basis: m.evidence_basis, execution: m.components.execution.version, coordination: m.components.coordination.version, evolution: m.components.evolution.version })), canaries: gate.canaries.where('1=1') });
+          return print({ isolation: gate.iso, integrity: gate.integrity(), ledger: gate.verifyLedger(), exploration: gate.exploration(), active_release: rt.registry.active(), releases: rt.registry.list().map((m) => ({ id: m.release_id, status: m.status, basis: m.evidence_basis, execution: m.components.execution.version, coordination: m.components.coordination.version, evolution: m.components.evolution.version })), canaries: gate.canaries.where('1=1') });
         case 'experiments':
           return print(gate.experiments.where('1=1').map((e) => ({ id: e.id, level: e.level, title: e.title, stage: e.stage, decision: e.decision, receipt_id: e.receipt_id, release_id: e.release_id, holdout_set: e.protocol?.holdout_set })));
         case 'receipt': {

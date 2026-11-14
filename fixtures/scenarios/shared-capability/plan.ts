@@ -102,14 +102,17 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
 /** Mission coordination's proposal for delivery, verification, knowledge capture and review. */
 export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriterion[]): PlanProposal {
   const shares = policy.budget_shares;
-  return {
+  // Whether a separate swarm verifies the integrated result is a coordination-policy choice,
+  // so it can be changed by a coordination-level candidate and tested.
+  const independent = policy.reviewer_assignment.independent_verification;
+  const plan: PlanProposal = {
     topology: 'hierarchical',
     anchor: 'mission',
     rationale:
       'Two implementation workstreams are independent once the interface is pinned, so they run in parallel under a delivery swarm and meet at one integration task. Verification is a separate swarm so nobody verifies their own work.',
     swarms: [
       { ref: 'delivery', archetype: 'delivery', parent_ref: null, purpose: 'Build the shared dataset-health capability', deliverable: 'An integrated, tested capability on the integration branch', stopping_condition: 'The integrated result is independently accepted, or the reservation is exhausted', budget_share: shares.delivery ?? 0.6, temporary: false, depends_on: ['planning'] },
-      { ref: 'verification', archetype: 'verification', parent_ref: null, purpose: 'Independently verify the integrated result against the acceptance criteria', deliverable: 'A verdict per acceptance criterion with evidence', stopping_condition: 'Every criterion has a verdict for the current result', budget_share: shares.verification ?? 0.8, temporary: false, depends_on: [] },
+      ...(independent ? [{ ref: 'verification', archetype: 'verification' as const, parent_ref: null, purpose: 'Independently verify the integrated result against the acceptance criteria', deliverable: 'A verdict per acceptance criterion with evidence', stopping_condition: 'Every criterion has a verdict for the current result', budget_share: shares.verification ?? 0.8, temporary: false, depends_on: [] }] : []),
       { ref: 'reliability', archetype: 'reliability', parent_ref: null, purpose: 'Preserve what this mission learned with provenance', deliverable: 'Scoped memories and a candidate skill', stopping_condition: 'Knowledge notes are accepted', budget_share: shares.reliability ?? 0.4, temporary: false, depends_on: [] },
     ],
     tasks: [
@@ -135,8 +138,9 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         // The exact workstream commits being integrated are pinned like any other input.
         input_keys: ['code/engine', 'code/report'],
         outputs: [{ key: 'code/integrated', kind: 'code', description: 'The integrated capability' }],
-        acceptance_criteria: criteria,
-        verification: { method: 'executable', independent: true },
+        // Without a verification swarm nobody checks these criteria independently; they stay recorded as unverified.
+        acceptance_criteria: independent ? criteria : criteria.map((c) => ({ ...c, mandatory: false })),
+        verification: { method: 'executable', independent },
         params: {
           merge_order: ['delivery.engine.implement', 'delivery.report.implement'],
           component_tests: { 'delivery.engine.implement': 'test/engine/**/*.test.ts', 'delivery.report.implement': 'test/report/**/*.test.ts' },
@@ -182,7 +186,7 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         executor: 'runtime:review_packet',
         title: 'Prepare the review packet',
         objective: 'Assemble context, exact changes, acceptance evidence, remaining concerns and the decision being requested.',
-        depends_on: ['delivery', 'verification', 'reliability'],
+        depends_on: independent ? ['delivery', 'verification', 'reliability'] : ['delivery', 'reliability'],
         outputs: [
           { key: 'review/packet', kind: 'review_packet', description: 'Review packet (JSON)' },
           { key: 'review/packet.md', kind: 'review_packet', description: 'Review packet (readable)' },
@@ -195,6 +199,8 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
     interface_agreements: [],
     extra_dependencies: [],
   };
+  if (!independent) plan.tasks = plan.tasks.filter((t) => t.ref !== 'verification.acceptance');
+  return plan;
 }
 
 /** The delivery lead's decomposition into two subordinate teams that meet at the pinned interface. */

@@ -12,7 +12,7 @@ import { hashDir } from './registry.ts';
 import { CandidateProcess, detectIsolation } from './sandbox.ts';
 import { type CaseScore, scoreReview } from '../../protected/checkers/review.ts';
 import { HOLDOUT_SETS, freshCases, holdoutCases, requiredStepProbes } from '../../protected/cases/review-holdout.ts';
-import { ARENA_SETS } from '../../protected/cases/arena-holdout.ts';
+import { ARENA_SETS, COORDINATION_SETS } from '../../protected/cases/arena-holdout.ts';
 import type { LabeledCase, ReviewOutput } from '../../fixtures/evolution/review-cases.ts';
 
 export const PROTECTED_SRC = join(REPO_ROOT, 'protected');
@@ -29,6 +29,7 @@ export interface PromotionPolicy {
   };
   forbidden_capabilities: string[];
   holdout: { max_uses_per_lineage: number; max_total_uses_per_set?: number };
+  exploration?: { budget_units: number };
   canary: { max_missions: number; fresh_cases: number; rollback_if: { accuracy_drop_gt: number; escaped_defect_rate_increase_gt: number; acceptance_failures_gt: number } };
   decision_rule: Record<string, string>;
 }
@@ -230,7 +231,7 @@ export class Gate {
     const revised = input.revises_experiment ? this.experiments.must(input.revises_experiment) : null;
     const id = newId('exp');
     const lineage_id = revised?.lineage_id ?? id;
-    const sets = input.level === 'evolution' ? ARENA_SETS : HOLDOUT_SETS;
+    const sets = input.level === 'evolution' ? ARENA_SETS : input.level === 'coordination' ? COORDINATION_SETS : HOLDOUT_SETS;
     const used = this.db.all<{ set_id: string; lineage_id: string }>('SELECT set_id, lineage_id FROM holdout_usage WHERE level = ?', input.level);
     const cap = pol.holdout.max_total_uses_per_set ?? 3;
     // Never a set this lineage has already been scored on, and never one past its total exposure cap.
@@ -241,6 +242,9 @@ export class Gate {
         .sort((a, b) => used.filter((u) => u.set_id === a).length - used.filter((u) => u.set_id === b).length || sets.indexOf(a) - sets.indexOf(b))[0] ?? null;
     const lv = pol.levels[input.level];
     const cases = 'holdout_cases' in lv ? lv.holdout_cases : lv.holdout_episodes;
+    // Exploration is a bounded allocation: improvement work cannot crowd out everything else.
+    const allocation = this.exploration();
+    if (allocation.remaining <= 0) throw new SwarmError('exploration_budget_exhausted', `The exploration allocation of ${allocation.budget} experiment units is used up (${allocation.spent} spent). Raising it is a decision for the chief of staff.`, allocation);
     const now = this.clock.iso();
     const exp: Experiment = {
       id,
@@ -277,6 +281,13 @@ export class Gate {
     }
     this.mirror('experiment_opened', { experiment_id: id, level: exp.level, title: exp.title, holdout_assigned: holdout_set !== null });
     return exp;
+  }
+
+  /** How much of the exploration allocation experiments have used so far. */
+  exploration(): { budget: number; spent: number; remaining: number } {
+    const budget = this.policy().exploration?.budget_units ?? Number.POSITIVE_INFINITY;
+    const spent = this.receipts.where('1=1').reduce((a, r) => a + r.resource_use.experiment_units, 0);
+    return { budget, spent, remaining: budget - spent };
   }
 
   /** Development checks run by the author on cases it is allowed to see. Recorded, never decisive. */
