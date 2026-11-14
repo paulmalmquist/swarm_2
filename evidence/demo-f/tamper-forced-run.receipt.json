@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgxrrm8akd2065ff8",
-  "experiment_id": "exp_0mwgxrreyag77891a3b",
+  "receipt_id": "rcpt_0mwgy7r16ak8f0176fa",
+  "experiment_id": "exp_0mwgy7qtiag8bcb2d59",
   "level": "execution",
   "problem": {
     "statement": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
@@ -37,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:47:06.250Z",
+    "frozen_at": "2026-11-14T21:59:31.974Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:4bdb4423ece645fd02dfbc962866f2bb5d5ddbe4e7d390ab7e336184eb2f2b96"
+      "snapshot:78fd81df16a457d702905892666d2122141718b0720ed3287cec5d07c9e12c5b"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -53,14 +53,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T21:47:06.512Z",
+      "at": "2026-11-14T21:59:32.251Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 241,
-    "wall_ms": 258,
+    "wall_ms": 274,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -157,12 +157,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.15,
-      "incumbent": 0.091,
-      "baseline": 0.108,
-      "diff_vs_incumbent": 0.06,
+      "candidate": 0.14,
+      "incumbent": 0.106,
+      "baseline": 0.112,
+      "diff_vs_incumbent": 0.034,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.042,
+      "diff_vs_baseline": 0.029,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -349,7 +349,7 @@
   "decision": "reject",
   "justification": "Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:47:06.512Z",
+  "decided_at": "2026-11-14T21:59:32.251Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -371,5 +371,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "fb9eb2e525e7cc09a81c6e143c164d4ddec0edad59cb83103e3d3ed76bbf5adb"
+  "receipt_hash": "897c645789c767ec61657697c37239c647fac09ce1e0bb813a0bec774ed47e6b"
 }

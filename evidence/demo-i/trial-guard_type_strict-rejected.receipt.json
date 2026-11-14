@@ -1,13 +1,13 @@
 {
-  "receipt_id": "rcpt_0mwgxuuh83fddbfb628",
-  "experiment_id": "exp_0mwgxuu7g3bd5d60efd",
+  "receipt_id": "rcpt_0mwgyaung3f54d98dc7",
+  "experiment_id": "exp_0mwgyaudg3bf09b6232",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: type_changed (3 verified, 0 unverified reports).",
     "observation_ids": [
-      "obs_0mwgxutio1r27463c61",
-      "obs_0mwgxutip1wb3cd2cb3",
-      "obs_0mwgxutip204e9dcb91"
+      "obs_0mwgyatn91r17432d9d",
+      "obs_0mwgyatn91w77437a5d",
+      "obs_0mwgyatna2076d3de47"
     ],
     "observed_failure_count": 3
   },
@@ -42,10 +42,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:49:29.837Z",
+    "frozen_at": "2026-11-14T22:01:56.549Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:8b027f7a1a9294116d91728082051507a8e2ec63287a424a4033e3b504b5c1ad"
+      "snapshot:23ca19b484dfc6bd4630730b4d707b039aa6bc802ce8d21bda31d2aeb6c91b0b"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -58,21 +58,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T21:49:29.915Z",
+      "at": "2026-11-14T22:01:56.613Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T21:49:30.188Z",
+      "at": "2026-11-14T22:01:56.908Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 273,
+    "wall_ms": 295,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -169,12 +169,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.11,
-      "incumbent": 0.108,
-      "baseline": 0.107,
-      "diff_vs_incumbent": 0.003,
+      "candidate": 0.152,
+      "incumbent": 0.105,
+      "baseline": 0.103,
+      "diff_vs_incumbent": 0.048,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.003,
+      "diff_vs_baseline": 0.049,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -362,7 +362,7 @@
   "decision": "reject",
   "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 13.5%, incumbent 0.0%; allowed margin 5.0%.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:49:30.188Z",
+  "decided_at": "2026-11-14T22:01:56.908Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -378,6 +378,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "12659f24b86ac30023d11aa74678c597324d7591d352000b6258d4722b2a4203",
-  "id": "rcpt_0mwgxuuh83fddbfb628"
+  "receipt_hash": "87e74f926a9d74ef0816268f071d1fe7f6d66611b502e2af376030ee19522e28",
+  "id": "rcpt_0mwgyaung3f54d98dc7"
 }

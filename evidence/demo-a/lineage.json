@@ -1,6 +1,6 @@
 {
   "mission": {
-    "id": "msn_0mwgxr3ik07242382f5",
+    "id": "msn_0mwgy735007c5d8c942",
     "title": "Shared dataset-health capability",
     "status": "review_ready",
     "release_id": "r1",
@@ -10,7 +10,7 @@
     {
       "key": "delivery",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45r2nca85d1ef",
+      "owner_id": "agt_0mwgy73qp2nb5badf15",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -20,7 +20,7 @@
     {
       "key": "delivery.decompose",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45v3585a001e9",
+      "owner_id": "agt_0mwgy73qs353d2d7918",
       "generation": 1,
       "attempts": [
         {
@@ -33,7 +33,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr4bw3zf3ca82ab",
+          "id": "evd_0mwgy73x03zc9ec1ddb",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -55,7 +55,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr4bw3zf3ca82ab"
+            "evd_0mwgy73x03zc9ec1ddb"
           ]
         }
       ]
@@ -63,7 +63,7 @@
     {
       "key": "delivery.engine",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr4bx43893187a3",
+      "owner_id": "agt_0mwgy73x2433f5b44c4",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -73,7 +73,7 @@
     {
       "key": "delivery.engine.implement",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr4bz4fcd42eb00",
+      "owner_id": "agt_0mwgy73x44fd1e6cd3d",
       "generation": 1,
       "attempts": [
         {
@@ -86,7 +86,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr4ro539dfd655c",
+          "id": "evd_0mwgy74c25a8b6ef41f",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -108,7 +108,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr4ro539dfd655c"
+            "evd_0mwgy74c25a8b6ef41f"
           ]
         }
       ]
@@ -116,7 +116,7 @@
     {
       "key": "delivery.integrate",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45x390828bd9d",
+      "owner_id": "agt_0mwgy73qt394944b779",
       "generation": 1,
       "attempts": [
         {
@@ -129,35 +129,35 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr4zj5r476ab4ad",
+          "id": "evd_0mwgy74kn5rfbaa40f8",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "after merging delivery.engine.implement: node --test test/engine/**/*.test.ts: 4 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgxr55f5y9b4b14d7",
+          "id": "evd_0mwgy74qs5y8fe7a27e",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "after merging delivery.report.implement: node --test test/report/**/*.test.ts: 3 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgxr59v63288f0b0c",
+          "id": "evd_0mwgy74wd63bc9a782e",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "combined result: node --test test/**/*.test.ts: 10 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgxr5a667250948a3",
+          "id": "evd_0mwgy74wq67752b720b",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "Combined result passes 10 tests"
         },
         {
-          "id": "evd_0mwgxr5ex6gc2b1cbd1",
+          "id": "evd_0mwgy751u6gdeeb42fe",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -179,7 +179,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr5ex6gc2b1cbd1"
+            "evd_0mwgy751u6gdeeb42fe"
           ]
         },
         {
@@ -188,7 +188,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr5ex6gc2b1cbd1"
+            "evd_0mwgy751u6gdeeb42fe"
           ]
         },
         {
@@ -197,7 +197,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr5ex6gc2b1cbd1"
+            "evd_0mwgy751u6gdeeb42fe"
           ]
         },
         {
@@ -206,7 +206,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr5ex6gc2b1cbd1"
+            "evd_0mwgy751u6gdeeb42fe"
           ]
         },
         {
@@ -215,7 +215,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr5ex6gc2b1cbd1"
+            "evd_0mwgy751u6gdeeb42fe"
           ]
         }
       ]
@@ -223,7 +223,7 @@
     {
       "key": "delivery.report",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr4by49a038160a",
+      "owner_id": "agt_0mwgy73x349d195765d",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -233,7 +233,7 @@
     {
       "key": "delivery.report.implement",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr4bz4j97c23457",
+      "owner_id": "agt_0mwgy73x54j80489e44",
       "generation": 1,
       "attempts": [
         {
@@ -246,7 +246,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr4so5c8c254aaf",
+          "id": "evd_0mwgy74bu5381eb5493",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -268,7 +268,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgxr4so5c8c254aaf"
+            "evd_0mwgy74bu5381eb5493"
           ]
         }
       ]
@@ -276,7 +276,7 @@
     {
       "key": "discovery",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3iy0i9aa4b659",
+      "owner_id": "agt_0mwgy73590i5495d31f",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -286,7 +286,7 @@
     {
       "key": "discovery.analyze",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3j30u8a551378",
+      "owner_id": "agt_0mwgy735c0ub48c56e8",
       "generation": 1,
       "attempts": [
         {
@@ -299,49 +299,49 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr3me041fbc5c36",
+          "id": "evd_0mwgy738u04af7fc7c8",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-001 (Propulsion Test) states: \"Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_t…"
         },
         {
-          "id": "evd_0mwgxr3me05ecec0671",
+          "id": "evd_0mwgy738v05772a7aa7",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-002 (Supply Chain Analytics) states: \"The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check tha…"
         },
         {
-          "id": "evd_0mwgxr3me0670a5da04",
+          "id": "evd_0mwgy738v0624a8209c",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-003 (Manufacturing Quality) states: \"For the weekly ops review I need an SLA report on the freshness of our NCR tables, grouped by owner team. If a dat…"
         },
         {
-          "id": "evd_0mwgxr3me079f9fd3b7",
+          "id": "evd_0mwgy738v079f547cfe",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-004 (Forward Deployed Engineering) states: \"Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresho…"
         },
         {
-          "id": "evd_0mwgxr3me08e673e49d",
+          "id": "evd_0mwgy738v082b9fa4e8",
           "kind": "analysis",
           "epistemic": "interpretation",
           "origin": "agent",
           "statement": "The consolidated requests can be served by one capability. This is an interpretation: lexical overlap nominated it and the stakeholders have not confirmed it."
         },
         {
-          "id": "evd_0mwgxr3n91g66a101ca",
+          "id": "evd_0mwgy73981g35bdc349",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "inspect:overlap_report on discovery/overlap-report: 4 distinct needs recorded for 4 consolidated requests"
         },
         {
-          "id": "evd_0mwgxr3n91j6987a684",
+          "id": "evd_0mwgy73991j89acdad3",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -363,7 +363,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr3n91g66a101ca"
+            "evd_0mwgy73981g35bdc349"
           ]
         },
         {
@@ -372,7 +372,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr3n91j6987a684"
+            "evd_0mwgy73991j89acdad3"
           ]
         }
       ]
@@ -380,7 +380,7 @@
     {
       "key": "planning",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3j10o33fac92b",
+      "owner_id": "agt_0mwgy735b0oc5042941",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -390,7 +390,7 @@
     {
       "key": "planning.contract",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3j40y6373d0d9",
+      "owner_id": "agt_0mwgy735d0y3b50beba",
       "generation": 1,
       "attempts": [
         {
@@ -403,7 +403,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr3zj28710e9451",
+          "id": "evd_0mwgy73kh284500efdc",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -425,7 +425,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr3zj28710e9451"
+            "evd_0mwgy73kh284500efdc"
           ]
         }
       ]
@@ -433,7 +433,7 @@
     {
       "key": "planning.criteria",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3j40y6373d0d9",
+      "owner_id": "agt_0mwgy735d0y3b50beba",
       "generation": 1,
       "attempts": [
         {
@@ -446,7 +446,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr3ui2048c3e141",
+          "id": "evd_0mwgy73fg20cc987618",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -468,7 +468,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr3ui2048c3e141"
+            "evd_0mwgy73fg20cc987618"
           ]
         }
       ]
@@ -476,7 +476,7 @@
     {
       "key": "planning.plan",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr3j815ecf19ac4",
+      "owner_id": "agt_0mwgy735e157141d92a",
       "generation": 1,
       "attempts": [
         {
@@ -489,7 +489,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr45p2j0a3149ee",
+          "id": "evd_0mwgy73qn2jf09483de",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -511,7 +511,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr45p2j0a3149ee"
+            "evd_0mwgy73qn2jf09483de"
           ]
         }
       ]
@@ -519,7 +519,7 @@
     {
       "key": "reliability",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45u2ze32f772e",
+      "owner_id": "agt_0mwgy73qr2zfa0cd2b1",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -529,7 +529,7 @@
     {
       "key": "reliability.knowledge",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45y3hc64b4b95",
+      "owner_id": "agt_0mwgy73qu3hd4d4a069",
       "generation": 1,
       "attempts": [
         {
@@ -542,7 +542,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr5j3762d5dc95d",
+          "id": "evd_0mwgy7576761c3653d3",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -564,7 +564,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgxr5j3762d5dc95d"
+            "evd_0mwgy7576761c3653d3"
           ]
         }
       ]
@@ -572,7 +572,7 @@
     {
       "key": "review.packet",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45z3l10f7c241",
+      "owner_id": "agt_0mwgy73qv3l6b5c0acb",
       "generation": 1,
       "attempts": [
         {
@@ -589,13 +589,13 @@
           "key": "review/packet",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "e66f5aa2ca37828f5a241db69d90b3ce303d9582b831c46c0885e907757bda34"
+          "content_hash": "ae9cafc5411724ce26292e989dea5f7cc6dfec421472e01f9efee72164449b7a"
         },
         {
           "key": "review/packet.md",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "67a8d2190125a1ea784b57c2dcb4d655c971a33cb64678b399ead3b0225ef7c3"
+          "content_hash": "4a2140db1d1573965620e1c70af862b4d716b540f84ca5e82cc5cade6ba8db0d"
         }
       ],
       "verifications": []
@@ -603,7 +603,7 @@
     {
       "key": "verification",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45t2t0a8f38d6",
+      "owner_id": "agt_0mwgy73qq2t5841c011",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -613,7 +613,7 @@
     {
       "key": "verification.acceptance",
       "status": "accepted",
-      "owner_id": "agt_0mwgxr45y3dd7f11252",
+      "owner_id": "agt_0mwgy73qu3de402432c",
       "generation": 1,
       "attempts": [
         {
@@ -626,11 +626,11 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgxr5f06re49b2cf8",
+          "id": "evd_0mwgy751x6ra6254fc2",
           "kind": "verification",
           "epistemic": "observed_fact",
           "origin": "runtime",
-          "statement": "delivery.integrate: 5/5 criteria pass at cc5ccb39ad"
+          "statement": "delivery.integrate: 5/5 criteria pass at 5235328334"
         }
       ],
       "artifacts": [],
@@ -639,7 +639,7 @@
   ],
   "decisions": [
     {
-      "id": "dec_0mwgxr5m07k9b18560c",
+      "id": "dec_0mwgy759x7k23b6d534",
       "kind": "outward_action",
       "status": "open",
       "chosen": null,
@@ -648,8 +648,8 @@
     }
   ],
   "outcome": {
-    "id": "out_0mwgxr5nc7w07a05d4f",
-    "mission_id": "msn_0mwgxr3ik07242382f5",
+    "id": "out_0mwgy75bd7w69f3b9d3",
+    "mission_id": "msn_0mwgy735007c5d8c942",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -735,38 +735,38 @@
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 946
+      "wall_ms": 1028
     },
-    "elapsed_ms": 2762,
-    "critical_path_wait_ms": 118,
+    "elapsed_ms": 2820,
+    "critical_path_wait_ms": 91,
     "messages": 1,
     "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T21:46:38.043Z"
+    "created_at": "2026-11-14T21:59:04.108Z"
   },
   "memories": [
     {
-      "id": "mem_0mwgxr5j57a8ab0e183",
+      "id": "mem_0mwgy75777a411a8096",
       "kind": "fact",
       "certainty": "verified",
       "status": "active"
     },
     {
-      "id": "mem_0mwgxr5j57b3d4266d9",
+      "id": "mem_0mwgy75787b52d8a4d9",
       "kind": "decision",
       "certainty": "verified",
       "status": "active"
     },
     {
-      "id": "mem_0mwgxr5j57c11a790fa",
+      "id": "mem_0mwgy75787ceafcd91d",
       "kind": "procedure",
       "certainty": "untested",
       "status": "active"
     },
     {
-      "id": "mem_0mwgxr5j57de1465b6d",
+      "id": "mem_0mwgy75787dd82c6cc1",
       "kind": "skill_candidate",
       "certainty": "untested",
       "status": "active"

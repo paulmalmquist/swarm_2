@@ -1,5 +1,5 @@
 {
-  "id": "can_0mwgxrsh6bl53a77124",
+  "id": "can_0mwgy7ryxblc01ed745",
   "release_id": "r2",
   "prior_release_id": "r1",
   "scope": {
@@ -9,12 +9,12 @@
   },
   "status": "rolled_back",
   "missions": [
-    "msn_0mwgxrsh7bn1a9cc0fb",
-    "msn_0mwgxrumnjg41d5d8c2"
+    "msn_0mwgy7ryybn5f7e7b69",
+    "msn_0mwgy7u5ojgaf77b2ec"
   ],
   "observations": [
     {
-      "at": "2026-11-14T21:47:10.418Z",
+      "at": "2026-11-14T21:59:36.303Z",
       "metric": "accuracy_drop_vs_approval",
       "value": 0,
       "threshold": 0.05,
@@ -22,7 +22,7 @@
       "injected": false
     },
     {
-      "at": "2026-11-14T21:47:10.418Z",
+      "at": "2026-11-14T21:59:36.303Z",
       "metric": "escaped_defect_rate_increase",
       "value": 0,
       "threshold": 0.02,
@@ -30,7 +30,7 @@
       "injected": false
     },
     {
-      "at": "2026-11-14T21:47:10.418Z",
+      "at": "2026-11-14T21:59:36.303Z",
       "metric": "canary_missions_with_acceptance_failures",
       "value": 0,
       "threshold": 0,
@@ -38,15 +38,15 @@
       "injected": false
     },
     {
-      "at": "2026-11-14T21:47:10.482Z",
+      "at": "2026-11-14T21:59:36.367Z",
       "metric": "accuracy_drop_vs_approval",
-      "value": 0.15,
+      "value": 0.2167,
       "threshold": 0.05,
       "breached": true,
       "injected": true
     },
     {
-      "at": "2026-11-14T21:47:10.482Z",
+      "at": "2026-11-14T21:59:36.367Z",
       "metric": "escaped_defect_rate_increase",
       "value": 0,
       "threshold": 0.02,
@@ -54,7 +54,7 @@
       "injected": true
     },
     {
-      "at": "2026-11-14T21:47:10.482Z",
+      "at": "2026-11-14T21:59:36.367Z",
       "metric": "canary_missions_with_acceptance_failures",
       "value": 0,
       "threshold": 0,
@@ -62,7 +62,7 @@
       "injected": false
     }
   ],
-  "started_at": "2026-11-14T21:47:07.626Z",
-  "ended_at": "2026-11-14T21:47:10.537Z",
-  "reason": "canary breach: accuracy_drop_vs_approval=0.15 (limit 0.05)"
+  "started_at": "2026-11-14T21:59:33.465Z",
+  "ended_at": "2026-11-14T21:59:36.440Z",
+  "reason": "canary breach: accuracy_drop_vs_approval=0.2167 (limit 0.05)"
 }

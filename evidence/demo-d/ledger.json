@@ -3,24 +3,24 @@
     "seq": 1,
     "experiment_id": null,
     "kind": "protected_store_sealed",
-    "at": "2026-11-14T21:46:47.076Z",
+    "at": "2026-11-14T21:59:12.891Z",
     "payload": {
       "digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
       "isolation": "enforced"
     },
-    "hash": "d1979663164bee8a519e9f2d670ac116f94746174151be577929ae235756ff14"
+    "hash": "5058cec19638012f7e1696306f26dab761d3be63c1c588d8fa8484b26273fb72"
   },
   {
     "seq": 2,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "experiment_opened",
-    "at": "2026-11-14T21:46:47.077Z",
+    "at": "2026-11-14T21:59:12.892Z",
     "payload": {
       "level": "evolution",
       "title": "Prioritize improvement work by expected value, pilot before submitting, and stop when nothing is worth its cost",
       "hypothesis": "If the improvement process ranks problems by verified failures times severity per unit of cost, pilots a built fix on observed cases before paying for a held-out evaluation, and stops when no remaining problem is worth its cost, then with the same budget on unseen failure episodes it will deliver more independently validated harm reduction and spend less on experiments that fail.",
-      "lineage_id": "exp_0mwgxrcmc9yb37e9261",
+      "lineage_id": "exp_0mwgy7c3f9yf56f5f4f",
       "revises": null,
       "parent": {
         "component": "evolution",
@@ -29,13 +29,13 @@
       },
       "authorship": null
     },
-    "hash": "fcc3b4371ae4ba21903b7371f41b2679b1a2aaca1ecc11157a4ca831b6bc7a37"
+    "hash": "effa25e673183c04af9b76b58a46f35075d9a0e5ac9e8ce19244b79c37861aa8"
   },
   {
     "seq": 3,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "protocol_frozen",
-    "at": "2026-11-14T21:46:47.077Z",
+    "at": "2026-11-14T21:59:12.892Z",
     "payload": {
       "protocol_id": "promotion-policy@1/evolution",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
@@ -43,18 +43,18 @@
       "holdout_set": "arena-A",
       "workload": "improvement-arena",
       "cases": 60,
-      "frozen_at": "2026-11-14T21:46:47.076Z",
+      "frozen_at": "2026-11-14T21:59:12.891Z",
       "executor": "improvement-arena",
       "budget_units": 2000,
       "note": "frozen before any candidate was submitted"
     },
-    "hash": "f80b1188cf759c3c30d2294840e2c08be6f6ba4b837ec19c029d8f7173adeb01"
+    "hash": "f9234c451ebc905adaa79a2196f421276653256d94201095e6c388ff46be66cb"
   },
   {
     "seq": 4,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "candidate_submitted",
-    "at": "2026-11-14T21:46:47.080Z",
+    "at": "2026-11-14T21:59:12.895Z",
     "payload": {
       "candidate_id": "evo-expected-value",
       "candidate_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363",
@@ -63,13 +63,13 @@
         "policy.mjs"
       ]
     },
-    "hash": "c602cc53e720a745ee3a0fcd3b35b2d86fe601b40988474e58390e7aa39db30f"
+    "hash": "a53e67837c0225d63f71564c76044dba1c648e9a4244e4004fad4f1d125148c0"
   },
   {
     "seq": 5,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "development_attempt",
-    "at": "2026-11-14T21:46:49.373Z",
+    "at": "2026-11-14T21:59:15.210Z",
     "payload": {
       "note": "development episodes run by the policy author",
       "cases": 8,
@@ -77,36 +77,36 @@
       "incumbent_mean_benefit": 174.25,
       "units": 6252
     },
-    "hash": "179f2bec4c4de4acd22904d458524ecea18ab82adcda31ecc71a32b0ef19c6d9"
+    "hash": "5bb4f6091eb55252563e2a45643ae0676b1ff859fdcff1de762f6f91be141440"
   },
   {
     "seq": 6,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "holdout_evaluation",
-    "at": "2026-11-14T21:47:05.893Z",
+    "at": "2026-11-14T21:59:31.611Z",
     "payload": {
       "set": "arena-A",
       "cases": 30,
       "units": 46858,
-      "evaluation_snapshot_hash": "186592970519306336195de0b2604b04c2bbd4a60efc88fb385c242c7b980280",
+      "evaluation_snapshot_hash": "1073fbfc0594a9b1935fe0f4a7a05658f27d1256366b67c6f20733ff1c74c2f4",
       "intact": true
     },
-    "hash": "82fbc558bd0c1601be69a16dff3d4a08a5a25a4d92f012c9d47636f0b6c632a2"
+    "hash": "d845d1a72769c985b85cd31459028909b6d7c61dc93440b6eeee913d7c0ccff7"
   },
   {
     "seq": 7,
-    "experiment_id": "exp_0mwgxrcmc9yb37e9261",
+    "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
     "kind": "decision",
-    "at": "2026-11-14T21:47:05.893Z",
+    "at": "2026-11-14T21:59:31.611Z",
     "payload": {
       "decision": "accept",
       "justification": "Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.",
-      "receipt_id": "rcpt_0mwgxrr50a214aca7bb",
-      "receipt_hash": "c8bce8a276b3235cfe35640cf11c517e91df832bce75ea6321b161bff724943a",
+      "receipt_id": "rcpt_0mwgy7qjea21b75ac1d",
+      "receipt_hash": "b9eaf6143c54857ee4189d80518661085896d4b7c51744b5bfb4f136115bcfe9",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-      "evaluation_snapshot_hash": "186592970519306336195de0b2604b04c2bbd4a60efc88fb385c242c7b980280",
+      "evaluation_snapshot_hash": "1073fbfc0594a9b1935fe0f4a7a05658f27d1256366b67c6f20733ff1c74c2f4",
       "release_id": "r2"
     },
-    "hash": "76f807d162309ac5d589290cad3b3989541f300bed33c240cf5e37fec6499a58"
+    "hash": "c0b9b02b1e6f312a34296570a69bd3693784ea1fddb6afe2f48dedaadcf6257f"
   }
 ]

@@ -27,7 +27,7 @@ Shared capability: A shared, policy-driven dataset-health capability: freshness 
 
 ## Exact changes
 
-Base `7e460e64c9` → head `cc5ccb39ad` on `integration`
+Base `e335748c15` → head `5235328334` on `integration`
 
 - A contracts/health-record.schema.json
 - A src/engine/evaluate.ts
@@ -39,11 +39,11 @@ Base `7e460e64c9` → head `cc5ccb39ad` on `integration`
 
 | Criterion | For | Verdict | Independent | Evidence |
 |---|---|---|---|---|
-| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
-| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
-| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
-| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
-| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
+| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgy751u6gdeeb42fe |
+| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgy751u6gdeeb42fe |
+| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgy751u6gdeeb42fe |
+| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgy751u6gdeeb42fe |
+| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgy751u6gdeeb42fe |
 
 ## Remaining concerns
 
@@ -68,4 +68,4 @@ Approval marks the merge request draft approved. The merge itself stays with the
 - Model calls: 0
 - Tokens: 0
 - Cost: not measured
-- Worker wall time: 927 ms
+- Worker wall time: 1013 ms

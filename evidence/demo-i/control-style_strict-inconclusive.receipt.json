@@ -1,40 +1,40 @@
 {
-  "receipt_id": "rcpt_0mwgxuevc135d70297b",
-  "experiment_id": "exp_0mwgxuenb0za6869778",
+  "receipt_id": "rcpt_0mwgyaebs1382b21708",
+  "experiment_id": "exp_0mwgyae2y0z1c74d2fd",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: style_nit (0 verified, 30 unverified reports).",
     "observation_ids": [
-      "obs_0mwgxueko03a0b3438b",
-      "obs_0mwgxuekp0469f31577",
-      "obs_0mwgxuekp056ce29f8d",
-      "obs_0mwgxuekp0616d06b67",
-      "obs_0mwgxuekp07ad3594ea",
-      "obs_0mwgxuekp08b69c1332",
-      "obs_0mwgxuekp0916799465",
-      "obs_0mwgxuekp0a7080f72d",
-      "obs_0mwgxuekp0b43551b33",
-      "obs_0mwgxuekp0c40fa3f00",
-      "obs_0mwgxuekp0d1c3df7e0",
-      "obs_0mwgxuekp0e02a56c81",
-      "obs_0mwgxuekp0f18e2cd6f",
-      "obs_0mwgxuekp0g38785949",
-      "obs_0mwgxuekp0h7b78bf56",
-      "obs_0mwgxuekp0if6c61718",
-      "obs_0mwgxuekp0j8c23676f",
-      "obs_0mwgxuekp0kbeed1063",
-      "obs_0mwgxuekq0ld3c52710",
-      "obs_0mwgxuekq0m7da8d51d",
-      "obs_0mwgxuekq0n37aaa358",
-      "obs_0mwgxuekq0ocd3d5e0f",
-      "obs_0mwgxuekq0pf4bfb032",
-      "obs_0mwgxuekq0qa08c8ed4",
-      "obs_0mwgxuekq0raceca8f3",
-      "obs_0mwgxuekq0s34f85e4e",
-      "obs_0mwgxuekq0tcfa4667a",
-      "obs_0mwgxuekq0u0f377802",
-      "obs_0mwgxuekq0vfcb770b3",
-      "obs_0mwgxuekq0wd2194990"
+      "obs_0mwgyadz6030b3e8866",
+      "obs_0mwgyadz604025a17c3",
+      "obs_0mwgyadz605b715ea2a",
+      "obs_0mwgyadz6062dc21f2c",
+      "obs_0mwgyadz607b90b90b4",
+      "obs_0mwgyadz60835bed8f0",
+      "obs_0mwgyadz60981e872e0",
+      "obs_0mwgyadz60aa7e27f15",
+      "obs_0mwgyadz70b583cf9ab",
+      "obs_0mwgyadz70cf33ebd3c",
+      "obs_0mwgyadz70d2937d6fc",
+      "obs_0mwgyadz70e530fce06",
+      "obs_0mwgyadz70fa39f3edc",
+      "obs_0mwgyadz70g525490bc",
+      "obs_0mwgyadz70he4b1d80d",
+      "obs_0mwgyadz70ia46d4364",
+      "obs_0mwgyadz70j2590a920",
+      "obs_0mwgyadz70kcd053092",
+      "obs_0mwgyadz70l1b13b64f",
+      "obs_0mwgyadz70m751a0757",
+      "obs_0mwgyadz80n8b83ceab",
+      "obs_0mwgyadz80o7eee2818",
+      "obs_0mwgyadz80p0f0126d6",
+      "obs_0mwgyadz80qfab9e73d",
+      "obs_0mwgyadz80r137564a5",
+      "obs_0mwgyadz80sda7d0515",
+      "obs_0mwgyadz80t112144a1",
+      "obs_0mwgyadz80u30462fdd",
+      "obs_0mwgyadz80v861f8544",
+      "obs_0mwgyadz80w9c7050b2"
     ],
     "observed_failure_count": 30
   },
@@ -69,10 +69,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:49:09.671Z",
+    "frozen_at": "2026-11-14T22:01:35.434Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:277c61f70e292a0fa4f4296f8db7e7d679d7025b2a4abf74a5bdccafdd53b188"
+      "snapshot:fb0655e3e2ce51370ac2da804e68c39afa17fd9bbf9bfaa6168b2956e8b60c94"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -85,21 +85,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T21:49:09.720Z",
+      "at": "2026-11-14T22:01:35.487Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T21:49:09.960Z",
+      "at": "2026-11-14T22:01:35.753Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 240,
+    "wall_ms": 266,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -196,12 +196,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.133,
-      "incumbent": 0.097,
-      "baseline": 0.087,
-      "diff_vs_incumbent": 0.035,
+      "candidate": 0.135,
+      "incumbent": 0.117,
+      "baseline": 0.122,
+      "diff_vs_incumbent": 0.017,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.045,
+      "diff_vs_baseline": 0.013,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -388,7 +388,7 @@
   "decision": "inconclusive",
   "justification": "No demonstrated improvement: the 95% interval of the difference in accuracy (0 to 0) includes zero.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:49:09.960Z",
+  "decided_at": "2026-11-14T22:01:35.753Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -404,6 +404,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "f3facfe72ea6e6dcaeeb6c573883021b5772e983f419699de52b020cf422b320",
-  "id": "rcpt_0mwgxuevc135d70297b"
+  "receipt_hash": "2831010189210018160b9c54c2a9bf2afc0b6defebcba506ca2f3df6abb7f441",
+  "id": "rcpt_0mwgyaebs1382b21708"
 }

@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-11-14T21:49:30.273Z",
+  "ran_at": "2026-11-14T22:01:56.989Z",
   "provider": "fixture",
   "results": [
     {
@@ -8,7 +8,7 @@
       "ok": true,
       "checks": 14,
       "held": 14,
-      "ms": 3041,
+      "ms": 3046,
       "labels": [
         "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
         "SYNTHETIC DATA — every request, team, dataset and value is invented"
@@ -20,7 +20,7 @@
       "ok": true,
       "checks": 9,
       "held": 9,
-      "ms": 7902,
+      "ms": 7777,
       "labels": [
         "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
         "SYNTHETIC DATA — every request, team, dataset and value is invented",
@@ -34,7 +34,7 @@
       "ok": true,
       "checks": 9,
       "held": 9,
-      "ms": 949,
+      "ms": 840,
       "labels": [
         "DETERMINISTIC FIXTURE EVALUATION — executable validators on synthetic change-review cases; no model was run",
         "ISOLATION MODE: enforced",
@@ -47,7 +47,7 @@
       "ok": true,
       "checks": 6,
       "held": 6,
-      "ms": 18843,
+      "ms": 18745,
       "labels": [
         "SIMULATION — a synthetic improvement arena; policies and fixes are real executable code, the failure distribution is invented",
         "Both policies and the arena were written by the same author. The result describes this testbed."
@@ -59,7 +59,7 @@
       "ok": true,
       "checks": 5,
       "held": 5,
-      "ms": 312,
+      "ms": 317,
       "labels": [
         "DETERMINISTIC FIXTURE EVALUATION — executable validators on synthetic cases; no model was run"
       ]
@@ -70,7 +70,7 @@
       "ok": true,
       "checks": 7,
       "held": 7,
-      "ms": 678,
+      "ms": 682,
       "labels": [
         "INJECTED FAULT — an adversarial candidate fixture",
         "ISOLATION MODE ON THIS HOST: enforced"
@@ -82,7 +82,7 @@
       "ok": true,
       "checks": 8,
       "held": 8,
-      "ms": 3633,
+      "ms": 3807,
       "labels": [
         "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
         "SYNTHETIC DATA — every request, team, dataset and value is invented",
@@ -95,7 +95,7 @@
       "ok": true,
       "checks": 9,
       "held": 9,
-      "ms": 118919,
+      "ms": 118710,
       "labels": [
         "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
         "SYNTHETIC DATA — every request, team, dataset and value is invented",
@@ -109,7 +109,7 @@
       "ok": true,
       "checks": 9,
       "held": 9,
-      "ms": 20755,
+      "ms": 21784,
       "labels": [
         "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
         "SYNTHETIC DATA — every request, team, dataset and value is invented",

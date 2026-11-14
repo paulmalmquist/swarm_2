@@ -17,7 +17,7 @@ Units that did not end in an accepted change — control: 301 on experiments not
 | The organization keeps a portfolio of hypotheses built from its own recorded observations | 13 verified review failures in 5 classes, plus 30 unverified reports of one complaint; 8 hypotheses | held |
 | The policy of the release in force decides each step, inside a bounded budget | r1's policy (frequency-first) took 8 decisions and used 712 of 900 units | held |
 | The replacement policy first has to pass the release gate | accept: Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed. | held |
-| During the canary the new policy decides, and the default has not changed | 7 decisions under canary can_0mwgxuthc1paa2e14aa; active release still r1 | held |
+| During the canary the new policy decides, and the default has not changed | 7 decisions under canary can_0mwgyatlu1p31873030; active release still r1 | held |
 | Replacing the policy changes what the organization works on | frequency-first began with style_strict; expected-value began with guard_removed_toplevel and piloted 2 times before submitting | held |
 | Every submission from either policy was decided by the same release gate | control: 1 accepted, style_strict (inconclusive) not accepted; trial: 1 accepted, guard_type_strict (rejected) not accepted | held |
 | Each approach that did not pass is recorded so it is not repeated blindly | [suspected] Adding the style_strict check to change review (built on r1) was inconclusive at the release gate: No demonstr… \| [verified] Adding the guard_type_strict check to change review (built on r1) was rejected at the release gate: Rejected: … | held |
@@ -26,4 +26,4 @@ Units that did not end in an accepted change — control: 301 on experiments not
 
 Files in this folder: `portfolio-control.json`, `portfolio-trial.json`, `comparison.json`, `expected-value-policy.receipt.json`, `expected-value-policy.receipt.md`, `control-guard_removed_toplevel-accepted.receipt.json`, `control-guard_removed_toplevel-accepted.receipt.md`, `control-style_strict-inconclusive.receipt.json`, `control-style_strict-inconclusive.receipt.md`, `trial-guard_removed_toplevel-accepted.receipt.json`, `trial-guard_removed_toplevel-accepted.receipt.md`, `trial-guard_type_strict-rejected.receipt.json`, `trial-guard_type_strict-rejected.receipt.md`.
 
-Reproduce with `npm run demo:i`. Run time 20755 ms.
+Reproduce with `npm run demo:i`. Run time 21784 ms.

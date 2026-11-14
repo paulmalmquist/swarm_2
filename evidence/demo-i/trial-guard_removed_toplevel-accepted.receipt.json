@@ -1,17 +1,17 @@
 {
-  "receipt_id": "rcpt_0mwgxutzg367676591f",
-  "experiment_id": "exp_0mwgxutqf32631bcff5",
+  "receipt_id": "rcpt_0mwgyau673619ba7693",
+  "experiment_id": "exp_0mwgyatvy325262e991",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).",
     "observation_ids": [
-      "obs_0mwgxutip1s6b4e315d",
-      "obs_0mwgxutip1t647648ad",
-      "obs_0mwgxutip1v6bdb05a3",
-      "obs_0mwgxutip1z0cc56b28",
-      "obs_0mwgxutip21bc31c93a",
-      "obs_0mwgxutip22492171f2",
-      "obs_0mwgxutip2371b01bc3"
+      "obs_0mwgyatn91sa9a34d6b",
+      "obs_0mwgyatn91t00394808",
+      "obs_0mwgyatn91vcf7bd243",
+      "obs_0mwgyatna1z74c27d10",
+      "obs_0mwgyatna21fde23199",
+      "obs_0mwgyatna22d11b411d",
+      "obs_0mwgyatna23b0afecce"
     ],
     "observed_failure_count": 7
   },
@@ -46,10 +46,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:49:29.224Z",
+    "frozen_at": "2026-11-14T22:01:55.918Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:0f42b4b0002eb50f1419087538d133613a19fbe88961c2ebc54c78c5fad132e0"
+      "snapshot:bb4e984503602e820cc11501c365c886ad3d8f630f51c95d2d6a9f71706ee080"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -62,21 +62,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T21:49:29.274Z",
+      "at": "2026-11-14T22:01:55.975Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T21:49:29.549Z",
+      "at": "2026-11-14T22:01:56.287Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 275,
+    "wall_ms": 312,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -173,12 +173,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.121,
-      "incumbent": 0.1,
-      "baseline": 0.107,
-      "diff_vs_incumbent": 0.021,
+      "candidate": 0.178,
+      "incumbent": 0.136,
+      "baseline": 0.114,
+      "diff_vs_incumbent": 0.042,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.013,
+      "diff_vs_baseline": 0.064,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -365,7 +365,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.1625 against the incumbent (95% interval 0.0875 to 0.25) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:49:29.549Z",
+  "decided_at": "2026-11-14T22:01:56.287Z",
   "release_manifest": {
     "release_id": "r3",
     "parent_release_id": "r1",
@@ -384,13 +384,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "0f42b4b0002eb50f1419087538d133613a19fbe88961c2ebc54c78c5fad132e0",
-    "receipt_id": "rcpt_0mwgxutzg367676591f",
+    "evaluation_snapshot_hash": "bb4e984503602e820cc11501c365c886ad3d8f630f51c95d2d6a9f71706ee080",
+    "receipt_id": "rcpt_0mwgyau673619ba7693",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T21:49:29.548Z",
-    "manifest_hash": "6961cee327a9ec669b8a42443d5936dd338c93b4d0a54dd84edc8826d4ef96cf"
+    "created_at": "2026-11-14T22:01:56.287Z",
+    "manifest_hash": "010cf2f16ed35e4a87c31078f505d6419b023e526ba0746554a468c6004228a3"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -406,6 +406,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "a41d925f3121f3624c0dd31570d03a781f4b9eb0ac965a0514553fe51265e85a",
-  "id": "rcpt_0mwgxutzg367676591f"
+  "receipt_hash": "b1d39c3c1f12b1b7766445c82a7d4e9f16c32885d4236f563c9eee1b3f3116c9",
+  "id": "rcpt_0mwgyau673619ba7693"
 }

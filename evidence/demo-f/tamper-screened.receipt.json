@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgxrrexaec49890f0",
-  "experiment_id": "exp_0mwgxrretaa6dcac340",
+  "receipt_id": "rcpt_0mwgy7qthae74045c9c",
+  "experiment_id": "exp_0mwgy7qtdaae95754d6",
   "level": "execution",
   "problem": {
     "statement": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
@@ -37,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:47:06.245Z",
+    "frozen_at": "2026-11-14T21:59:31.970Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:ed823be0dec0ffb50e5bb354202703e2bc5fbb8dada6c5abd2b97e486c0ed249"
+      "snapshot:e7923858efefe88644bbcd7614817c983427c0afb30caf26d83096964971509b"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -53,7 +53,7 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T21:47:06.249Z",
+      "at": "2026-11-14T21:59:31.973Z",
       "cases": 0,
       "note": "candidate was not executed on held-out cases"
     }
@@ -202,7 +202,7 @@
   "decision": "reject",
   "justification": "Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:47:06.249Z",
+  "decided_at": "2026-11-14T21:59:31.973Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -218,5 +218,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "d1d01746bcad874c0d7a105f1939beedd23c7b9181c7b7d325c416ae03a5fd1c"
+  "receipt_hash": "5e1629c2984589dd1866c422531ddec506902ce98d4e169fdec8bf21ec56f413"
 }

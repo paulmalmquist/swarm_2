@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgxuei2zn99fe2ce6",
-  "experiment_id": "exp_0mwgxt2r77h3ef7ae9a",
+  "receipt_id": "rcpt_0mwgyadvrzn94eab953",
+  "experiment_id": "exp_0mwgy923r7h5800f308",
   "level": "coordination",
   "problem": {
     "statement": "Every mission with two workstreams spends a planning step agreeing a versioned interface before delivery starts. Integration is verified afterwards in any case.",
@@ -33,10 +33,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/coordination",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T21:48:07.604Z",
+    "frozen_at": "2026-11-14T22:00:33.255Z",
     "workload_refs": [
       "mission-episodes:missions-B",
-      "snapshot:3b04e986594ac4a84092c16a34ba44d2b4c354ffd384f19de2d1259da1ced30e"
+      "snapshot:d04f53cb95395339c641ccde4aa3983d393e3624904b413912dc48e676bb8332"
     ],
     "holdout_set": "missions-B",
     "executor": "mission-episodes",
@@ -49,14 +49,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T21:49:09.482Z",
+      "at": "2026-11-14T22:01:35.175Z",
       "cases": 8,
       "note": "one evaluation on missions-B"
     }
   ],
   "resource_use": {
     "experiment_units": 190,
-    "wall_ms": 61876,
+    "wall_ms": 61917,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -125,18 +125,18 @@
       "metric": "completion_ms",
       "unit": "milliseconds from start to a reviewable result",
       "higher_is_better": false,
-      "candidate": 3808.125,
-      "incumbent": 3407.25,
-      "baseline": 3407.25,
-      "diff_vs_incumbent": 400.875,
+      "candidate": 3820,
+      "incumbent": 3376.625,
+      "baseline": 3376.625,
+      "diff_vs_incumbent": 443.375,
       "ci95_vs_incumbent": [
-        17.25,
-        747.625
+        26.375,
+        826.5
       ],
-      "diff_vs_baseline": 400.875,
+      "diff_vs_baseline": 443.375,
       "ci95_vs_baseline": [
-        17.25,
-        747.625
+        26.375,
+        826.5
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 5 better, 3 worse, 0 same, p=0.72656"
@@ -309,7 +309,7 @@
   "decision": "inconclusive",
   "justification": "No demonstrated improvement: truly_correct_missions is no worse (95% interval 0 to 0, margin 0), but cost did not fall (worker_invocations_per_mission changed by 0.25), so the simplification saves nothing.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T21:49:09.482Z",
+  "decided_at": "2026-11-14T22:01:35.175Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -325,5 +325,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "d17a4690f442af326f130591928b2a7742396b9d99986be29bf42fd6ce299226"
+  "receipt_hash": "9fde0ac1fc9b45b65b2c807eaa4809e51dad933960e885e5a90a0e1f51b07fe0"
 }
