@@ -23,7 +23,7 @@ test('an external effect with an uncertain outcome is reconciled before any retr
     const lines = readFileSync(join(wh.dir, 't.jsonl'), 'utf8').trim().split('\n');
     assert.equal(lines.length, 2, 'the retry found the load had landed and did not repeat it');
     assert.equal(rt.store.effects.first('"idempotency_key" = ?', 'load-1')!.attempts, 1);
-    assert.equal(rt.store.events({ type: 'external_effect_reconciled' })[0]!.payload.found, 'applied');
+    assert.equal(rt.store.events({ type: 'external_effect_reconciled' }).at(-1)!.payload.found, 'applied');
     wh.load('t', rows, 'load-1');
     assert.equal(readFileSync(join(wh.dir, 't.jsonl'), 'utf8').trim().split('\n').length, 2, 'a confirmed effect is never repeated');
   } finally {
@@ -50,8 +50,10 @@ test('connectors report honestly what is connected, and history exports for anal
     assert.equal(out.tables.missions, 1);
     assert.ok(out.tables.tasks! >= 18 && out.tables.attempts! >= 10 && out.tables.verifications! >= 10);
     assert.ok(existsSync(out.schema_path));
-    const outcome = JSON.parse(readFileSync(join(wh.dir, 'outcomes.jsonl'), 'utf8').trim().split('\n')[0]!) as { verified_success: boolean; escaped_defects: number | null };
-    assert.equal(outcome.verified_success, true);
+    const outcome = JSON.parse(readFileSync(join(wh.dir, 'outcomes.jsonl'), 'utf8').trim().split('\n')[0]!) as { verified_success: boolean; technical_success: boolean; human_acceptance: string; escaped_defects: number | null };
+    assert.equal(outcome.technical_success, true);
+    assert.equal(outcome.verified_success, false);
+    assert.equal(outcome.human_acceptance, 'pending');
     assert.equal(outcome.escaped_defects, null, 'unmeasured values are exported as null');
     const again = exportAnalytics(rt, gate, wh);
     assert.deepEqual(again.tables, out.tables);

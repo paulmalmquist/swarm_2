@@ -1,5 +1,8 @@
 # Chief-of-staff handoff
 
+**Updated after PR #1 merged:** see [hardening.md](hardening.md) for current boundaries and
+[the architecture diagram](architecture-overview.svg). Live evidence below predates the hardening.
+
 For the chief of staff, and for Paul reading over its shoulder. Five questions, answered from what
 exists on 2026-11-14. Detail and every figure's source are in [evidence-report.md](evidence-report.md).
 
@@ -68,14 +71,14 @@ are listed in the report with what was changed. Three things worth knowing befor
 
 1. Acceptance tests in the scenario are pre-written. One of them demands something no requirement
    states, and that cost a live mission its repair limit. In real use, someone has to own the tests.
-2. Model workers are confined by the worker harness's file rules, not by the operating system.
-   That was verified by probe, and every refused action is recorded, but it is a weaker boundary.
-3. Held-out cases live in this repository. They are held out from candidate authors only as long
-   as those authors work inside the harness.
+2. Model workers now return file proposals with tools disabled. Generated code runs in Linux
+   namespaces without host state or network. The revised live protocol still needs a live smoke test.
+3. Held-out cases live in this repository. Runtime sandboxes do not mount them, but independent
+   authors with repository access can read them; external evaluation custody remains necessary.
 
 ## How do I run it, inspect it, and stop it?
 
-From the repository root, with Node 22.18 or later and nothing to install:
+From the repository root, with the Linux isolation prerequisites in [hardening.md](hardening.md):
 
 | To | Run |
 |---|---|
@@ -97,10 +100,9 @@ Stopping loses nothing: the next run resumes from stored state.
 
 1. **Whether to connect it, and to what first.** Paul OS is the natural first connection: it
    submits missions and shows what `attention` returns. The requirement is in `integration.md`.
-2. **A separate credential for model workers**, so their isolation is enforced by the operating
-   system and not only by the harness.
+2. **A dedicated executor for production** with aggregate resource quotas and scoped provider credentials.
 3. **Who owns acceptance tests** in real missions.
 4. **The promotion rules.** The thresholds in `protected/policy.json` are first settings.
    Changing them is your decision; no experiment can.
 
-The pull request is a draft. Nothing has been merged.
+PR #1 was merged. The subsequent hardening is tracked separately from the original live evidence.

@@ -1,3 +1,4 @@
+import { completeFixtureCanary } from './lib.ts';
 /**
  * Demonstrations A–G. Each one runs the real runtime against a fresh state directory and writes
  * an evidence bundle built from persisted events and records.
@@ -275,6 +276,7 @@ async function demoC(): Promise<DemoResult> {
     rep.check('Acceptance creates a release manifest but does not make it the default', rel.status === 'canary' && rt.registry.active() === 'r1' && rel.components.execution.version === 2 && rel.components.coordination.version === 1, `${rel.release_id}: execution v${rel.components.execution.version}, coordination v${rel.components.coordination.version}, evolution v${rel.components.evolution.version}; rollback target ${rel.rollback_target}; active release still ${rt.registry.active()}`);
 
     const canary = gate.startCanary(rel.release_id, { max_missions: 2 });
+    await completeFixtureCanary(rt, gate, canary.id);
     const observed = await gate.observeCanary(canary.id);
     rep.check('The qualified release is monitored in a bounded canary on fresh cases', observed.status === 'running' && observed.observations.every((o) => !o.breached), observed.observations.map((o) => `${o.metric}=${o.value ?? '—'} (limit ${o.threshold})`).join('; '));
     const retained = gate.retain(canary.id);

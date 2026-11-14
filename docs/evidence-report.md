@@ -1,5 +1,8 @@
 # Evidence report
 
+**Historical evidence:** these live and fixture receipts precede the hardening in
+[hardening.md](hardening.md). They do not validate the new tool-free worker protocol or stronger canary rules.
+
 What was built, what ran, what improved, what failed and what remains unverified.
 Recorded 2026-11-14. Every figure below comes from a file under `evidence/` or from the test
 suite, and can be reproduced with the commands in the last section.

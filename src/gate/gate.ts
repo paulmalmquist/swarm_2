@@ -1,3 +1,4 @@
+import { rejectLinks, validateExecutionScope } from './scope.ts';
 import { chmodSync, cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { REPO_ROOT } from '../config.ts';
@@ -318,10 +319,12 @@ export class Gate {
     if (exp.candidate) throw new SwarmError('candidate_already_submitted', `Experiment ${experiment_id} already has a candidate; a revision is a new experiment`);
     if (built.spec.level !== exp.level) throw new SwarmError('level_mismatch', `Experiment is ${exp.level}; candidate is ${built.spec.level}`);
     if (built.parent_hash !== exp.parent.content_hash) throw new SwarmError('stale_parent', 'The candidate was built from a different parent version than the one this experiment froze');
+    rejectLinks(built.dir);
     const dest = join(this.rt.paths.candidates, experiment_id, 'ingested');
     rmSync(dest, { recursive: true, force: true });
     mkdirSync(dest, { recursive: true });
     cpSync(built.dir, dest, { recursive: true });
+    rejectLinks(dest);
     const lock = (d: string): void => {
       chmodSync(d, 0o755);
       for (const n of readdirSync(d)) {
@@ -333,6 +336,7 @@ export class Gate {
     lock(join(this.rt.paths.candidates, experiment_id));
     const candidate_hash = hashDir(dest);
     if (candidate_hash !== built.content_hash) throw new SwarmError('candidate_changed', 'The bundle changed while it was being submitted');
+    if (exp.level === 'execution') validateExecutionScope(this.rt.registry.componentDir(exp.level, exp.parent.version), dest, Object.keys(this.policy().levels.execution.required_steps)[0]!);
     const next: Experiment = { ...exp, stage: 'candidate_built', candidate: { candidate_id: built.spec.candidate_id, ingested_dir: dest, candidate_hash, files: built.files, summary: built.spec.change_summary }, updated_at: this.clock.iso() };
     this.experiments.put(next);
     this.append(experiment_id, 'candidate_submitted', { candidate_id: built.spec.candidate_id, candidate_hash, files: built.files.map((f) => f.path) });
@@ -688,6 +692,7 @@ export class Gate {
       this.append(this.experiments.first('"release_id" = ?', release_id)?.id ?? null, 'canary_refused_stale_parent', { release_id, qualified_against: m.parent_release_id, active });
       throw new SwarmError('stale_parent', `Release ${release_id} was qualified against ${m.parent_release_id}, but ${active} is now active. Rebuild the candidate on ${active} and evaluate it again.`, { release_id, qualified_against: m.parent_release_id, active });
     }
+    if (!Number.isInteger(scope.max_missions ?? this.policy().canary.max_missions) || (scope.max_missions ?? this.policy().canary.max_missions) < (this.experiments.first('"release_id" = ?', release_id)?.level === 'evolution' ? 0 : 1) || (scope.max_missions ?? this.policy().canary.max_missions) > this.policy().canary.max_missions) throw new SwarmError('invalid_canary_scope', 'Canary size must be within the protected mission limit');
     const c: CanaryRecord = { id: newId('can'), release_id, prior_release_id: m.rollback_target ?? this.rt.registry.active(), scope: { max_missions: scope.max_missions ?? this.policy().canary.max_missions, data_class: 'synthetic', scenario: scope.scenario ?? null }, status: 'running', missions: [], observations: [], started_at: this.clock.iso(), ended_at: null, reason: null };
     this.canaries.put(c);
     const exp = this.experiments.first('"release_id" = ?', release_id);
@@ -745,14 +750,21 @@ export class Gate {
       observations.push({ at, metric: 'decisions_made_under_canary', value: steps.length, threshold: 1, breached: false, injected: false });
       observations.push({ at, metric: 'policy_actions_refused', value: refused, threshold: limit, breached: refused > limit, injected: false });
     }
+    // Model/evaluator work awaited above; preserve missions pinned during that wait.
+    c = this.canaries.must(canary_id);
+    if (c.status !== 'running') return c;
     const failures = c.missions.filter((id) => this.rt.store.observations.where('"mission_id" = ?', id).some((o) => o.kind === 'acceptance_failure' || o.kind === 'execution_failure' || o.kind === 'escaped_defect')).length;
     observations.push({ at, metric: 'canary_missions_with_acceptance_failures', value: c.missions.length ? failures : null, threshold: pol.canary.rollback_if.acceptance_failures_gt, breached: failures > pol.canary.rollback_if.acceptance_failures_gt, injected: false });
-    c = { ...c, observations: [...c.observations, ...observations] };
+    c = { ...c, observed_mission_state: this.canaryMissionState(c), observations: [...c.observations, ...observations] };
     this.canaries.put(c);
     this.append(exp?.id ?? null, 'canary_observation', { canary_id, observations, injected_regression: opts.inject_regression ?? null });
     this.mirror('canary_observed', { canary_id, release_id: c.release_id, breached: observations.filter((o) => o.breached).map((o) => o.metric), injected: Boolean(opts.inject_regression) });
     if (observations.some((o) => o.breached)) return this.rollback(canary_id, `canary breach: ${observations.filter((o) => o.breached).map((o) => `${o.metric}=${o.value} (limit ${o.threshold})`).join(', ')}`);
     return c;
+  }
+
+  private canaryMissionState(c: CanaryRecord): string {
+    return hashOf(c.missions.map((id) => ({ mission: this.rt.store.missions.must(id), outcome: this.rt.store.outcomes.first('"mission_id" = ? AND "task_id" IS NULL', id) ?? null })));
   }
 
   /** Retain: the canary release becomes the default for future missions. Running missions keep their release. */
@@ -762,7 +774,15 @@ export class Gate {
     if (c.observations.length === 0) throw new SwarmError('not_observed', 'A canary cannot be retained before it has been observed');
     const decided = c.observations.filter((o) => o.metric === 'decisions_made_under_canary').at(-1);
     if (decided && Number(decided.value ?? 0) < 1) throw new SwarmError('not_observed', 'This release changes the improvement policy, and the policy has not made a decision under the canary yet');
+    const expForCanary = this.experiments.first('"release_id" = ?', c.release_id);
+    if (expForCanary?.level !== 'evolution') {
+      const outcomes = c.missions.map((id) => this.rt.store.outcomes.first('"mission_id" = ? AND "task_id" IS NULL', id));
+      if (!outcomes.length || outcomes.some((o) => !o?.verified_success || this.rt.store.missions.must(o.mission_id).status !== 'completed' || this.rt.store.missions.must(o.mission_id).release_id !== c.release_id)) throw new SwarmError('canary_unproven', 'A canary needs completed, independently verified and human-approved missions');
+      if (c.observed_mission_state !== this.canaryMissionState(c)) throw new SwarmError('canary_stale', 'Observe the canary again after all mission outcomes are recorded');
+    }
+    if (c.observations.some((o) => o.breached)) throw new SwarmError('canary_breached', 'A breached canary cannot be retained');
     const { registry } = this.rt;
+    if (registry.active() !== c.prior_release_id || !registry.verify(c.release_id).ok || !this.integrity().ok) throw new SwarmError('canary_changed', 'The release, parent or protected rules changed during the canary');
     registry.setStatus(c.release_id, 'active');
     registry.setStatus(c.prior_release_id, 'retired');
     registry.setActive(c.release_id);

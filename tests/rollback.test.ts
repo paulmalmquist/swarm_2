@@ -8,7 +8,7 @@ import { LocalChiefOfStaff } from '../src/cos/port.ts';
 import { Gate } from '../src/gate/gate.ts';
 import { observeReviewWork, runExperiment } from '../src/evolution/loop.ts';
 import { openRuntime } from '../src/runtime.ts';
-import { scenarioRequests } from '../demos/lib.ts';
+import { scenarioRequests, completeFixtureCanary } from '../demos/lib.ts';
 
 test('canary and rollback: a qualified release is tried on bounded missions and rolled back on a regression', async () => {
   const home = mkdtempSync(join(tmpdir(), 'swarm2-canary-'));
@@ -104,6 +104,10 @@ test('retain: a canary that stays healthy becomes the default for future work on
     const accepted = await runExperiment(rt, gate, 'exec-interface-compat', { revises_experiment: first.experiment.id });
     const r2 = accepted.receipt.release_manifest!.release_id;
     const canary = gate.startCanary(r2, { max_missions: 1 });
+    await gate.observeCanary(canary.id);
+    assert.throws(() => gate.retain(canary.id), /needs completed/);
+    await completeFixtureCanary(rt, gate, canary.id);
+    assert.throws(() => gate.retain(canary.id), /Observe the canary again/);
     await gate.observeCanary(canary.id);
     assert.equal(gate.retain(canary.id).status, 'retained');
     assert.equal(rt.registry.active(), r2);

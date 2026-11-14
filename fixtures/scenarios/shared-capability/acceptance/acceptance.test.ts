@@ -62,8 +62,9 @@ test('AC-POLICY-FDE: thresholds come from policy configuration, not code', async
   assert.equal(after.freshness.status, 'stale', 'changing only the policy changes the result');
 });
 
-test('AC-CONTRACT: every record conforms to the pinned HealthRecord contract', async (t) => {
-  if (!contract) return t.skip('no interface contract was agreed for this mission');
+// Register this criterion only for missions that declare a pinned contract. The runtime still
+// rejects a missing test when AC-CONTRACT is required by the delegation contract.
+if (contract) test('AC-CONTRACT: every record conforms to the pinned HealthRecord contract', async () => {
   const { evaluateHealth } = await load();
   const records = evaluateHealth(data.datasets, policies, data.as_of);
   assert.equal(records.length, data.datasets.length);

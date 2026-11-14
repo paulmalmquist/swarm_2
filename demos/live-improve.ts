@@ -1,3 +1,5 @@
+import { killGroup } from '../src/security/process.ts';
+import { applyFileChanges, workspaceSnapshot } from '../src/workspace/patches.ts';
 /**
  * LIVE first-order improvement — a real model in the candidate author's seat.
  *
@@ -63,8 +65,9 @@ console.log(JSON.stringify({ checks: files, cases: cases.length, accuracy: +(cor
 const AUTHOR_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['hypothesis', 'change_summary', 'procedure_step', 'known_failure_cases', 'development_accuracy', 'remaining_uncertainty'],
+  required: ['validator_source', 'hypothesis', 'change_summary', 'procedure_step', 'known_failure_cases', 'development_accuracy', 'remaining_uncertainty'],
   properties: {
+    validator_source: { type: 'string', description: 'Complete JavaScript module exporting id and check(c).' },
     hypothesis: { type: 'string', description: 'A falsifiable statement: if the skill also does X, then Y will change.' },
     change_summary: { type: 'string' },
     procedure_step: { type: 'string', description: 'One sentence a reviewer would follow, describing the new step.' },
@@ -77,7 +80,7 @@ const AUTHOR_SCHEMA = {
 interface AuthorResult {
   ok: boolean;
   error: string | null;
-  report: { hypothesis: string; change_summary: string; procedure_step: string; known_failure_cases: string[]; development_accuracy: number; remaining_uncertainty: string[] } | null;
+  report: { validator_source: string; hypothesis: string; change_summary: string; procedure_step: string; known_failure_cases: string[]; development_accuracy: number; remaining_uncertainty: string[] } | null;
   model_requested: string;
   models_served: string[];
   session_id: string | null;
@@ -91,14 +94,21 @@ interface AuthorResult {
 
 function runAuthor(ws: string, model: string, prompt: string): Promise<AuthorResult> {
   const started = Date.now();
-  const args = ['-p', prompt, '--output-format', 'stream-json', '--verbose', '--json-schema', JSON.stringify(AUTHOR_SCHEMA), '--model', model, '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--disable-slash-commands', '--setting-sources', '', '--tools', 'Read,Write,Edit,Glob,Grep,Bash', '--allowedTools', 'Read(./**)', 'Glob(./**)', 'Grep(./**)', 'Edit(./candidate/**)', 'Write(./candidate/**)', 'Bash(node check.mjs:*)'];
+  const input = prompt + '\n# Workspace snapshot\n' + workspaceSnapshot(ws) + '\nNo tools are enabled. Return the module in validator_source. The runtime applies it and runs the development checks.';
+  const args = ['-p', '--output-format', 'stream-json', '--verbose', '--json-schema', JSON.stringify(AUTHOR_SCHEMA), '--model', model, '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--disable-slash-commands', '--setting-sources', '', '--tools', ''];
   return new Promise((resolve) => {
-    const child = spawn('claude', args, { cwd: ws, stdio: ['ignore', 'pipe', 'pipe'], env: process.env });
+    const child = spawn('claude', args, { cwd: ws, detached: true, stdio: ['pipe', 'pipe', 'pipe'], env: process.env });
+    child.stdin.on('error', () => undefined);
+    child.stdin.end(input);
+    child.stderr.on('data', () => undefined);
+    let bytes = 0;
     let buffer = '';
     let final: Record<string, unknown> | null = null;
     let checks = 0;
-    const timer = setTimeout(() => child.kill('SIGTERM'), TIMEOUT_MS);
+    const timer = setTimeout(() => killGroup(child), TIMEOUT_MS);
     child.stdout.on('data', (d: Buffer) => {
+      bytes += d.length;
+      if (bytes > 2 * 1024 * 1024) { killGroup(child); return; }
       buffer += d.toString();
       let nl: number;
       while ((nl = buffer.indexOf('\n')) >= 0) {
@@ -114,11 +124,12 @@ function runAuthor(ws: string, model: string, prompt: string): Promise<AuthorRes
         }
       }
     });
-    child.on('close', () => {
+    child.on('error', () => undefined);
+    child.on('close', (code, signal) => {
       clearTimeout(timer);
       const f = (final ?? {}) as { is_error?: boolean; result?: unknown; structured_output?: AuthorResult['report']; session_id?: string; num_turns?: number; total_cost_usd?: number; usage?: { output_tokens?: number }; modelUsage?: Record<string, unknown>; permission_denials?: { tool_name?: string; tool_input?: Record<string, unknown> }[] };
       resolve({
-        ok: Boolean(final) && !f.is_error && Boolean(f.structured_output),
+        ok: code === 0 && !signal && Boolean(final) && !f.is_error && Boolean(f.structured_output),
         error: !final ? 'the author process ended without a result' : f.is_error ? String(f.result ?? 'error') : f.structured_output ? null : 'no schema-valid report',
         report: f.structured_output ?? null,
         model_requested: model,
@@ -182,7 +193,7 @@ async function main(): Promise<void> {
       '',
       'How it will be judged: the release gate will run the skill with your check on HELD-OUT cases you cannot see, which include kinds of change that are not in the development cases. It accepts only if accuracy improves, no more breaking changes are approved, and safe changes are not blocked beyond a small margin. So think about which differences between two schemas are truly breaking for a consumer and which are safe, rather than fitting the development cases.',
       '',
-      'Run `node check.mjs` (exactly that command) to see how the skill does on the development cases with your check added. Iterate until you are satisfied, then answer with the structured report. You can only write inside candidate/.',
+      'Return complete module source in validator_source. The runtime will execute development checks; do not claim to have run checks yourself.',
     ].join('\n');
     const MAX_ROUNDS = Number(process.env.SWARM2_LIVE_ROUNDS ?? 2);
     const rounds: Record<string, unknown>[] = [];
@@ -209,11 +220,12 @@ async function main(): Promise<void> {
         `What the gate reported: ${previous.feedback}`,
         '',
         'You cannot see the held-out cases, and you will not be told which ones went wrong. Reason about which kinds of difference between contract_before and contract_after your check treats as breaking although a consumer of the contract would not be broken by them, and which truly breaking kinds it might miss. The development cases in dev-cases.json do not contain every kind of change.',
-        'Revise candidate/validators/interface_compat.mjs in place. The rules are unchanged: it exports `id` and `check(c)`; a blocking finding names the affected field as a dot path; plain JavaScript with no imports and no file, process, network or dynamic-code access; decide from structure only.',
+        'Return the revised complete module in validator_source. The rules are unchanged: it exports `id` and `check(c)`; a blocking finding names the affected field as a dot path; plain JavaScript with no imports and no file, process, network or dynamic-code access; decide from structure only.',
         'Your revision will be judged on a DIFFERENT held-out set. Run `node check.mjs` (exactly that command) to confirm the development cases still pass, then answer with the structured report.',
       ].join('\n');
       process.stdout.write(`Round ${round}: author (${model}) is working in an isolated workspace…\n`);
       const author = await runAuthor(ws, model, ask);
+      if (author.ok && typeof author.report?.validator_source === 'string') applyFileChanges(ws, [{ path: 'candidate/validators/interface_compat.mjs', content: author.report.validator_source }], ['candidate/**']);
       process.stdout.write(`Round ${round}: author finished: ok=${author.ok}, ${Math.round(author.wall_ms / 1000)} s, ${author.development_check_runs} development check runs, ${author.denials.length} tool uses refused\n`);
       const files = existsSync(join(ws, 'candidate', 'validators')) ? readdirSync(join(ws, 'candidate', 'validators')).filter((f) => f.endsWith('.mjs')) : [];
       const entry: Record<string, unknown> = { round, author: { ...author, files_written: files } };
@@ -284,9 +296,9 @@ async function main(): Promise<void> {
 
       if (rec.decision === 'accept' && rec.release_manifest) {
         // An accepted release is tried on fresh cases before it can become the default.
-        const c = gate.startCanary(rec.release_manifest.release_id, { max_missions: 0 });
+        const c = gate.startCanary(rec.release_manifest.release_id, { max_missions: 1 });
         const observed = await gate.observeCanary(c.id);
-        const done = observed.status === 'running' ? gate.retain(c.id) : observed;
+        const done = observed; // retention requires a completed trial and explicit review
         canary = { status: done.status, observations: done.observations };
         entry.canary = canary;
         writeEvidence(out, 'release-manifest.md', renderManifest(rt.registry.manifest(rec.release_manifest.release_id)));
@@ -306,7 +318,7 @@ async function main(): Promise<void> {
       label: 'LIVE MODEL AUTHOR; SYNTHETIC review workload; evaluation by executing checks, with no model in the judging',
       ran_at: new Date().toISOString(),
       observed: { reviewed: seen.reviewed, accuracy: seen.accuracy, failures_by_class: seen.by_class },
-      author_isolation: 'Harness-level: file tools scoped to the workspace, writes to candidate/ only, one shell command allowed. The author process ran as the operator user, so this is not OS-enforced; refused tool uses are listed per round.',
+      author_isolation: 'No model tools. Bounded source proposals are applied by the runtime; candidate code executes in Linux namespaces without host state or network.',
       rounds,
       held_out_sets_used: sets,
       final_decision: lastReceipt?.decision ?? 'none',
@@ -320,7 +332,7 @@ async function main(): Promise<void> {
       `Held-out sets used by this line of work: ${sets.join(', ') || 'none'}. A revision is never scored on a set its lineage has already seen results for.`,
       `Final decision: **${lastReceipt?.decision ?? 'none'}**. Active release afterwards: ${rt.registry.active()}.`,
       '',
-      `Isolation: candidate CODE was executed by the gate in mode \`${lastReceipt?.isolation.mode ?? 'unknown'}\`. The AUTHOR was confined by the worker harness only (file tools scoped to its workspace), not by the operating system; it ran as the operator user.`,
+      `Isolation: candidate CODE was executed by the gate in mode \`${lastReceipt?.isolation.mode ?? 'unknown'}\`. The AUTHOR returned source text with tools disabled; the runtime applied its file proposal. No generated code ran in the author process.`,
       '',
       'Files: `summary.json`; per round `receipt.md` / `receipt.json` and `authored/` (the check the model wrote, its report, and the task it was given); `release-manifest.md` if a release was created.',
     );

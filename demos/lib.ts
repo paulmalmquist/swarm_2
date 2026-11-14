@@ -1,3 +1,5 @@
+import { Coordinator } from '../src/coordination/coordinator.ts';
+import type { Gate } from '../src/gate/gate.ts';
 import { type ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -82,4 +84,24 @@ export function writeEvidence(dir: string, name: string, value: unknown): string
   mkdirSync(dirname(p), { recursive: true });
   writeFileSync(p, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
   return p;
+}
+
+/** Scripted approval is confined to synthetic fixture demonstrations, never live/real work. */
+export async function completeFixtureCanary(rt: Runtime, gate: Gate, canaryId: string): Promise<string> {
+  const c = gate.canaries.must(canaryId);
+  const cos = new LocalChiefOfStaff(rt, (m) => gate.releaseFor(m));
+  cos.onPinned = (canary, mission) => gate.noteCanaryMission(canary, mission);
+  cos.ingestRequests({ command: 'ingestRequests', actor: 'fixture-reviewer', key: `${canaryId}:ingest`, data: { requests: scenarioRequests() } });
+  const submitted = cos.submitMission({ command: 'submitMission', actor: 'fixture-reviewer', key: `${canaryId}:mission`, data: { title: 'Synthetic canary trial', objective: 'Exercise the release through delivery and review', scenario: 'shared-capability', provider_mode: 'fixture', data_class: 'synthetic', request_ids: scenarioRequests().slice(0, 4).map((r) => r.id) } });
+  if (submitted.source === 'unavailable' || submitted.mission.release_id !== c.release_id) throw new Error('canary mission was not pinned');
+  const co = new Coordinator(rt);
+  try {
+    await co.runUntilIdle({ mission_id: submitted.mission.id, max_ms: 60_000 });
+    await co.drain();
+    const m = rt.store.missions.must(submitted.mission.id);
+    if (m.status !== 'review_ready' || m.provider_mode !== 'fixture' || m.data_class !== 'synthetic') throw new Error('fixture canary did not reach review');
+    const review = rt.store.getMeta<{ decision_id: string }>(`mission:${m.id}:review`)!;
+    cos.resolveDecision({ command: 'resolveDecision', actor: 'fixture-reviewer', key: `${canaryId}:approve`, data: { decision_id: review.decision_id, chosen: 'approve', rationale: 'SCRIPTED FIXTURE APPROVAL: exercises the lifecycle; not real user acceptance evidence' } });
+    return m.id;
+  } finally { co.stop(); await co.drain(); }
 }

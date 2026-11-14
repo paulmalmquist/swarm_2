@@ -1,5 +1,14 @@
 # Progress notes
 
+## Hardening update — 2026-11-14
+
+PR #1 merged at `15299b9`. The `codex/harden-swarm-runtime` branch adds isolation, complete-run
+verification, scoped promotion, transactional review, current outcomes, checked memory sources,
+request revisions and effect idempotency. Local validation: 61 tests; nine demos; 75/75 demo checks.
+Receipts: `evidence/hardening/`. Diagram: `docs/architecture-overview.svg`.
+Current limits and operating prerequisites: `docs/hardening.md`. The revised live worker path has
+not been exercised with a model. Older progress and live receipts below are historical.
+
 Durable notes so the work survives a context reset. Read this first, then `docs/handoff.md`.
 
 ## State

@@ -1,5 +1,9 @@
 # Architecture
 
+![Architecture overview](architecture-overview.svg)
+
+Current security changes: [hardening.md](hardening.md).
+
 swarm_2 is an execution and improvement layer that sits beneath an existing chief of staff.
 The chief of staff decides what matters and speaks for Paul. swarm_2 turns an authorized objective
 into coordinated work, verifies the result, and uses the outcome to change how later work is done.
@@ -23,24 +27,9 @@ generation of the work does (`Kernel.acceptTask`).
 
 ## 2. The smallest durable shape
 
-```
- chief of staff ──commands──▶ ChiefOfStaffPort ──▶ kernel (SQLite, one file per state directory)
-        ▲                                             │  missions · tasks · leases · budgets
-        │ decisions, drafts, review packets           │  artifacts · evidence · decisions · events
-        │                                             ▼
-   review interface ◀── read models ◀──────── coordinator (a loop over durable state)
-   (/v1/os/swarm)                                     │ dispatches one OS process per attempt
-                                                      ▼
-                                   workers: model (claude -p) or labeled fixture
-                                   coding workers each get a git worktree
-                                                      │ results come back under a fencing token
-                                                      ▼
-                               integration queue ──▶ independent verification ──▶ review packet
+The overview above shows the control, delivery and improvement paths. SQLite owns operational state;
+the release gate keeps its own protected store. Generated code sees only explicit sandbox mounts.
 
- protected store (separate directory, separate SQLite file, other OS user where available)
-   release registry · promotion policy · held-out cases · evaluation ledger · canaries
-   candidates are evaluated here in a sandbox; nothing they run can write here
-```
 
 - **One language, no services.** TypeScript on Node 22 run directly (type stripping), zero runtime
   dependencies, `node:sqlite` for state, `git` for workspaces, `node:http` for the interface.
@@ -188,8 +177,8 @@ decision and its justification, the new release manifest if any, and the rollbac
   (`src/gate/gate.ts`) takes custody of a copy, evaluates it, and alone can create a release.
 - **The protected store** holds the promotion policy, held-out cases, scoring code, the evaluation
   ledger (hash-chained) and the release pointer. Candidate code runs in a sandbox process under an
-  unprivileged OS user with Node's permission model as a second layer. The gate reports which of
-  three modes the host actually provides — `enforced`, `seatbelt` or `procedural` — in every receipt.
+  isolated Linux namespaces with Node's permission model as a second layer. Code execution
+  fails closed when namespace isolation is unavailable; receipts retain the measured capability.
 - **A candidate cannot change the rules it is judged by.** Static screening refuses code that uses
   file, process, network or dynamic-code capabilities. A proposal to change the rules becomes a
   decision for the chief of staff and is applied by nobody else.

@@ -1,7 +1,7 @@
 # Operator guide
 
-Everything is run from the repository root with Node 22.18 or later. There is nothing to install
-or build. `swarm2` below means `node src/cli.ts` (or `npm run swarm2 --`).
+Run from the repository root on Linux with Node 22.18+, Git, bubblewrap and util-linux.
+User/network namespaces must be enabled; see [hardening.md](hardening.md). `swarm2` below means `node src/cli.ts` (or `npm run swarm2 --`).
 
 State lives in one directory: `./var` by default, or `--home DIR`, or `SWARM2_HOME`.
 
@@ -97,7 +97,7 @@ swarm2 evolve candidates              # hand-authored candidates
 swarm2 evolve run <candidate> [--revises <experiment>]   # put one candidate to the release gate
 swarm2 gate canary start <release> [--max-missions N]
 swarm2 gate canary observe <canary>
-swarm2 gate canary retain <canary>    # the release becomes the default for future work only
+swarm2 gate canary retain <canary>    # requires completed trials, review and a fresh observation
 swarm2 gate canary rollback <canary> --reason "..."
 swarm2 gate dependents <release>      # missions, artifacts and memories that rest on a release
 ```
@@ -112,7 +112,7 @@ then the gate reports the store as changed and refuses to decide.
 ## Demonstrations and tests
 
 ```
-npm test                 # 49 tests, about two minutes
+npm test                 # regression suite
 npm run demo:all         # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a           # one demonstration (a … i)
 npm run typecheck

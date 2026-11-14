@@ -66,12 +66,19 @@ export function recordOutcome(rt: Runtime, mission_id: string): Outcome {
   const obs = store.observations.where('"mission_id" = ?', mission_id);
   const events = store.events({ mission_id });
   const overhead = comms.overhead(mission_id);
-  const verified_success = leaf.length > 0 && leaf.every((t) => t.status === 'accepted' || t.status === 'not_selected') && leaf.every((t) => t.status !== 'accepted' || t.contract.verification.method === 'none' || kernel.acceptanceGaps(t).length === 0);
+  const technical_success = leaf.length > 0 && leaf.every((t) => t.status === 'accepted' || t.status === 'not_selected') && leaf.every((t) => t.status !== 'accepted' || t.contract.verification.method === 'none' || kernel.acceptanceGaps(t).length === 0);
+  const review = store.getMeta<{ decision_id: string }>(`mission:${mission_id}:review`);
+  const decision = review ? store.decisions.get(review.decision_id) : undefined;
+  const human_acceptance: Outcome['human_acceptance'] = decision?.status !== 'resolved' ? 'pending' : decision.chosen === 'approve' ? 'accepted' : decision.chosen === 'reject' ? 'rejected' : 'changes_requested';
+  const verified_success = technical_success && m.status === 'completed' && human_acceptance === 'accepted';
+  const prior = store.outcomes.first('"mission_id" = ? AND "task_id" IS NULL', mission_id);
   const outcome: Outcome = {
-    id: newId('out'),
+    id: prior?.id ?? newId('out'),
     mission_id,
     task_id: null,
-    terminal_state: 'accepted',
+    terminal_state: verified_success ? 'accepted' : m.status === 'cancelled' ? 'cancelled' : m.status === 'blocked' ? 'blocked' : m.status === 'review_ready' ? 'review_ready' : 'in_progress',
+    technical_success,
+    human_acceptance,
     verified_success,
     criterion_results,
     escaped_defects: store.getMeta<number>(`mission:${mission_id}:escaped_defects`) ?? null,
@@ -86,7 +93,7 @@ export function recordOutcome(rt: Runtime, mission_id: string): Outcome {
     message_bytes: overhead.bytes,
     release_id: m.release_id,
     source: kernel.sourceOf(mission_id),
-    label_source: 'executable_check',
+    label_source: human_acceptance === 'pending' ? 'executable_check' : 'human',
     created_at: store.clock.iso(),
   };
   for (const prior of store.outcomes.where('"mission_id" = ? AND "task_id" IS NULL', mission_id)) store.outcomes.delete(prior.id);

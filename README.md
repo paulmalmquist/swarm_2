@@ -12,6 +12,10 @@ how it is coordinated, and how it finds improvements.
 
 It never sends, merges, deploys or commits anyone to anything. It prepares, verifies and asks.
 
+![Architecture overview](docs/architecture-overview.svg)
+
+[Hardening changes and limits](docs/hardening.md).
+
 ## Start here
 
 | If you want to | Read |
@@ -26,10 +30,10 @@ It never sends, merges, deploys or commits anyone to anything. It prepares, veri
 
 ## Run it
 
-Node 22.18 or later. Nothing to install or build; there are no runtime dependencies.
+Linux and Node 22.18 or later. Install Git, `bubblewrap` and `util-linux`; unprivileged user/network namespaces must be enabled. Generated-code execution fails closed without isolation. Run `npm ci` for development tools.
 
 ```
-npm test                 # 49 tests: coordination, recovery, isolation, rollback, limits, escalation
+npm test                 # regression suite: coordination, recovery, isolation, rollback, limits, escalation
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
 ```

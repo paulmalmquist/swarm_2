@@ -1,5 +1,8 @@
 # Capability matrix
 
+**Historical build measurements.** Current behavior supersedes the fallback and model-tool rows
+below: namespace isolation is required, and model tools are disabled. See [hardening.md](hardening.md).
+
 Recorded 2026-11-14 from inside the build container, and updated the same day after live execution became available again. Each row is something that was actually
 exercised, with the evidence, its limitation, and the implementation choice it led to.
 "Not available" rows state the exact integration requirement instead of assuming a connector exists.

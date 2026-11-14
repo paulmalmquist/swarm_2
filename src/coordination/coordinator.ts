@@ -7,7 +7,8 @@ import { scopeSignature } from '../kernel/intake.ts';
 import { materializePlan } from './plan.ts';
 import { Steps } from './steps.ts';
 import { recordOutcome } from './metrics.ts';
-import { contextPacket, creditMemories, ingestKnowledge } from '../memory/memory.ts';
+import { contextPacket, ingestKnowledge } from '../memory/memory.ts';
+import { applyFileChanges, workspaceSnapshot } from '../workspace/patches.ts';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -32,6 +33,7 @@ interface Running {
  * it dispatches work that the kernel says is ready and applies results through the kernel.
  */
 export class Coordinator {
+  private stopped = false;
   rt: Runtime;
   steps: Steps;
   private running = new Map<string, Running>();
@@ -128,6 +130,8 @@ export class Coordinator {
 
   async tick(only?: string): Promise<{ active: boolean }> {
     const { kernel, store } = this.rt;
+    if (this.stopped || this.stopRequested()) { this.stop(); return { active: false }; }
+    for (const [id, r] of this.running) if (store.tasks.must(r.task_id).status !== 'leased' && !store.getMeta<boolean>(`attempt:${id}:unreachable`)) this.killAttempt(id, r.handle.pid);
     let progressed = false;
 
     for (const { task, attempt } of kernel.expireLeases()) {
@@ -202,6 +206,7 @@ export class Coordinator {
   // ───────── dispatch ─────────
 
   private async dispatch(m: Mission, t: Task): Promise<boolean> {
+    if (this.stopped || this.stopRequested()) return false;
     switch (t.executor) {
       case 'worker':
         return this.dispatchWorker(m, t);
@@ -238,6 +243,8 @@ export class Coordinator {
     if (t.scope_signature !== signature) store.tasks.put({ ...store.tasks.must(t.id), scope_signature: signature });
     const source = intake.reusable(signature, m.id, defs.coordination.reuse.max_age_ms);
     if (!source || source.contract.release_id !== m.release_id) return false;
+    const sourceMission = store.missions.must(source.mission_id);
+    if (m.data_class !== 'synthetic' || m.provider_mode !== 'fixture' || sourceMission.data_class !== 'synthetic' || sourceMission.provider_mode !== 'fixture' || !['review_ready', 'completed'].includes(sourceMission.status)) return false;
     const lease = kernel.claim(t.id, t.owner_id, { provider: 'reuse', provider_mode: m.provider_mode, model_requested: null, uses_call_slot: false });
     if (!lease) return false;
     store.db.tx(() => {
@@ -276,6 +283,10 @@ export class Coordinator {
     const { task, attempt, token } = lease;
 
     const scenario = await this.scenario(m);
+    if (this.stopped || this.stopRequested()) {
+      kernel.failAttempt(task.id, token, 'killed', { code: 'operator_stop', message: 'Stopped before worker dispatch' }, null, { countsAsRetry: false });
+      return false;
+    }
     const inputs: Record<string, string> = {};
     for (const i of task.contract.inputs) {
       const v = store.versions.get(i.version_id);
@@ -302,6 +313,7 @@ export class Coordinator {
       // Pinned inputs are committed by the runtime, so the worker's own changes are exactly what follows.
       workspaces.commitAll(wt.dir, `Pin inputs for ${task.key}`);
       workspace = wt;
+      if (provider.mode === 'live') inputs['workspace_snapshot'] = workspaceSnapshot(wt.dir);
       kernel.heartbeat(task.id, token, { workspace: { ...wt, head_commit: null } });
     }
     this.acceptHandoffs(task);
@@ -363,9 +375,11 @@ export class Coordinator {
     if (res.denials?.length) store.emit({ type: 'worker_tool_denied', mission_id: task.mission_id, task_id, actor_id: task.owner_id, actor_kind: 'agent', payload: { key: task.key, attempt: token.attempt, count: res.denials.length, denials: res.denials.slice(0, 12) }, release_id: task.contract.release_id });
     if (res.status === 'ok' && res.self_submitted) return;
     if (res.status === 'ok' && res.output) {
+      if (task.status !== 'leased' || task.generation !== token.generation || task.attempt !== token.attempt) return;
       let git: { commit: string; tree: string; key: string } | null = null;
       let head_commit: string | null = null;
       if (workspace) {
+        if (res.output.file_changes) applyFileChanges(workspace.dir, res.output.file_changes, task.contract.authority.write_scope);
         // The runtime, not the worker, decides whether the write scope was respected.
         workspaces.git(workspace.dir, ['add', '-A']);
         const changed = workspaces.git(workspace.dir, ['diff', '--cached', '--name-only']).split('\n').filter((f) => f && !f.startsWith('.inputs/'));
@@ -404,7 +418,8 @@ export class Coordinator {
         const cur = this.rt.store.tasks.get(t.id);
         if (cur && cur.status === 'leased') {
           this.rt.kernel.failAttempt(t.id, { attempt: cur.attempt, generation: cur.generation }, 'failed', { code: err instanceof SwarmError ? err.code : 'step_error', message: err instanceof Error ? err.message : String(err) }, null, { countsAsRetry: true });
-        } else if (cur && cur.status === 'submitted') {
+        } else if (cur && ['submitted', 'verifying'].includes(cur.status)) {
+          if (cur.status === 'verifying') this.rt.kernel.setStatus(cur.id, 'submitted', 'runtime');
           // A check that keeps failing on the same result must not be retried forever. After three
           // tries the result goes back to its author with the reason, inside the repair limit.
           const key = `task:${t.id}:step_errors:g${cur.generation}a${cur.attempt}`;
@@ -545,9 +560,8 @@ export class Coordinator {
     }
     const top = tasks.filter((t) => t.parent_task_id === null);
     if (top.length && top.every((t) => t.status === 'accepted') && tasks.every((t) => ['accepted', 'not_selected', 'cancelled'].includes(t.status))) {
-      recordOutcome(this.rt, mission_id);
-      creditMemories(this.rt, mission_id);
       kernel.setMissionStatus(mission_id, 'review_ready', 'runtime', { reason: 'all work accepted; awaiting the decision in the review packet' });
+      recordOutcome(this.rt, mission_id);
       return true;
     }
     return false;
@@ -561,6 +575,17 @@ export class Coordinator {
 
   /** Stop every worker this coordinator started. */
   stop(): void {
+    if (this.stopped) return;
+    this.stopped = true;
+    this.rt.workspaces.stop();
+    for (const a of this.rt.store.attempts.where(`"status" = 'running'`)) {
+      const t = this.rt.store.tasks.must(a.task_id);
+      if (t.status === 'leased' && (this.running.has(a.id) || a.provider === 'runtime')) this.rt.kernel.failAttempt(t.id, { generation: a.generation, attempt: a.attempt_no }, 'killed', { code: 'operator_stop', message: 'Stopped by operator; may resume after restart' }, null, { countsAsRetry: false });
+    }
+    for (const id of this.busy) {
+      const t = this.rt.store.tasks.must(id);
+      if (t.status === 'verifying') this.rt.kernel.setStatus(id, 'submitted', 'runtime');
+    }
     for (const [id, r] of this.running) this.killAttempt(id, r.handle.pid);
   }
 

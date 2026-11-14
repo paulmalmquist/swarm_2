@@ -1,6 +1,6 @@
 import type { IntakeRequest, StakeholderNeed, Task } from '../contracts/types.ts';
 import type { Store } from '../store/store.ts';
-import { newId, sha256 } from '../lib/util.ts';
+import { newId, sha256, hashOf, SwarmError } from '../lib/util.ts';
 
 const STOP = new Set(
   'a an and are as at be been but by can do each for from has have how i in is it its just my need needs of on one or our over so that the their them then there this to up was we what when which who why will with would you your us not no after before into also want wants every still'.split(
@@ -75,12 +75,27 @@ export class Intake {
   }
 
   /** Record a request once. Re-delivery of the same request id is a no-op. */
-  ingest(r: Omit<IntakeRequest, 'signature' | 'cluster_id' | 'mission_id'>): { request: IntakeRequest; duplicate: boolean } {
+  ingest(r: Omit<IntakeRequest, 'signature' | 'cluster_id' | 'mission_id'>, onRevision?: (prior: IntakeRequest) => void): { request: IntakeRequest; duplicate: boolean } {
     return this.store.db.tx(() => {
       const existing = this.store.requests.get(r.id);
+      if (r.source_revision !== undefined && (!Number.isSafeInteger(r.source_revision) || r.source_revision < 1)) throw new SwarmError('invalid_revision', 'Source revision must be a positive integer');
+      const payload = (x: typeof r) => ({ source: x.source, stakeholder: x.stakeholder, team: x.team, text: x.text, data_class: x.data_class, withdrawn: x.withdrawn ?? false });
       if (existing) {
-        this.store.emit({ type: 'duplicate_delivery_ignored', actor_id: 'intake', actor_kind: 'runtime', payload: { request_id: r.id, scope: 'intake' } });
-        return { request: existing, duplicate: true };
+        const same = hashOf(payload(existing)) === hashOf(payload(r));
+        const oldRev = existing.source_revision ?? 1, newRev = r.source_revision ?? 1;
+        if (newRev < oldRev || (same && newRev === oldRev)) {
+          this.store.emit({ type: 'duplicate_delivery_ignored', actor_id: 'intake', actor_kind: 'runtime', payload: { request_id: r.id, scope: 'intake', stale: newRev < oldRev } });
+          return { request: existing, duplicate: true };
+        }
+        if (newRev === oldRev) throw new SwarmError('request_revision_conflict', 'Changed request content requires a newer source_revision');
+        if (existing.source !== r.source) throw new SwarmError('request_source_conflict', 'A request ID cannot change its source');
+        if (existing.mission_id && !same && !onRevision) throw new SwarmError('request_revision_requires_replan', 'Use the chief-of-staff port to revise an assigned request');
+        if (!same) onRevision?.(existing);
+        const next: IntakeRequest = { ...existing, ...r, signature: signature(r.text), cluster_id: null, mission_id: same ? existing.mission_id : null };
+        this.store.setMeta(`request:${r.id}:revision:${oldRev}`, existing);
+        this.store.requests.put(next);
+        this.store.emit({ type: 'request_revised', actor_id: 'intake', actor_kind: 'runtime', payload: { request_id: r.id, from: oldRev, to: newRev, previous_mission_id: existing.mission_id, withdrawn: r.withdrawn ?? false } });
+        return { request: next, duplicate: false };
       }
       const request: IntakeRequest = { ...r, signature: signature(r.text), cluster_id: null, mission_id: null };
       this.store.requests.put(request);
@@ -92,7 +107,7 @@ export class Intake {
   /** Single-link clustering of unassigned requests above a similarity threshold. */
   cluster(threshold = 0.3): Cluster[] {
     return this.store.db.tx(() => {
-      const reqs = this.store.requests.where('"mission_id" IS NULL').sort((a, b) => a.id.localeCompare(b.id));
+      const reqs = this.store.requests.where('"mission_id" IS NULL').filter((r) => !r.withdrawn).sort((a, b) => a.id.localeCompare(b.id));
       const parent = new Map(reqs.map((r) => [r.id, r.id]));
       const find = (x: string): string => (parent.get(x) === x ? x : (parent.set(x, find(parent.get(x)!)), parent.get(x)!));
       const best = new Map<string, number>();

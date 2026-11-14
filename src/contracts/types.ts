@@ -514,6 +514,8 @@ export interface Draft {
 // ───────────────────────────── intake ─────────────────────────────
 
 export interface IntakeRequest {
+  source_revision?: number;
+  withdrawn?: boolean;
   id: string; // synthetic ids begin with `syn-`
   source: string; // connector label, e.g. `local-fixture:slack`
   stakeholder: string;
@@ -597,8 +599,10 @@ export interface Outcome {
   id: string;
   mission_id: string;
   task_id: string | null;
-  terminal_state: 'accepted' | 'failed' | 'cancelled';
-  /** Independently accepted: every mandatory criterion passed a verification the author did not perform. */
+  terminal_state: 'in_progress' | 'review_ready' | 'accepted' | 'failed' | 'cancelled' | 'blocked';
+  technical_success: boolean;
+  human_acceptance: 'pending' | 'accepted' | 'rejected' | 'changes_requested';
+  /** Successful only after independent checks AND human acceptance. */
   verified_success: boolean;
   criterion_results: { criterion_id: string; verdict: 'pass' | 'fail' | 'inconclusive'; independent: boolean }[];
   escaped_defects: number | null;
@@ -779,6 +783,7 @@ export interface IsolationReport {
 }
 
 export interface CanaryRecord {
+  observed_mission_state?: string;
   id: string;
   release_id: string;
   prior_release_id: string;
@@ -812,6 +817,7 @@ export interface RunEvent {
 // ───────────────────────────── worker protocol ─────────────────────────────
 
 export interface WorkOutput {
+  file_changes?: { path: string; content: string | null }[];
   status: 'completed' | 'blocked' | 'failed';
   summary: string;
   artifacts: { key: string; kind: ArtifactKind; media_type: string; content?: string; path?: string }[];

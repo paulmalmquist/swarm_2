@@ -68,13 +68,15 @@ export async function serve(opts: { home?: string; port: number; host?: string; 
   const uiDir = join(REPO_ROOT, 'src', 'ui');
   const co = opts.run ? new Coordinator(rt, { log: (m) => process.stderr.write(`[coordinator] ${m}\n`) }) : null;
   let loop: NodeJS.Timeout | null = null;
+  let tickPromise: Promise<unknown> | null = null;
   if (co) {
     co.recover();
     let ticking = false;
     loop = setInterval(() => {
-      if (ticking || co.stopRequested()) return;
+      if (co.stopRequested()) { co.stop(); return; }
+      if (ticking) return;
       ticking = true;
-      co.tick()
+      tickPromise = co.tick()
         .catch((err) => process.stderr.write(`[coordinator] ${String(err)}\n`))
         .finally(() => (ticking = false));
     }, 150);
@@ -163,6 +165,8 @@ export async function serve(opts: { home?: string; port: number; host?: string; 
       if (loop) clearInterval(loop);
       co?.stop();
       await new Promise<void>((resolve) => server.close(() => resolve()));
+      await tickPromise;
+      await co?.drain();
       gate.close();
       rt.close();
     },

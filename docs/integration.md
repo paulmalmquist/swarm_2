@@ -138,15 +138,11 @@ access policy of the host shell (Dreamcatcher) in front of it.
 
 ## 5. Isolation requirements on the host
 
-The release gate needs somewhere candidates cannot write. It tests what the host provides and
-reports one of:
+Generated code requires Linux namespace isolation (bubblewrap + util-linux). The runtime mounts
+only its explicit input workspace read-only, provides ephemeral scratch space, and supplies no
+network or host environment. An unavailable sandbox blocks execution. Model authors return bounded
+file proposals with tools disabled. See [hardening.md](hardening.md) for prerequisites and limits.
 
-| Mode | Requires | What is enforced |
-|---|---|---|
-| `enforced` | The gate runs as root (or can `setpriv`) | Candidate code runs as an unprivileged user; the protected store is owned by another user with mode 0700. Node's permission model is a second layer |
-| `seatbelt` | Node 22 permission model only | Out-of-scope file access and process spawning are denied inside the candidate process. Node documents this as a seat belt, not a defence against hostile code |
-| `procedural` | Nothing | Separation by convention only. Receipts say so |
-
-Two limits apply in every mode and are reported, not hidden: the operator account can edit the
-protected store (the gate detects it by digest and refuses to decide; it cannot prevent it), and the
-held-out case generator is committed in the same repository as everything else.
+The operator and provider CLI are trusted. Held-out generators remain in the repository, so an
+author with independent repo access can see them. Real adapters still require source ACLs and
+scoped credentials; no production integration is implied by passing fixture tests.

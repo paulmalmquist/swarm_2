@@ -218,6 +218,9 @@ export class Kernel {
       m.updated_at = this.clock.iso();
       m.revision++;
       this.store.missions.put(m);
+      if (status !== 'completed') for (const outcome of this.store.outcomes.where('"mission_id" = ? AND "task_id" IS NULL', mission_id)) {
+        this.store.outcomes.put({ ...outcome, verified_success: false, terminal_state: status === 'cancelled' ? 'cancelled' : status === 'blocked' ? 'blocked' : status === 'review_ready' ? 'review_ready' : 'in_progress' });
+      }
       this.store.emit({ type: 'mission_status_changed', mission_id, actor_id: actor, actor_kind: 'runtime', payload: { from, to: status, ...payload }, release_id: m.release_id });
       return m;
     });
