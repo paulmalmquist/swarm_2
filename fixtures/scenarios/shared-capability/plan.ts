@@ -51,7 +51,11 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         objective: 'Identify the shared underlying need behind the requests, keep each stakeholder\'s distinct need, separate symptoms from the underlying problem, and name what is unknown.',
         input_keys: ['intake/requests'],
         // The same analysis of the same requests need not be repeated in another mission.
-        params: { reuse_capability: 'request-overlap-analysis' },
+        params: {
+          reuse_capability: 'request-overlap-analysis',
+          output_format:
+            'Put one JSON document under the key discovery/overlap-report with exactly these fields: shared_capability (one sentence naming the single capability that would serve the overlapping requests); consolidated_request_ids (ids of the requests that share that need); unrelated_request_ids (ids that do not belong, possibly empty); distinct_needs (one object per consolidated request: request_id, stakeholder, team, need — the need in that stakeholder\'s own terms, not merged with the others); symptoms (objects: request_id, symptom); underlying_problem (one or two sentences); observed_facts (strings: only what a request literally states, citing its id); interpretations (strings: what you infer, marked as inference); unknowns (strings: what no request states and somebody must decide). If an unknown can only be settled by a person, also ask it in questions[] addressed to chief_of_staff.',
+        },
         outputs: [{ key: 'discovery/overlap-report', kind: 'report', description: 'JSON overlap report' }],
         acceptance_criteria: [
           inspect('D-OVERLAP', 'Names the shared capability and lists a distinct need for every request it consolidates', 'overlap_report', 'discovery/overlap-report'),
@@ -66,6 +70,14 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         title: 'Define outcomes and measurable acceptance criteria',
         objective: 'Write one measurable acceptance criterion for every distinct stakeholder need, plus any shared criterion, each with a way to verify it.',
         input_keys: ['discovery/overlap-report'],
+        params: {
+          output_format:
+            'Put one JSON document under the key plan/acceptance-criteria with these fields: outcome (one sentence); criteria (array of objects: criterion_id, description, verification_kind — always "executable", stakeholder — the stakeholder id the criterion serves, or null for a shared criterion); needs_map (one object per stakeholder need in the overlap report: request_id, stakeholder, need, criterion_id); deferred_needs (objects: stakeholder, reason — only for a need you deliberately leave out, otherwise an empty array). Each description must be measurable: say what is observed and what result counts as passing, including any threshold or exact wording a request gives.',
+          // The verification swarm owns the executable acceptance suite and assigns the ids its tests answer to.
+          criterion_ids_assigned_by_verification: agreed
+            ? { 'syn-req-001': 'AC-FRESH-PROPULSION', 'syn-req-002': 'AC-SCHEMA-SUPPLY', 'syn-req-003': 'AC-SLA-QUALITY', 'syn-req-004': 'AC-POLICY-FDE', '(shared: every record conforms to the agreed interface)': 'AC-CONTRACT' }
+            : { 'syn-req-001': 'AC-FRESH-PROPULSION', 'syn-req-002': 'AC-SCHEMA-SUPPLY', 'syn-req-003': 'AC-SLA-QUALITY', 'syn-req-004': 'AC-POLICY-FDE' },
+        },
         outputs: [{ key: 'plan/acceptance-criteria', kind: 'plan', description: 'JSON acceptance criteria mapped to stakeholder needs' }],
         acceptance_criteria: [inspect('P-CRITERIA', 'Every stakeholder need maps to a criterion or is explicitly deferred with a reason', 'criteria', 'plan/acceptance-criteria')],
         budget_share: 0.3,
@@ -78,6 +90,8 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         objective: 'Define the record that the evaluation engine produces and the report consumes, as a versioned contract both workstreams will pin.',
         depends_on: ['planning.criteria'],
         input_keys: ['plan/acceptance-criteria'],
+        // The scenario supplies its reference contract; in a live mission this step stays scripted and is labeled so.
+        params: { execution: 'template' },
         outputs: [{ key: 'contract/health-record', kind: 'contract', description: 'Versioned JSON schema for HealthRecord' }],
         acceptance_criteria: [inspect('P-CONTRACT', 'The contract is a versioned schema with required fields for freshness and schema status', 'contract', 'contract/health-record')],
         budget_share: 0.3,
@@ -91,6 +105,8 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         depends_on: [agreed ? 'planning.contract' : 'planning.criteria'],
         // The plan depends on the criteria and on the interface existing, not on the interface's content.
         input_keys: ['plan/acceptance-criteria'],
+        // The work graph comes from the versioned coordination policy, not from a model.
+        params: { execution: 'template' },
         outputs: [{ key: 'plan/work-graph', kind: 'plan', description: 'The proposed plan, as proposed' }],
         acceptance_criteria: [inspect('P-PLAN', 'A plan is proposed and recorded', 'nonempty', 'plan/work-graph')],
         budget_share: 0.3,
@@ -128,6 +144,8 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         title: 'Decide how to divide the implementation',
         objective: 'Decide whether the implementation justifies subordinate teams, and if so give each a bounded purpose, budget, deliverable and stopping condition.',
         input_keys: ['plan/acceptance-criteria'],
+        // The decomposition also comes from the coordination policy.
+        params: { execution: 'template' },
         outputs: [{ key: 'plan/delivery-decomposition', kind: 'plan', description: 'The delivery lead\'s decomposition, as proposed' }],
         acceptance_criteria: [inspect('L-DECOMP', 'A decomposition is proposed and recorded', 'nonempty', 'plan/delivery-decomposition')],
         budget_share: 0.06,
@@ -179,6 +197,10 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         objective: 'Record reusable facts, decisions and a candidate procedure from this mission, each with provenance, scope and a way to invalidate it.',
         depends_on: ['delivery.integrate'],
         input_keys: agreed ? ['discovery/overlap-report', 'plan/acceptance-criteria', 'contract/health-record'] : ['discovery/overlap-report', 'plan/acceptance-criteria'],
+        params: {
+          output_format:
+            'Put one JSON document under the key knowledge/mission-notes with a field notes: an array of objects, each with kind (one of fact, interpretation, decision, procedure, failed_approach), statement (one or two sentences that will still make sense out of context), scope (array of strings saying where it applies, for example "scenario:shared-capability" or "archetype:delivery"), source_refs (array naming the input artifact keys the note rests on, never empty), certainty (verified, suspected or untested — a procedure is untested until it has worked again elsewhere) and fresh_for_days (a number). Record only what the inputs support.',
+        },
         outputs: [{ key: 'knowledge/mission-notes', kind: 'report', description: 'JSON knowledge notes' }],
         acceptance_criteria: [inspect('K-PROVENANCE', 'Every note states its kind, scope and source', 'knowledge', 'knowledge/mission-notes')],
         budget_class: 'completion',
@@ -219,7 +241,10 @@ export function decomposePlan(policy: CoordinationDef): PlanProposal {
       title: `Implement the ${what}`,
       objective: `Implement the ${what} in src/${dir} with unit tests in test/${dir}, against the pinned HealthRecord contract.`,
       // Without an explicit interface agreement each workstream works from the prose criteria alone.
-      input_keys: pinned ? ['contract/health-record'] : ['plan/acceptance-criteria'],
+      input_keys: pinned ? ['contract/health-record', 'plan/acceptance-criteria'] : ['plan/acceptance-criteria'],
+      params: {
+        guidance: `Before writing anything, read README.md, data/, contracts/ and test/integration/ in the working directory. The integration test shows the module paths and exported function names the other workstream and the integration step rely on; keep to them exactly. Put your code only under src/${dir}/ and your own tests only under test/${dir}/. Run your tests with exactly this command, as a command on its own: node --test test/${dir}/*.test.ts — and make them pass before you finish. Shell commands other than node --test are not available to you; use the file tools for everything else. The acceptance criteria you were given are checked afterwards by tests you cannot see.`,
+      },
       outputs: [{ key: `code/${dir}`, kind: 'code', description: `src/${dir} and its tests` }],
       acceptance_criteria: [{ criterion_id: `U-${dir.toUpperCase()}`, description: `The ${what} passes its own unit tests`, verification_kind: 'executable', required_evidence_types: ['test_result'], mandatory: true, stakeholder: null, check: { runner: 'node-test', target: `test/${dir}/**/*.test.ts` } }],
       write_scope: [`src/${dir}/**`, `test/${dir}/**`],

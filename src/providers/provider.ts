@@ -33,6 +33,8 @@ export interface WorkResult {
   model_actual: string | null;
   session_id: string | null;
   error: { code: string; message: string } | null;
+  /** Tool uses the worker harness refused (for example a read outside the workspace). An audit trail, when the provider reports one. */
+  denials?: { tool: string; target: string }[];
 }
 
 export interface WorkerHandle {

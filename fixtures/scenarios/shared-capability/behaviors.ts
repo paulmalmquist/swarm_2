@@ -124,7 +124,17 @@ export const behaviors: Record<string, Behavior> = {
   },
 
   'planning.plan': (ctx) => {
-    const criteria = (JSON.parse(ctx.inputs['plan/acceptance-criteria'] ?? '{"criteria":[]}') as { criteria: AcceptanceCriterion[] }).criteria;
+    const doc = JSON.parse(ctx.inputs['plan/acceptance-criteria'] ?? '{"criteria":[]}') as { criteria: Partial<AcceptanceCriterion>[]; needs_map?: { stakeholder: string; criterion_id: string }[] };
+    // Whoever worded the criteria, acceptance is decided by the verification swarm's executable suite.
+    const criteria = doc.criteria.map((c): AcceptanceCriterion => ({
+      criterion_id: String(c.criterion_id),
+      description: String(c.description ?? ''),
+      verification_kind: 'executable',
+      required_evidence_types: ['test_result'],
+      mandatory: c.mandatory ?? true,
+      stakeholder: c.stakeholder ?? doc.needs_map?.find((n) => n.criterion_id === c.criterion_id)?.stakeholder ?? null,
+      check: { runner: 'acceptance-suite', target: 'acceptance' },
+    }));
     const plan = missionPlan(ctx.coordination, criteria);
     return done(`Proposed a ${plan.topology} organization: ${plan.swarms.map((s) => s.archetype).join(', ')} with ${plan.tasks.length} tasks`, {
       artifacts: [{ key: 'plan/work-graph', kind: 'plan', media_type: 'application/json', content: JSON.stringify(plan, null, 2) }],

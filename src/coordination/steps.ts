@@ -4,7 +4,7 @@ import type { IntegrationItem } from '../contracts/runtime.ts';
 import type { AcceptanceCriterion, Mission, PlanProposal, ReviewPacket, Task, Verification, WorkOutput } from '../contracts/types.ts';
 import type { Token } from '../kernel/kernel.ts';
 import { SwarmError, hashOf, newId, truncate } from '../lib/util.ts';
-import { type RunResult, parseTap } from '../workspace/workspaces.ts';
+import { type RunResult, parseTap, tapFailures } from '../workspace/workspaces.ts';
 import type { Coordinator } from './coordinator.ts';
 import { materializePlan, validatePlan } from './plan.ts';
 
@@ -305,7 +305,8 @@ export class Steps {
         const responsibleKeys = [...new Set(failing.flatMap((name) => Object.entries(params.attribution ?? {}).filter(([prefix]) => name.startsWith(prefix)).map(([, key]) => key)))];
         const responsible = responsibleKeys.length ? merged.filter((t) => responsibleKeys.includes(t.key)) : merged;
         workspaces.resetIntegration(m.id, base_commit);
-        this.integrationFailure(task, responsible, `combined tests fail at the integration boundary: ${failing.join('; ') || 'no tests ran'}`, 'combined_tests_failed');
+        const why = tapFailures(run.stdout).map((f) => `${f.name}${f.message ? ` — ${f.message}` : ''}`);
+        this.integrationFailure(task, responsible, truncate(`combined tests fail at the integration boundary: ${why.join('; ') || failing.join('; ') || 'no tests ran'}`, 1600), 'combined_tests_failed');
         return null;
       }
       const head = workspaces.head(dir);
@@ -353,10 +354,15 @@ export class Steps {
         const run = await workspaces.run(dir, [...NODE_TEST, 'acceptance/**/*.test.ts'], 90_000);
         const evidence = this.recordRunEvidence(m, target, 'protected acceptance suite', run);
         const results = parseTap(run.stdout);
+        const why = tapFailures(run.stdout);
+        const notes: Record<string, string> = {};
         for (const c of target.contract.acceptance_criteria) {
           const mine = results.filter((r) => r.name.startsWith(`${c.criterion_id}:`));
           const verdict = mine.length === 0 ? 'inconclusive' : mine.every((r) => r.ok) ? 'pass' : 'fail';
-          kernel.recordVerification({ task_id: target.id, verifier_task_id: task.id, criterion_id: c.criterion_id, method: 'executable', verdict, verifier_id: task.owner_id, evidence_ids: [evidence], target_version_id: version.id, details: { tests: mine.map((r) => ({ name: r.name, ok: r.ok })), commit } });
+          // What the failing check reported goes back to the author; the check's code does not.
+          const said = why.filter((f) => f.name.startsWith(`${c.criterion_id}:`) && f.message).map((f) => f.message);
+          if (said.length) notes[c.criterion_id] = said.join(' / ');
+          kernel.recordVerification({ task_id: target.id, verifier_task_id: task.id, criterion_id: c.criterion_id, method: 'executable', verdict, verifier_id: task.owner_id, evidence_ids: [evidence], target_version_id: version.id, details: { tests: mine.map((r) => ({ name: r.name, ok: r.ok, ...(r.ok ? {} : { reported: why.find((f) => f.name === r.name)?.message ?? '' }) })), commit } });
           for (const need of store.needs.where('"mission_id" = ?', m.id).filter((n) => n.criterion_id === c.criterion_id)) {
             need.status = verdict === 'pass' ? 'satisfied' : 'mapped';
             store.needs.put(need);
@@ -364,7 +370,7 @@ export class Steps {
         }
         const failed = target.contract.acceptance_criteria.filter((c) => !results.filter((r) => r.name.startsWith(`${c.criterion_id}:`)).every((r) => r.ok) || !results.some((r) => r.name.startsWith(`${c.criterion_id}:`)));
         summaries.push(`${target.key}: ${target.contract.acceptance_criteria.length - failed.length}/${target.contract.acceptance_criteria.length} criteria pass at ${commit.slice(0, 10)}`);
-        settlers.push(() => this.settleTarget(target.id, task, failed, params.attribution ?? {}));
+        settlers.push(() => this.settleTarget(target.id, task, failed, params.attribution ?? {}, notes));
       }
       settle = () => settlers.forEach((s) => s());
       return { output: out(`Independent verification: ${summaries.join('; ') || 'nothing to verify'}`, { evidence: summaries.map((s) => ({ kind: 'verification', statement: s, epistemic: 'observed_fact' as const, origin: 'runtime' as const, refs: [] })) }) };
@@ -377,7 +383,7 @@ export class Steps {
     }
   }
 
-  private settleTarget(target_id: string, verifier: Task, failed: AcceptanceCriterion[], attribution: Record<string, string>): void {
+  private settleTarget(target_id: string, verifier: Task, failed: AcceptanceCriterion[], attribution: Record<string, string>, notes: Record<string, string> = {}): void {
     const { kernel, store } = this.rt;
     const target = store.tasks.must(target_id);
     if (target.status !== 'verifying') return;
@@ -387,7 +393,7 @@ export class Steps {
       this.afterAccept(store.tasks.must(target.id));
       return;
     }
-    const reason = `independent acceptance failed: ${gaps.map((g) => `${g.criterion_id} (${g.reason})`).join('; ')}`;
+    const reason = truncate(`independent acceptance failed: ${gaps.map((g) => `${g.criterion_id} (${g.reason}${notes[g.criterion_id] ? `: ${notes[g.criterion_id]}` : ''})`).join('; ')}`, 1600);
     const keys = [...new Set(failed.map((c) => attribution[c.criterion_id]).filter((k): k is string => Boolean(k)))];
     const responsible = keys.map((k) => store.tasks.first('"mission_id" = ? AND "key" = ?', target.mission_id, k)).filter((t): t is Task => Boolean(t) && t!.status === 'accepted');
     kernel.observe({ mission_id: target.mission_id, task_id: target.id, kind: 'acceptance_failure', failure_class: failed.map((c) => c.criterion_id).sort().join('+') || 'unattributed', certainty: 'verified', details: { reason, responsible: responsible.map((r) => r.key) }, component: 'execution', release_id: target.contract.release_id, source: kernel.sourceOf(target.mission_id) });

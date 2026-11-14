@@ -11,12 +11,41 @@ const CLASS_FOR: Record<SwarmArchetype, BudgetClass> = {
   reliability: 'completion',
 };
 
+function planShapeErrors(plan: unknown): string[] {
+  if (plan === null || typeof plan !== 'object' || Array.isArray(plan)) return ['it is not an object'];
+  const p = plan as Record<string, unknown>;
+  const out: string[] = [];
+  if (typeof p.topology !== 'string') out.push('topology is missing');
+  if (p.anchor !== 'mission' && p.anchor !== 'own_swarm') out.push('anchor must be "mission" or "own_swarm"');
+  for (const k of ['swarms', 'tasks', 'interface_agreements', 'extra_dependencies']) if (!Array.isArray(p[k])) out.push(`${k} is not a list`);
+  if (out.length) return out;
+  const str = (v: unknown): boolean => typeof v === 'string' && v.length > 0;
+  (p.swarms as Record<string, unknown>[]).forEach((s, i) => {
+    if (s === null || typeof s !== 'object') return void out.push(`swarm ${i} is not an object`);
+    if (!str(s.ref) || !str(s.archetype)) out.push(`swarm ${i} lacks a ref or an archetype`);
+    if (typeof s.budget_share !== 'number') out.push(`swarm ${String(s.ref ?? i)} has no budget share`);
+    if (s.depends_on !== undefined && !Array.isArray(s.depends_on)) out.push(`swarm ${String(s.ref ?? i)}: depends_on is not a list`);
+  });
+  (p.tasks as Record<string, unknown>[]).forEach((t, i) => {
+    if (t === null || typeof t !== 'object') return void out.push(`task ${i} is not an object`);
+    if (!str(t.ref) || !str(t.swarm_ref) || !str(t.title)) out.push(`task ${i} lacks a ref, a swarm or a title`);
+    for (const k of ['depends_on', 'verifies', 'input_keys', 'outputs', 'acceptance_criteria', 'write_scope']) if (!Array.isArray(t[k])) out.push(`task ${String(t.ref ?? i)}: ${k} is not a list`);
+    if (t.verification === null || typeof t.verification !== 'object') out.push(`task ${String(t.ref ?? i)} has no verification method`);
+    if (typeof t.budget_share !== 'number') out.push(`task ${String(t.ref ?? i)} has no budget share`);
+  });
+  return out.slice(0, 8);
+}
+
 /**
  * Check a proposed plan before anything is created. Agents propose; the runtime decides whether
  * the proposal is structurally sound and within the proposer's authority.
  */
 export function validatePlan(kernel: Kernel, mission: Mission, plan: PlanProposal, proposer: Task | null): string[] {
   const errors: string[] = [];
+  // A proposal is untrusted input. Its shape is checked before anything reads it, so a malformed
+  // one is refused with a reason instead of breaking the step that validates it.
+  const shape = planShapeErrors(plan);
+  if (shape.length) return [`the proposed plan is malformed: ${shape.join('; ')}`];
   const swarmRefs = new Set(plan.swarms.map((s) => s.ref));
   const taskRefs = new Set(plan.tasks.map((t) => t.ref));
   const existing = new Map(kernel.store.tasks.where('"mission_id" = ?', mission.id).map((t) => [t.key, t]));

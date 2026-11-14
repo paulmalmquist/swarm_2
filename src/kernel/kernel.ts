@@ -1,5 +1,5 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, resolve, sep } from 'node:path';
 import type {
   AcceptanceCriterion,
   ActorKind,
@@ -221,6 +221,13 @@ export class Kernel {
       this.store.emit({ type: 'mission_status_changed', mission_id, actor_id: actor, actor_kind: 'runtime', payload: { from, to: status, ...payload }, release_id: m.release_id });
       return m;
     });
+  }
+
+  /** Whether a submission published a version of every output the contract requires. */
+  private deliveredEverything(task: Task, version_ids: string[]): boolean {
+    if (task.contract.required_outputs.length === 0) return false;
+    const keys = new Set(version_ids.map((id) => this.store.versions.get(id)?.key));
+    return task.contract.required_outputs.every((o) => keys.has(o.key));
   }
 
   /**
@@ -747,15 +754,35 @@ export class Kernel {
           version_ids.push(r.version.id);
           impacts.push(...r.impacts);
         };
+        // A worker publishes only the outputs its contract names. Code is taken from git by the
+        // runtime, never from what a worker says it wrote, and a file is read only if it is a
+        // regular file inside the worker's own workspace.
+        const named = new Set(task.contract.required_outputs.map((o) => o.key));
+        const fromGit = new Set(task.contract.required_outputs.filter((o) => o.kind === 'code').map((o) => o.key));
+        const ignored: { key: string; why: string }[] = [];
         for (const art of output.artifacts) {
+          if (!named.has(art.key)) {
+            ignored.push({ key: art.key, why: 'not an output named in the contract' });
+            continue;
+          }
+          if (fromGit.has(art.key)) {
+            ignored.push({ key: art.key, why: 'code is recorded from the workspace commit' });
+            continue;
+          }
           let content = art.content;
           if (content === undefined && art.path && extra.workspace) {
-            const p = join(extra.workspace.dir, art.path);
-            content = existsSync(p) ? readFileSync(p, 'utf8') : undefined;
+            const root = resolve(extra.workspace.dir);
+            const p = resolve(root, art.path);
+            const regular = p.startsWith(root + sep) && existsSync(p) && lstatSync(p).isFile();
+            content = regular ? readFileSync(p, 'utf8') : undefined;
           }
-          if (content === undefined) continue;
+          if (content === undefined) {
+            ignored.push({ key: art.key, why: 'no content, or its path is not a regular file inside the workspace' });
+            continue;
+          }
           publish({ key: art.key, kind: art.kind, media_type: art.media_type, content });
         }
+        if (ignored.length) this.store.emit({ type: 'artifacts_ignored', mission_id: task.mission_id, task_id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, ignored }, release_id: task.contract.release_id });
         if (extra.git) publish({ key: extra.git.key, kind: 'code', media_type: 'application/x-git-commit', git: { commit: extra.git.commit, tree: extra.git.tree } });
 
         for (const ev of output.evidence) {
@@ -781,9 +808,14 @@ export class Kernel {
 
         if (output.status === 'failed') {
           this.requeueOrFail(task, 'worker_reported_failure', output.summary);
-        } else if (output.status === 'blocked') {
+        } else if (output.status === 'blocked' && !this.deliveredEverything(task, version_ids)) {
           this.block(task, 'worker_blocked', this.nextAction(task.contract.escalation.path[0] ?? 'chief_of_staff', 'agent', `Unblock: ${truncate(output.summary, 120)}`));
         } else {
+          if (output.status === 'blocked') {
+            // The worker delivered every required output but could not vouch for it. Its doubt is no
+            // more a verdict than a claim would be: the work goes to verification, which decides.
+            this.store.emit({ type: 'worker_doubt_recorded', mission_id: task.mission_id, task_id: task.id, actor_id: agent, actor_kind: 'agent', payload: { key: task.key, said: truncate(output.summary, 300), proceeding_to: 'verification' }, release_id: task.contract.release_id });
+          }
           task.status = 'submitted';
           task.lease_owner = null;
           task.lease_expires_at = null;

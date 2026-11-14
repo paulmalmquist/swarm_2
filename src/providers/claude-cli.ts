@@ -54,7 +54,8 @@ export const WORK_OUTPUT_SCHEMA = {
       type: 'array',
       items: { type: 'object', required: ['kind', 'payload'], properties: { kind: { type: 'string' }, payload: { type: 'object' } } },
     },
-    plan: { type: 'object' },
+    // No `plan`: in this build the work graph comes from the versioned coordination policy, and a
+    // live worker is not asked to propose one. Offering the field invited shapeless objects.
   },
 } as const;
 
@@ -106,7 +107,11 @@ export function interpretResult(ev: ClaudeResultEvent | null, meta: { model_requ
     completeness: (ev.subagent_stats?.spawned ?? 0) > 0 ? 'partial' : 'complete',
     observed_at: new Date().toISOString(),
   };
-  const common = { ...base, usage, model_actual, session_id: ev.session_id ?? null };
+  const denials = ((ev.permission_denials ?? []) as { tool_name?: string; tool_input?: Record<string, unknown> }[]).map((d) => ({
+    tool: String(d.tool_name ?? 'unknown'),
+    target: String(d.tool_input?.file_path ?? d.tool_input?.path ?? d.tool_input?.pattern ?? d.tool_input?.command ?? '').slice(0, 240),
+  }));
+  const common = { ...base, usage, model_actual, session_id: ev.session_id ?? null, denials };
   if (ev.is_error) {
     const message = String(ev.result ?? ev.subtype ?? 'error');
     const limited = ev.api_error_status === 429 || /usage limit|rate limit|hit your .*limit/i.test(message);
@@ -120,7 +125,8 @@ export function interpretResult(ev: ClaudeResultEvent | null, meta: { model_requ
     if (!out || typeof out !== 'object' || typeof out.summary !== 'string' || !Array.isArray(out.artifacts)) {
       return { ...common, status: 'invalid_output', output: null, error: { code: 'invalid_output', message: 'worker finished without a schema-valid structured result' } };
     }
-    return { ...common, status: 'ok', output: { ...out, questions: out.questions ?? [], proposals: out.proposals ?? [] }, error: null };
+    const { plan: _notAccepted, ...rest } = out as typeof out & { plan?: unknown };
+    return { ...common, status: 'ok', output: { ...rest, questions: out.questions ?? [], proposals: out.proposals ?? [] }, error: null };
   }
   return { ...common, status: 'ok', output: { status: 'completed', summary: String(ev.result ?? ''), artifacts: [], evidence: [], criteria_claims: [], remaining_uncertainty: [], questions: [], proposals: [] }, error: null };
 }
@@ -208,7 +214,10 @@ export class ClaudeCliProvider implements Provider {
       // Tool allow-lists are a harness-level control, not an OS boundary: a bare `Write` rule was
       // observed to permit writes outside the working directory, so edits are path-scoped here and
       // the runtime re-checks the write scope from git afterwards.
-      args.push('--tools', 'Read,Write,Edit,Glob,Grep,Bash', '--allowedTools', 'Read', 'Glob', 'Grep', 'Edit(./**)', 'Write(./**)', 'Bash(node --test:*)');
+      // Verified on Claude Code 2.1.325 in don't-ask mode: with these path-scoped rules a read, a
+      // glob, a write and a `cat` aimed outside the working directory were each denied, while
+      // `node --test …` (also piped to tail) ran. A bare `Write` rule had NOT confined writes.
+      args.push('--tools', 'Read,Write,Edit,Glob,Grep,Bash', '--allowedTools', 'Read(./**)', 'Glob(./**)', 'Grep(./**)', 'Edit(./**)', 'Write(./**)', 'Bash(node --test:*)');
     } else {
       args.push('--tools', '');
     }
@@ -222,6 +231,14 @@ export class ClaudeCliProvider implements Provider {
       timed_out = true;
       child.kill('SIGTERM');
     }, req.timeout_ms);
+    // A model can generate for longer than a lease without emitting an event. While the process is
+    // alive the lease is kept; a worker that hangs is ended by the timeout above.
+    const beat = setInterval(() => {
+      if (Date.now() - lastBeat > 1000) {
+        lastBeat = Date.now();
+        hooks.onHeartbeat({ pid: child.pid });
+      }
+    }, Math.max(500, Math.floor(this.limits.lease_ms / 5)));
     child.stdout.on('data', (d: Buffer) => {
       buffer += d.toString();
       let nl: number;
@@ -244,12 +261,14 @@ export class ClaudeCliProvider implements Provider {
     const done = new Promise<WorkResult>((resolve) => {
       child.on('close', (code, signal) => {
         clearTimeout(timer);
+        clearInterval(beat);
         const result = interpretResult(final, { model_requested: req.model, wall_ms: Date.now() - started, exit_code: code, signal, timed_out, expects_structured: true });
         if (result.status === 'rate_limited') this.noteRateLimit(result.error?.message ?? '');
         resolve(result);
       });
       child.on('error', (err) => {
         clearTimeout(timer);
+        clearInterval(beat);
         resolve({ status: 'failed', output: null, self_submitted: false, usage: null, model_requested: req.model, model_actual: null, session_id: null, error: { code: 'spawn_failed', message: String(err) } });
       });
     });

@@ -60,7 +60,7 @@ export class Workspaces {
   }
 
   /** A fresh worktree and branch for one attempt, based on the current integration head. */
-  createWorktree(mission_id: string, taskKey: string, attemptNo: number, generation: number): { dir: string; branch: string; base_commit: string } {
+  createWorktree(mission_id: string, taskKey: string, attemptNo: number, generation: number, from: string | null = null): { dir: string; branch: string; base_commit: string } {
     const repo = this.repoDir(mission_id);
     const safe = taskKey.replace(/[^a-zA-Z0-9_-]+/g, '-');
     const branch = `task/${safe}/g${generation}a${attemptNo}`;
@@ -71,7 +71,8 @@ export class Workspaces {
     }
     this.git(repo, ['branch', '-D', branch], true);
     mkdirSync(dirname(dir), { recursive: true });
-    this.git(repo, ['worktree', 'add', '-q', '-b', branch, dir, 'integration']);
+    // A repair may continue from the author's previous attempt instead of starting over.
+    this.git(repo, ['worktree', 'add', '-q', '-b', branch, dir, from ?? 'integration']);
     return { dir, branch, base_commit: this.git(dir, ['rev-parse', 'HEAD']) };
   }
 
@@ -183,6 +184,40 @@ export class Workspaces {
 }
 
 /** Parse top-level results from the Node test runner's TAP output. */
+/**
+ * Failing tests with the first lines of what each assertion reported. That is enough for an
+ * author to repair the work without being shown the test's code.
+ */
+export function tapFailures(out: string, maxChars = 320): { name: string; message: string }[] {
+  const lines = out.split('\n');
+  const failures: { name: string; message: string }[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^\s*not ok \d+ - (.*)$/.exec(lines[i]!);
+    if (!m) continue;
+    const name = (m[1] ?? '').replace(/ # .*$/, '').trim();
+    let message = '';
+    for (let j = i + 1; j < lines.length && !/^\s*\.\.\.\s*$/.test(lines[j]!) && !/^\s*(not ok|ok) \d+ - /.test(lines[j]!); j++) {
+      const e = /^(\s*)error:\s*(.*)$/.exec(lines[j]!);
+      if (!e) continue;
+      const indent = e[1]!.length;
+      if (e[2] && !/^[|>][-+]?$/.test(e[2].trim())) message = e[2].trim().replace(/^'|'$/g, '');
+      else {
+        const body: string[] = [];
+        for (let k = j + 1; k < lines.length; k++) {
+          const l = lines[k]!;
+          if (l.trim() !== '' && l.length - l.trimStart().length <= indent) break;
+          body.push(l.trim());
+        }
+        message = body.filter(Boolean).join(' ');
+      }
+      break;
+    }
+    message = message.replace(/\s+/g, ' ');
+    failures.push({ name, message: message.length > maxChars ? message.slice(0, maxChars - 1) + '…' : message });
+  }
+  return failures;
+}
+
 export function parseTap(out: string): { name: string; ok: boolean }[] {
   const results: { name: string; ok: boolean }[] = [];
   for (const line of out.split('\n')) {

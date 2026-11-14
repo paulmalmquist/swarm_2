@@ -1,6 +1,6 @@
 import { type ChildProcess, spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../src/config.ts';
 import type { FaultSpec } from '../src/coordination/coordinator.ts';
 import { LocalChiefOfStaff, type RawRequest } from '../src/cos/port.ts';
@@ -78,8 +78,8 @@ export function brief(e: RunEvent): string {
 }
 
 export function writeEvidence(dir: string, name: string, value: unknown): string {
-  mkdirSync(dir, { recursive: true });
   const p = join(dir, name);
+  mkdirSync(dirname(p), { recursive: true });
   writeFileSync(p, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
   return p;
 }

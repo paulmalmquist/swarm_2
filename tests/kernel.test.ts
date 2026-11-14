@@ -225,8 +225,8 @@ test('reuse: an unchanged input lets a verified result be revalidated without re
   const r = rig();
   try {
     const m = mission(r);
-    const src = task(r, m, 'src');
-    const mid = task(r, m, 'mid', { depends_on: [src.id], input_keys: ['doc/src'] });
+    const src = task(r, m, 'src', { required_outputs: [{ key: 'doc/src', kind: 'report', description: 'src' }] });
+    const mid = task(r, m, 'mid', { depends_on: [src.id], input_keys: ['doc/src'], required_outputs: [{ key: 'doc/mid', kind: 'report', description: 'mid' }] });
     const leaf = task(r, m, 'leaf', { depends_on: [mid.id], input_keys: ['doc/mid'] });
     r.kernel.refreshReadiness(m.id);
     complete(r, src, { artifacts: [{ key: 'doc/src', kind: 'report', media_type: 'text/plain', content: 'one' }] });
@@ -312,7 +312,7 @@ test('cancellation propagates to descendants, releases reservations and keeps ar
     const delivery = r.kernel.classAccount(m.id, 'delivery');
     const before = r.kernel.budget.available(delivery).worker_invocations;
     const team = task(r, m, 'team', { executor: 'container', acceptance_criteria: [], verification: { method: 'none', independent: false }, reservation: amounts({ model_calls: 12, worker_invocations: 12, tokens: 30000, cost_usd_est: 1.5, wall_ms: 200000 }) });
-    const done = task(r, m, 'done', { parent_task_id: team.id });
+    const done = task(r, m, 'done', { parent_task_id: team.id, required_outputs: [{ key: 'doc/kept', kind: 'report', description: 'kept' }] });
     const running = task(r, m, 'running', { parent_task_id: team.id });
     task(r, m, 'waiting', { parent_task_id: team.id, depends_on: [running.id] });
     r.kernel.refreshReadiness(m.id);
@@ -384,5 +384,53 @@ test('the event log is append-only and hash-chained', () => {
     assert.throws(() => r.store.db.run(`DELETE FROM events WHERE seq = 1`), /append-only/);
   } finally {
     r.cleanup();
+  }
+});
+
+test('a worker publishes only the outputs its contract names, and files only from inside its workspace', async () => {
+  const { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const r = rig();
+  const box = mkdtempSync(join(tmpdir(), 'swarm2-artifact-'));
+  try {
+    const m = mission(r);
+    const t = task(r, m, 'writer', { required_outputs: [{ key: 'doc/mine', kind: 'report', description: 'mine' }, { key: 'doc/file', kind: 'report', description: 'file' }, { key: 'doc/stolen', kind: 'report', description: 'x' }, { key: 'doc/linked', kind: 'report', description: 'x' }, { key: 'doc/dir', kind: 'report', description: 'x' }] });
+    const other = task(r, m, 'owner', { required_outputs: [{ key: 'contract/shared', kind: 'contract', description: 'shared' }] });
+    r.kernel.refreshReadiness(m.id);
+    complete(r, r.store.tasks.must(other.id), { artifacts: [{ key: 'contract/shared', kind: 'contract', media_type: 'application/json', content: '{"version":1}' }] });
+    const before = r.kernel.currentVersion(m.id, 'contract/shared')!;
+
+    // A workspace with one legitimate file, a secret outside it, and a link pointing at the secret.
+    const ws = join(box, 'ws');
+    mkdirSync(join(ws, 'sub'), { recursive: true });
+    writeFileSync(join(ws, 'note.txt'), 'written in the workspace');
+    writeFileSync(join(box, 'secret.txt'), 'OUTSIDE');
+    symlinkSync(join(box, 'secret.txt'), join(ws, 'link.txt'));
+
+    const lease = r.kernel.claim(t.id, t.owner_id, { provider: 'fixture', provider_mode: 'fixture', model_requested: null, uses_call_slot: false })!;
+    r.kernel.submitResult(t.id, lease.token, {
+      status: 'completed', summary: 's', evidence: [], criteria_claims: [], remaining_uncertainty: [], questions: [], proposals: [],
+      artifacts: [
+        { key: 'doc/mine', kind: 'report', media_type: 'text/plain', content: 'my result' },
+        { key: 'doc/file', kind: 'report', media_type: 'text/plain', path: 'note.txt' },
+        // Overwrite an artifact another task owns.
+        { key: 'contract/shared', kind: 'contract', media_type: 'application/json', content: '{"version":99}' },
+        // Lift files from outside the workspace: by a relative path, through a link, and a directory.
+        { key: 'doc/stolen', kind: 'report', media_type: 'text/plain', path: '../secret.txt' },
+        { key: 'doc/linked', kind: 'report', media_type: 'text/plain', path: 'link.txt' },
+        { key: 'doc/dir', kind: 'report', media_type: 'text/plain', path: 'sub' },
+      ],
+    }, null, { source: 'fixture', workspace: { dir: ws, branch: null, base_commit: null, head_commit: null } });
+
+    assert.equal(r.kernel.readArtifact(r.kernel.currentVersion(m.id, 'doc/mine')!), 'my result');
+    assert.equal(r.kernel.readArtifact(r.kernel.currentVersion(m.id, 'doc/file')!), 'written in the workspace');
+    assert.equal(r.kernel.currentVersion(m.id, 'contract/shared')!.id, before.id, 'another owner\'s artifact is untouched');
+    for (const key of ['doc/stolen', 'doc/linked', 'doc/dir']) assert.equal(r.kernel.currentVersion(m.id, key), undefined, `${key} was not published`);
+    const ignored = r.store.events({ type: 'artifacts_ignored' }).flatMap((e) => (e.payload.ignored as { key: string; why: string }[]).map((i) => i.key)).sort();
+    assert.deepEqual(ignored, ['contract/shared', 'doc/dir', 'doc/linked', 'doc/stolen']);
+  } finally {
+    r.cleanup();
+    rmSync(box, { recursive: true, force: true });
   }
 });

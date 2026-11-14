@@ -66,6 +66,16 @@ export class Coordinator {
     return m.provider_mode === 'live' ? this.rt.providers.live : this.rt.providers.fixture;
   }
 
+  /**
+   * A live mission can contain steps that stay scripted from the scenario: a policy template, or
+   * a reference document the scenario supplies. Those run on the fixture provider and are recorded
+   * as fixture attempts, so nothing scripted is ever labeled as model work.
+   */
+  providerFor(m: Mission, t: Task): Provider {
+    if (m.provider_mode === 'live' && this.rt.kernel.params(t.id).execution === 'template') return this.rt.providers.fixture;
+    return this.provider(m);
+  }
+
   // ───────── recovery ─────────
 
   /** Run once when a coordinator starts: fence anything the previous coordinator left in flight. */
@@ -168,7 +178,10 @@ export class Coordinator {
       }
       if (this.updateMissionState(m.id)) progressed = true;
     }
-    return { active: progressed || this.running.size > 0 || this.busy.size > 0 };
+    // Work that is leased is still in flight even when no process of this coordinator is attached
+    // to it: its lease will either be renewed by a worker or expire and be reclaimed.
+    const leased = missions.some((m) => store.tasks.count(`"mission_id" = ? AND "status" = 'leased' AND "executor" = 'worker'`, m.id) > 0);
+    return { active: progressed || this.running.size > 0 || this.busy.size > 0 || leased };
   }
 
   private async bootstrap(m: Mission): Promise<void> {
@@ -248,7 +261,7 @@ export class Coordinator {
   private async dispatchWorker(m: Mission, t: Task): Promise<boolean> {
     const { kernel, store, workspaces } = this.rt;
     if (this.tryReuse(m, t)) return true;
-    const provider = this.provider(m);
+    const provider = this.providerFor(m, t);
     const gate = provider.available();
     if (!gate.ok) {
       // Fail closed: no fallback to another provider, and no pretending a fixture is live.
@@ -273,7 +286,10 @@ export class Coordinator {
     if (task.contract.required_outputs.some((o) => o.kind === 'code')) {
       if (!scenario.config.app_seed) throw new SwarmError('no_app_seed', `Scenario ${scenario.name} has no application to work on`);
       workspaces.initMissionRepo(m.id, join(scenario.dir, scenario.config.app_seed));
-      const wt = workspaces.createWorktree(m.id, task.key, token.attempt, token.generation);
+      // A model worker repairing its own rejected work continues from that work, as long as the
+      // inputs are the same generation. Scripted workers always rebuild from the integration head.
+      const earlier = provider.mode === 'live' ? store.attempts.where('"task_id" = ?', task.id).filter((a) => a.generation === token.generation && a.attempt_no < token.attempt && a.workspace?.head_commit).sort((a, b) => b.attempt_no - a.attempt_no)[0] : undefined;
+      const wt = workspaces.createWorktree(m.id, task.key, token.attempt, token.generation, earlier?.workspace?.head_commit ?? null);
       workspaces.materializeInputs(
         wt.dir,
         Object.entries(inputs).flatMap(([key, content]) => {
@@ -317,7 +333,20 @@ export class Coordinator {
     if (faults.some((f) => f.startsWith('stall_then_submit'))) store.setMeta(`attempt:${attempt.id}:unreachable`, true);
     this.running.set(attempt.id, { handle, task_id: task.id, token });
     this.log(`dispatched ${task.key} (${provider.name}, token g${token.generation}a${token.attempt}${faults.length ? `, INJECTED FAULT ${faults.join('+')}` : ''})`);
-    const p = handle.done.then((res) => this.onWorkerDone(attempt.id, task.id, token, res, workspace)).catch((err) => this.log(`worker completion error on ${task.key}: ${String(err)}`));
+    const p = handle.done
+      .then((res) => {
+        try {
+          this.onWorkerDone(attempt.id, task.id, token, res, workspace);
+        } catch (err) {
+          // A result that cannot be recorded must not strand the task: the attempt fails and is retried.
+          this.log(`could not record the result of ${task.key}: ${err instanceof Error ? err.message : String(err)}`);
+          const cur = store.tasks.get(task.id);
+          if (cur && cur.status === 'leased' && cur.attempt === token.attempt && cur.generation === token.generation) {
+            kernel.failAttempt(task.id, token, 'invalid_output', { code: err instanceof SwarmError ? err.code : 'result_not_recordable', message: truncate(err instanceof Error ? err.message : String(err), 300) }, res.usage, { countsAsRetry: true });
+          }
+        }
+      })
+      .catch((err) => this.log(`worker completion error on ${task.key}: ${String(err)}`));
     this.track(p);
     return true;
   }
@@ -327,6 +356,9 @@ export class Coordinator {
     this.running.delete(attempt_id);
     const task = store.tasks.must(task_id);
     const source = kernel.sourceOf(task.mission_id);
+    // What the worker harness refused is kept: it shows a worker reaching outside its scope, and it
+    // shows the scope doing its job.
+    if (res.denials?.length) store.emit({ type: 'worker_tool_denied', mission_id: task.mission_id, task_id, actor_id: task.owner_id, actor_kind: 'agent', payload: { key: task.key, attempt: token.attempt, count: res.denials.length, denials: res.denials.slice(0, 12) }, release_id: task.contract.release_id });
     if (res.status === 'ok' && res.self_submitted) return;
     if (res.status === 'ok' && res.output) {
       let git: { commit: string; tree: string; key: string } | null = null;
@@ -370,6 +402,13 @@ export class Coordinator {
         const cur = this.rt.store.tasks.get(t.id);
         if (cur && cur.status === 'leased') {
           this.rt.kernel.failAttempt(t.id, { attempt: cur.attempt, generation: cur.generation }, 'failed', { code: err instanceof SwarmError ? err.code : 'step_error', message: err instanceof Error ? err.message : String(err) }, null, { countsAsRetry: true });
+        } else if (cur && cur.status === 'submitted') {
+          // A check that keeps failing on the same result must not be retried forever. After three
+          // tries the result goes back to its author with the reason, inside the repair limit.
+          const key = `task:${t.id}:step_errors:g${cur.generation}a${cur.attempt}`;
+          const n = (this.rt.store.getMeta<number>(key) ?? 0) + 1;
+          this.rt.store.setMeta(key, n);
+          if (n >= 3) this.rt.kernel.rejectTask(t.id, 'verification', `the result could not be checked (${truncate(err instanceof Error ? err.message : String(err), 200)}); either its shape is not what the contract asks for or the check is defective`, 'verification_error');
         }
       })
       .finally(() => {
@@ -436,6 +475,28 @@ export class Coordinator {
     if (!['planning', 'active'].includes(m.status)) return false;
     const tasks = store.tasks.where('"mission_id" = ?', mission_id);
     if (tasks.length === 0) return false;
+    // A worker that says it cannot proceed is not left waiting on an agent that has no way to act:
+    // the question goes to a person, once, with what the worker said.
+    for (const b of tasks.filter((t) => t.status === 'blocked' && t.blocked_reason === 'worker_blocked')) {
+      if (store.decisions.first(`"mission_id" = ? AND "kind" = 'blocked_work' AND "task_id" = ? AND "status" IN ('open', 'escalated')`, mission_id, b.id)) continue;
+      if (store.getMeta<number>(`task:${b.id}:blocked_asked`) === b.attempt) continue;
+      const said = store.getMeta<{ summary: string; remaining_uncertainty: string[] }>(`task:${b.id}:output:g${b.generation}`);
+      store.setMeta(`task:${b.id}:blocked_asked`, b.attempt);
+      comms.openDecision({
+        mission_id,
+        task_id: b.id,
+        kind: 'blocked_work',
+        question: `The worker on "${b.title}" reports it cannot proceed: ${truncate(said?.summary ?? 'no reason given', 400)} What should happen?`,
+        owner_id: 'chief_of_staff',
+        owner_kind: 'chief_of_staff',
+        requires_human: true,
+        options: [
+          { id: 'retry', label: 'Try the task again', evidence_ids: [], consequences: ['A new attempt starts and is given what the previous worker reported', 'It uses one more worker invocation from the mission budget'], proposed_by: 'runtime' },
+          { id: 'cancel', label: 'Cancel the mission and keep its artifacts', evidence_ids: [], consequences: ['Reservations are released', 'Finished artifacts stay available'], proposed_by: 'runtime' },
+          { id: 'hold', label: 'Hold it for investigation', evidence_ids: [], consequences: ['Nothing further runs on this task'], proposed_by: 'runtime' },
+        ],
+      });
+    }
     const failed = tasks.filter((t) => t.status === 'failed');
     if (failed.length) {
       const f = failed[0]!;

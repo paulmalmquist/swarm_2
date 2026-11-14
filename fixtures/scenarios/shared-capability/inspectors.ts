@@ -11,15 +11,22 @@ function parse(text: string | undefined): Record<string, unknown> | null {
 }
 
 export const inspectors: Record<string, Inspector> = {
-  overlap_report: ({ artifacts }) => {
+  overlap_report: ({ artifacts, mission, rt }) => {
     const doc = parse(artifacts['discovery/overlap-report']);
     if (!doc) return { ok: false, details: 'the overlap report is not valid JSON' };
-    const needs = (doc.distinct_needs ?? []) as { request_id?: string; stakeholder?: string; need?: string }[];
-    const ids = (doc.consolidated_request_ids ?? []) as string[];
+    const list = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []);
+    const needs = (Array.isArray(doc.distinct_needs) ? doc.distinct_needs : []) as { request_id?: string; stakeholder?: string; need?: string }[];
+    const ids = list(doc.consolidated_request_ids);
     if (typeof doc.shared_capability !== 'string' || !doc.shared_capability.trim()) return { ok: false, details: 'no shared capability is named' };
     if (ids.length < 2) return { ok: false, details: 'fewer than two requests are consolidated' };
-    const missing = ids.filter((id) => !needs.some((n) => n.request_id === id && n.stakeholder && n.need));
-    return { ok: missing.length === 0, details: missing.length ? `no distinct need recorded for ${missing.join(', ')}` : `${needs.length} distinct needs recorded for ${ids.length} consolidated requests` };
+    const missing = ids.filter((id) => !needs.some((n) => n?.request_id === id && n.stakeholder && n.need));
+    if (missing.length) return { ok: false, details: `no distinct need recorded for ${missing.join(', ')}` };
+    // No request the mission was authorized with may simply disappear: each is either consolidated
+    // or named as left out. The list is read from the store, not from the document under inspection.
+    const accounted = new Set([...ids, ...list(doc.unrelated_request_ids)]);
+    const dropped = (mission.request_ids ?? []).filter((id) => rt.store.requests.get(id) && !accounted.has(id));
+    if (dropped.length) return { ok: false, details: `${dropped.join(', ')} appears in neither consolidated_request_ids nor unrelated_request_ids; every request must be placed in one of them (asking a question about it does not place it)` };
+    return { ok: true, details: `${needs.length} distinct needs recorded for ${ids.length} consolidated requests` };
   },
   epistemics: ({ artifacts }) => {
     const doc = parse(artifacts['discovery/overlap-report']);

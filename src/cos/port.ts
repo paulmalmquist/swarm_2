@@ -66,6 +66,8 @@ export interface ProgressSnapshot {
   /** Whose action or decision is needed next, per unfinished task. */
   next_actions: (NextAction & { task_key: string; task_title: string; status: string })[];
   blockers: { task_key: string; reason: string | null; owner_id: string | null }[];
+  /** How the work was actually executed: by a model, by a labeled script, or by the runtime itself. */
+  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number };
   spent: ResourceAmounts;
   budget: ResourceAmounts;
   open_decisions: number;
@@ -82,6 +84,8 @@ export interface AttentionItem {
   options: { id: string; label: string; consequences: string[] }[];
   owner_id: string;
   owner_kind: ActorKind;
+  /** Whether the work this concerns was executed by live model workers or by labeled fixtures. */
+  source: 'live' | 'fixture';
   created_at: string;
 }
 
@@ -109,7 +113,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
     return { source, generated_at: this.rt.store.clock.iso(), ...data };
   }
 
-  private sourceOf(mission_id: string | null): Exclude<SourceLabel, 'unavailable'> {
+  private sourceOf(mission_id: string | null): 'live' | 'fixture' {
     return this.rt.kernel.sourceOf(mission_id) === 'live' ? 'live' : 'fixture';
   }
 
@@ -215,12 +219,14 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         tasks: { total: tasks.length, by_status },
         next_actions: tasks.filter((t) => t.next_action).map((t) => ({ ...t.next_action!, task_key: t.key, task_title: t.title, status: t.status })),
         blockers: tasks.filter((t) => t.status === 'blocked' || t.status === 'failed').map((t) => ({ task_key: t.key, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null })),
+        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length }))(store.attempts.where('"mission_id" = ?', m.id)),
         spent: kernel.budget.spent(m.budget_account_id),
         budget: store.accounts.must(m.budget_account_id).limit,
         open_decisions: store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).length,
       };
     });
-    return this.env({ missions: snapshots });
+    // The label says where the work shown was executed. Each mission also carries its own provider mode.
+    return this.env({ missions: snapshots }, snapshots.some((x) => x.mission.provider_mode === 'live') ? 'live' : 'fixture');
   }
 
   /** What needs a person: decisions owned by the chief of staff or a human, and drafts awaiting review. */
@@ -239,6 +245,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         options: d.options.map((o) => ({ id: o.id, label: o.label, consequences: o.consequences })),
         owner_id: d.owner_id,
         owner_kind: d.owner_kind,
+        source: this.sourceOf(d.mission_id),
         created_at: d.created_at,
       });
     }
@@ -256,10 +263,11 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         ],
         owner_id: dr.audience,
         owner_kind: 'human',
+        source: this.sourceOf(dr.mission_id),
         created_at: dr.created_at,
       });
     }
-    return this.env({ items: items.sort((a, b) => a.created_at.localeCompare(b.created_at)) });
+    return this.env({ items: items.sort((a, b) => a.created_at.localeCompare(b.created_at)) }, items.some((i) => i.source === 'live') ? 'live' : 'fixture');
   }
 
   resolveDecision(cmd: Command<{ decision_id: string; chosen: string; rationale: string }>): Envelope<{ decision: Decision; effect: string }> {
@@ -287,8 +295,17 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
           effect = 'correction recorded; mission held for rework';
         }
-      } else if (['failure_escalation', 'limit_reached'].includes(decision.kind) && decision.chosen === 'cancel') {
-        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : 'failure'}: ${cmd.data.rationale}` } });
+      } else if (decision.kind === 'blocked_work' && decision.chosen === 'retry' && decision.task_id) {
+        const t = store.tasks.must(decision.task_id);
+        if (t.status === 'blocked') {
+          const said = store.getMeta<{ summary: string }>(`task:${t.id}:output:g${t.generation}`);
+          // The next worker is told what stopped the previous one.
+          store.setMeta(`task:${t.id}:rework`, { reason: `the previous worker reported it was blocked: ${said?.summary ?? 'no reason given'}`.slice(0, 1200), repairs: t.repairs });
+          kernel.unblock(t.id, cmd.actor, `retry decided by ${cmd.actor}: ${cmd.data.rationale}`);
+          effect = 'task released for another attempt';
+        }
+      } else if (['failure_escalation', 'limit_reached', 'blocked_work'].includes(decision.kind) && decision.chosen === 'cancel') {
+        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : 'failure'}: ${cmd.data.rationale}` } });
         effect = 'mission cancelled; artifacts kept';
       } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
         // Only a person can extend a ceiling. The extension is one more period of the configured length.
