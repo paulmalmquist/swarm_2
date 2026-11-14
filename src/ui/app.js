@@ -156,7 +156,7 @@ async function showTask(id) {
   const [cls, text] = statusOf(t);
   openDrawer(t.title, [
     h('div', { class: 'row' }, st(cls, text), provenance(env), h('span', { class: 'chip' }, 'layer ', h('b', {}, t.depth)), h('span', { class: 'chip' }, 'token ', h('b', {}, `g${t.generation}a${t.attempt}`))),
-    t.next_action ? h('p', {}, h('b', {}, 'Next action: '), `${t.next_action.owner_id} — ${t.next_action.action} (for ${ago(t.next_action.since)})`) : null,
+    t.next_action ? h('p', {}, h('b', {}, 'Next action: '), `${t.next_action.owner_label ?? t.next_action.owner_id} — ${t.next_action.action} (for ${ago(t.next_action.since)})`) : null,
     h('div', { class: 'card' }, h('h4', {}, 'Delegation contract'),
       kv([['Owner', t.owner_label], ['Accountable person', c.accountable_human], ['Objective', c.objective], ['Depends on', env.dependencies.join(', ') || '—'], env.verifies.length ? ['Verifies', env.verifies.join(', ')] : null,
         ['Pinned inputs', c.inputs.length ? c.inputs.map((i) => `${i.artifact_key} @ ${short(i.version_id)}`).join(', ') : '—'], ['May write', c.authority.write_scope.join(', ') || 'nothing'], ['May not', c.authority.forbidden_actions.join(', ')],
@@ -295,8 +295,8 @@ async function renderDoing() {
       h('div', { class: 'row spread' }, h('h3', {}, h('a', { tabindex: 0, onclick: () => showMission(m.id) }, m.title)), h('div', { class: 'row' }, h('span', { class: 'chip' }, 'status ', h('b', {}, m.status.replace(/_/g, ' '))), d ? h('span', { class: 'chip' }, 'release ', h('b', {}, d.release_id)) : null, d ? h('span', { class: 'chip' }, h('b', {}, `${d.provider_mode} · ${d.data_class} data`)) : null)),
       d?.migration?.required ? h('div', { class: 'banner', style: 'margin-top:10px' }, st('warn', 'Migration decision needed'), h('p', { class: 'small sec' }, d.migration.reason)) : null,
       d ? h('div', { class: 'grid two', style: 'margin:12px 0' },
-        h('div', {}, h('p', {}, h('b', {}, 'Next action: '), d.next_action ? `${d.next_action.owner_id} — ${d.next_action.action}` : 'none pending'), h('p', { class: 'small sec' }, `Accountable: ${d.accountable_human}. ${d.progress.accepted} of ${d.progress.total} tasks accepted.`),
-          d.blockers.length ? h('ul', { class: 'plain' }, d.blockers.map((b) => h('li', {}, st(b.owner_kind === 'agent' ? 'warn' : 'person', `blocked: ${b.reason}`), ` ${b.title} — waiting on ${dash(b.owner_id)}`))) : h('p', { class: 'small muted' }, 'No blockers.'),
+        h('div', {}, h('p', {}, h('b', {}, 'Next action: '), d.next_action ? `${d.next_action.owner_label ?? d.next_action.owner_id} — ${d.next_action.action}` : 'none pending'), h('p', { class: 'small sec' }, `Accountable: ${d.accountable_human}. ${d.progress.accepted} of ${d.progress.total} tasks accepted.`),
+          d.blockers.length ? h('ul', { class: 'plain' }, d.blockers.map((b) => h('li', {}, st(b.owner_kind === 'agent' ? 'warn' : 'person', `blocked: ${b.reason}`), ` ${b.title} — waiting on ${dash(b.owner_label ?? b.owner_id)}`))) : h('p', { class: 'small muted' }, 'No blockers.'),
           h('p', { class: 'small sec' }, 'Critical path: ', d.critical_path.keys.length ? d.critical_path.keys.join(' → ') : '—', d.critical_path.wait_ms === null ? '' : ` (waited ${ms(d.critical_path.wait_ms)} for an owner)`)),
         h('div', {}, meter('Worker invocations', d.spent.worker_invocations, d.budget.worker_invocations), meter('Worker time', d.spent.wall_ms, d.budget.wall_ms, ms), meter('Tokens', d.spent.tokens, d.budget.tokens),
           h('p', { class: 'small muted' }, d.spent.cost_usd_est > 0 ? `Cost estimate ${d.spent.cost_usd_est.toFixed(4)} USD at list prices; not a bill.` : 'Cost not measured: the fixture provider makes no model calls.'))) : null,

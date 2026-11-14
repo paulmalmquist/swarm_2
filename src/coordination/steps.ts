@@ -206,6 +206,36 @@ export class Steps {
           if (!have.has(n.request_id)) intake.recordNeed({ request_id: n.request_id, mission_id: m.id, stakeholder: n.stakeholder, need: n.need });
         }
       }
+      // A request the mission was authorized with, left out by discovery, is a change of scope.
+      // The work continues on the rest; the change itself is for the chief of staff to accept or refuse.
+      if (Array.isArray(doc.consolidated_request_ids) && typeof doc.shared_capability === 'string') {
+        const kept = new Set((doc.consolidated_request_ids as unknown[]).filter((x): x is string => typeof x === 'string'));
+        for (const id of (m.request_ids ?? []).filter((r) => !kept.has(r))) {
+          const req = store.requests.get(id);
+          if (!req || store.getMeta<boolean>(`mission:${m.id}:scope_asked:${id}`)) continue;
+          store.setMeta(`mission:${m.id}:scope_asked:${id}`, true);
+          // The stakeholder's need is kept as a record, marked as not covered by this mission.
+          const existing = store.needs.first('"mission_id" = ? AND "request_id" = ?', m.id, id);
+          const need = existing ?? intake.recordNeed({ request_id: id, mission_id: m.id, stakeholder: req.stakeholder, need: truncate(req.text, 300) });
+          store.needs.put({ ...need, status: 'deferred' });
+          const why = ((Array.isArray(doc.interpretations) ? doc.interpretations : []) as unknown[]).filter((x): x is string => typeof x === 'string').find((x) => x.includes(id));
+          const asked = this.rt.comms.openDecision({
+            mission_id: m.id,
+            task_id: task.id,
+            kind: 'scope_change',
+            question: `Discovery left ${id} (${req.stakeholder}, ${req.team}) out of "${m.title}"${why ? `: ${truncate(why, 360)}` : '.'} The mission is continuing without it. What should happen?`,
+            owner_id: 'chief_of_staff',
+            owner_kind: 'chief_of_staff',
+            requires_human: true,
+            options: [
+              { id: 'separate', label: 'Handle that request separately', evidence_ids: [], consequences: ['The request returns to intake for a mission of its own', 'This mission continues as it is', 'Its review packet lists the need as not covered'], proposed_by: task.owner_id },
+              { id: 'stop', label: 'Stop this mission: that is not the scope I authorized', evidence_ids: [], consequences: ['The mission is cancelled and its artifacts are kept', 'You can submit it again with the scope stated'], proposed_by: 'runtime' },
+            ],
+          });
+          store.setMeta(`decision:${asked.id}:request_id`, id);
+          store.emit({ type: 'scope_narrowed', mission_id: m.id, task_id: task.id, actor_id: task.owner_id, actor_kind: 'agent', payload: { request_id: id, stakeholder: req.stakeholder, why: why ? truncate(why, 300) : null } });
+        }
+      }
       // … and each is tied to the acceptance criterion that decides it.
       if (Array.isArray(doc.needs_map)) {
         for (const map of doc.needs_map as { request_id: string; criterion_id: string }[]) {

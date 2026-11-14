@@ -99,6 +99,8 @@ export interface LimitsProfile {
   lease_ms: number;
   heartbeat_ms: number;
   /** Live model execution is off unless the operator turns it on. No automatic fallback between providers. */
+  /** A model worker gets at least this long for one attempt, however small its share of the budget. */
+  live_attempt_floor_ms: number;
   live_execution_enabled: boolean;
 }
 

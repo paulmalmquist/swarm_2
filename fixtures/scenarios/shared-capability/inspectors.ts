@@ -44,7 +44,8 @@ export const inspectors: Record<string, Inspector> = {
     const deferred = new Set(((doc.deferred_needs ?? []) as { stakeholder: string; reason?: string }[]).filter((d) => d.reason).map((d) => d.stakeholder));
     // The consolidated needs are read from the store, not from the document under inspection.
     const needs = rt.store.needs.where('"mission_id" = ?', mission.id);
-    const dropped = needs.filter((n) => !mapped.has(n.request_id) && !deferred.has(n.stakeholder));
+    // A need already recorded as outside this mission (a scope decision is open for it) is not silently dropped.
+    const dropped = needs.filter((n) => n.status !== 'deferred' && !mapped.has(n.request_id) && !deferred.has(n.stakeholder));
     return { ok: dropped.length === 0, details: dropped.length ? `stakeholder need dropped without a criterion or a stated deferral: ${dropped.map((d) => d.stakeholder).join(', ')}` : `${needs.length} stakeholder needs each map to a criterion` };
   },
   contract: ({ artifacts }) => {

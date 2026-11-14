@@ -68,8 +68,10 @@ function implement(ctx: BehaviorCtx, part: 'engine' | 'report'): number {
 export const behaviors: Record<string, Behavior> = {
   'discovery.analyze': (ctx) => {
     const reqs = (JSON.parse(ctx.inputs['intake/requests'] ?? '{"requests":[]}') as { requests: Req[] }).requests;
-    const related = reqs.filter((r) => ANALYSIS[r.id]);
-    const unrelated = reqs.filter((r) => !ANALYSIS[r.id]);
+    // INJECTED JUDGMENT: treat the schema-drift request as a separate need, as a real analyst might.
+    const narrow = fault(ctx, 'leaves_out_request');
+    const related = reqs.filter((r) => ANALYSIS[r.id] && !(narrow && r.id === 'syn-req-002'));
+    const unrelated = reqs.filter((r) => !related.includes(r));
     const report = {
       synthetic: true,
       shared_capability: 'A shared, policy-driven dataset-health capability: freshness against per-dataset thresholds and schema conformance against declared fields, with an SLA report and alerts',
@@ -79,7 +81,7 @@ export const behaviors: Record<string, Behavior> = {
       symptoms: related.map((r) => ({ request_id: r.id, symptom: ANALYSIS[r.id]!.symptom })),
       underlying_problem: 'Dataset health is not observable in one place. Each team learns about staleness or drift only after a consumer breaks, and each has started solving it separately.',
       observed_facts: related.map((r) => `${r.id} (${r.team}) states: "${r.text}"`),
-      interpretations: ['The consolidated requests can be served by one capability. This is an interpretation: lexical overlap nominated it and the stakeholders have not confirmed it.', ...(unrelated.length ? [`${unrelated.map((r) => r.id).join(', ')} concerns licensing and is not part of this need.`] : [])],
+      interpretations: ['The consolidated requests can be served by one capability. This is an interpretation: lexical overlap nominated it and the stakeholders have not confirmed it.', ...(narrow ? ['syn-req-002 checks a schema against a contract rather than age against a threshold, so it is left out as a sibling need.'] : []), ...(unrelated.filter((r) => !ANALYSIS[r.id]).length ? [`${unrelated.filter((r) => !ANALYSIS[r.id]).map((r) => r.id).join(', ')} concerns licensing and is not part of this need.`] : [])],
       unknowns: ['Actual load cadences are not given; thresholds are taken from the requests where stated', 'Whether an alert should page someone or only appear in a report is not stated', 'No request says how long drift may persist before it matters'],
     };
     return done(`Consolidated ${related.length} of ${reqs.length} requests into one shared need; ${unrelated.length} left out as unrelated`, {

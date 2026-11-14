@@ -184,102 +184,147 @@ async function main(): Promise<void> {
       '',
       'Run `node check.mjs` (exactly that command) to see how the skill does on the development cases with your check added. Iterate until you are satisfied, then answer with the structured report. You can only write inside candidate/.',
     ].join('\n');
-    process.stdout.write(`Author (${model}) is working in an isolated workspace…\n`);
-    const author = await runAuthor(ws, model, prompt);
-    process.stdout.write(`Author finished: ok=${author.ok}, ${Math.round(author.wall_ms / 1000)} s, ${author.development_check_runs} development check runs, ${author.denials.length} tool uses refused\n`);
+    const MAX_ROUNDS = Number(process.env.SWARM2_LIVE_ROUNDS ?? 2);
+    const rounds: Record<string, unknown>[] = [];
+    let previous: { experiment_id: string; feedback: string } | null = null;
+    let lastReceipt: Awaited<ReturnType<typeof runExperiment>>['receipt'] | null = null;
+    let canary: { status: string; observations: unknown[] } | null = null;
+    const lines: string[] = [
+      `# Live improvement run: ${name}`,
+      '',
+      '**LIVE MODEL AUTHOR.** A model wrote each candidate from development cases only. The review workload is SYNTHETIC, and the release gate judged each candidate by executing it on held-out cases — no model took part in the judging.',
+      '',
+      `Observed first: ${seen.observation_ids.length} verified failures in ${seen.reviewed} development reviews (accuracy ${Math.round(seen.accuracy * 100)}%).`,
+      '',
+    ];
 
-    const files = existsSync(join(ws, 'candidate', 'validators')) ? readdirSync(join(ws, 'candidate', 'validators')).filter((f) => f.endsWith('.mjs')) : [];
-    const summary: Record<string, unknown> = {
+    for (let round = 1; round <= MAX_ROUNDS; round++) {
+      // A revision is told what the gate decided and the aggregate results — never the held-out cases.
+      const ask = previous === null ? prompt : [
+        def.agents.evolution?.instructions ?? '',
+        '',
+        '# Your task: revise your candidate',
+        'You wrote candidate/validators/interface_compat.mjs for the change-review skill. The release gate evaluated it on held-out cases and did not accept it.',
+        '',
+        `What the gate reported: ${previous.feedback}`,
+        '',
+        'You cannot see the held-out cases, and you will not be told which ones went wrong. Reason about which kinds of difference between contract_before and contract_after your check treats as breaking although a consumer of the contract would not be broken by them, and which truly breaking kinds it might miss. The development cases in dev-cases.json do not contain every kind of change.',
+        'Revise candidate/validators/interface_compat.mjs in place. The rules are unchanged: it exports `id` and `check(c)`; a blocking finding names the affected field as a dot path; plain JavaScript with no imports and no file, process, network or dynamic-code access; decide from structure only.',
+        'Your revision will be judged on a DIFFERENT held-out set. Run `node check.mjs` (exactly that command) to confirm the development cases still pass, then answer with the structured report.',
+      ].join('\n');
+      process.stdout.write(`Round ${round}: author (${model}) is working in an isolated workspace…\n`);
+      const author = await runAuthor(ws, model, ask);
+      process.stdout.write(`Round ${round}: author finished: ok=${author.ok}, ${Math.round(author.wall_ms / 1000)} s, ${author.development_check_runs} development check runs, ${author.denials.length} tool uses refused\n`);
+      const files = existsSync(join(ws, 'candidate', 'validators')) ? readdirSync(join(ws, 'candidate', 'validators')).filter((f) => f.endsWith('.mjs')) : [];
+      const entry: Record<string, unknown> = { round, author: { ...author, files_written: files } };
+      rounds.push(entry);
+      if (!author.ok || !author.report || files.length === 0) {
+        entry.outcome = `no candidate was submitted: ${author.error ?? 'the author wrote no check'}`;
+        lines.push(`## Round ${round}`, '', `No candidate was submitted: ${author.error ?? 'the author wrote no check'}.`, '');
+        break;
+      }
+
+      // Package what the author wrote as a candidate and hand it to the gate.
+      const specDir = join(rt.paths.candidates, 'live-author', `spec-${round}`);
+      rmSync(specDir, { recursive: true, force: true });
+      mkdirSync(join(specDir, 'files', 'validators'), { recursive: true });
+      for (const f of files) cpSync(join(ws, 'candidate', 'validators', f), join(specDir, 'files', 'validators', f));
+      const spec: CandidateSpec = {
+        candidate_id: round === 1 ? 'live-authored-interface-check' : `live-authored-interface-check-rev${round - 1}`,
+        level: 'execution',
+        title: `Interface compatibility check for change review (written by a model author${round > 1 ? ', revised after a rejection' : ''})`,
+        problem: `Reviews with release ${active.release_id} got ${seen.observation_ids.length} of ${seen.reviewed} development reviews wrong: ${Object.entries(seen.by_class).map(([k, v]) => `${k}×${v}`).join(', ')}.`,
+        failure_classes: Object.keys(seen.by_class),
+        hypothesis: author.report.hypothesis,
+        expected_benefit: 'Fewer approved breaking changes, with safe changes still approved.',
+        possible_regressions: ['Safe changes could be blocked', 'Each review runs one more step', ...author.report.remaining_uncertainty.slice(0, 3)],
+        change_summary: author.report.change_summary,
+        revises: round === 1 ? null : 'live-authored-interface-check',
+        declared_simplification: false,
+        skill_patch: { skill_id: 'change-review', validators_add: files, validators_remove: [], procedure: [...skill.procedure.slice(0, -1), author.report.procedure_step, ...skill.procedure.slice(-1)], known_failure_cases: author.report.known_failure_cases },
+      };
+      writeFileSync(join(specDir, 'candidate.json'), JSON.stringify(spec, null, 2) + '\n');
+      const r = await runExperiment(rt, gate, spec.candidate_id, { spec_dir: specDir, revises_experiment: previous?.experiment_id ?? null });
+      const rec = r.receipt;
+      lastReceipt = rec;
+      const acc = rec.comparisons.find((c) => c.metric === 'accuracy');
+      const fa = rec.comparisons.find((c) => c.metric === 'false_alarm_rate');
+      const esc = rec.comparisons.find((c) => c.metric === 'escaped_defect_rate');
+      process.stdout.write(`Round ${round}: gate decision: ${rec.decision} — ${rec.justification}\n`);
+      entry.gate = {
+        experiment_id: r.experiment.id,
+        decision: rec.decision,
+        justification: rec.justification,
+        holdout_set: rec.evaluation.holdout_set,
+        isolation_of_candidate_code: rec.isolation,
+        comparisons: rec.comparisons.map((c) => ({ metric: c.metric, incumbent: c.incumbent, candidate: c.candidate, difference: c.diff_vs_incumbent, ci95: c.ci95_vs_incumbent, n: c.n })),
+        gates_not_passed: rec.gates.filter((g) => g.verdict !== 'PASSED').map((g) => ({ id: g.id, verdict: g.verdict, meaning: g.meaning })),
+        development_accuracy_claimed_by_author: author.report.development_accuracy,
+        development_accuracy_measured_by_gate: r.dev?.accuracy ?? null,
+        release: rec.release_manifest?.release_id ?? null,
+      };
+      writeEvidence(out, `round-${round}/receipt.json`, rec);
+      writeEvidence(out, `round-${round}/receipt.md`, renderReceipt(rec));
+      for (const f of files) writeEvidence(out, `round-${round}/authored/${f}`, readFileSync(join(ws, 'candidate', 'validators', f), 'utf8'));
+      writeEvidence(out, `round-${round}/authored/author-report.json`, author.report);
+      writeEvidence(out, `round-${round}/authored/TASK.md`, ask);
+      lines.push(
+        `## Round ${round}${round > 1 ? ' (revision)' : ''}`,
+        '',
+        `- Author: ${author.models_served.join(', ') || model}; ${Math.round(author.wall_ms / 1000)} s; ${author.turns ?? '—'} turns; ${author.development_check_runs} run(s) of the development check; ${author.output_tokens ?? '—'} output tokens; list-price cost estimate ${author.cost_usd_list_price_estimate ?? '—'} USD (not billing).`,
+        `- Tool uses refused by the worker harness: ${author.denials.length}${author.denials.length ? ` (${author.denials.map((d) => `${d.tool}: ${d.target.replace(/\s+/g, ' ').slice(0, 110)}`).join('; ')})` : ''}.`,
+        `- Hypothesis (the author's): ${author.report.hypothesis}`,
+        `- Development accuracy: ${author.report.development_accuracy} claimed by the author; ${r.dev?.accuracy ?? '—'} measured by the gate on a different development sample.`,
+        `- **Gate decision: ${rec.decision}.** ${rec.justification}`,
+        acc ? `- Held-out accuracy on ${rec.evaluation.holdout_set}: ${acc.incumbent} → ${acc.candidate} (difference ${acc.diff_vs_incumbent}, 95% interval ${acc.ci95_vs_incumbent?.[0]} to ${acc.ci95_vs_incumbent?.[1]}, n=${acc.n}).` : '- No held-out comparison was made.',
+        esc ? `- Share of breaking changes approved: ${esc.incumbent} → ${esc.candidate}.` : '',
+        fa ? `- Share of safe changes blocked: ${fa.incumbent} → ${fa.candidate}.` : '',
+        '',
+      );
+
+      if (rec.decision === 'accept' && rec.release_manifest) {
+        // An accepted release is tried on fresh cases before it can become the default.
+        const c = gate.startCanary(rec.release_manifest.release_id, { max_missions: 0 });
+        const observed = await gate.observeCanary(c.id);
+        const done = observed.status === 'running' ? gate.retain(c.id) : observed;
+        canary = { status: done.status, observations: done.observations };
+        entry.canary = canary;
+        writeEvidence(out, 'release-manifest.md', renderManifest(rt.registry.manifest(rec.release_manifest.release_id)));
+        lines.push(`Canary on fresh cases: **${done.status}**. Active release afterwards: ${rt.registry.active()}.`, '');
+        process.stdout.write(`Canary: ${done.status}; active release is now ${rt.registry.active()}\n`);
+        break;
+      }
+      previous = {
+        experiment_id: r.experiment.id,
+        feedback: `${rec.justification} On the held-out cases: accuracy ${acc?.incumbent} for the current skill and ${acc?.candidate} with your check; share of breaking changes approved ${esc?.incumbent} and ${esc?.candidate}; share of safe changes blocked ${fa?.incumbent} and ${fa?.candidate} (the allowed increase is ${gate.policy().levels.execution.false_alarm_margin}).`,
+      };
+    }
+
+    const sets = rounds.map((x) => (x.gate as { holdout_set?: string } | undefined)?.holdout_set).filter(Boolean);
+    const total = rounds.reduce((a, x) => a + ((x.author as AuthorResult).cost_usd_list_price_estimate ?? 0), 0);
+    writeEvidence(out, 'summary.json', {
       label: 'LIVE MODEL AUTHOR; SYNTHETIC review workload; evaluation by executing checks, with no model in the judging',
       ran_at: new Date().toISOString(),
       observed: { reviewed: seen.reviewed, accuracy: seen.accuracy, failures_by_class: seen.by_class },
-      author: { ...author, files_written: files, isolation: 'Harness-level: file tools scoped to the workspace, writes to candidate/ only, one shell command allowed. The author process ran as the operator user, so this is not OS-enforced; refused tool uses are listed in denials.' },
-    };
-    if (!author.ok || !author.report || files.length === 0) {
-      summary.outcome = `no candidate was submitted: ${author.error ?? 'the author wrote no check'}`;
-      writeEvidence(out, 'summary.json', summary);
-      writeEvidence(out, 'README.md', `# Live improvement run: ${name}\n\n**LIVE MODEL AUTHOR.** No candidate was submitted: ${author.error ?? 'the author wrote no check'}.\n`);
-      process.stdout.write(`${String(summary.outcome)}\n→ evidence/${name}/\n`);
-      return;
-    }
-
-    // 3. Package what the author wrote as a candidate and hand it to the gate.
-    const specDir = join(rt.paths.candidates, 'live-author', 'spec');
-    rmSync(specDir, { recursive: true, force: true });
-    mkdirSync(join(specDir, 'files', 'validators'), { recursive: true });
-    for (const f of files) cpSync(join(ws, 'candidate', 'validators', f), join(specDir, 'files', 'validators', f));
-    const spec: CandidateSpec = {
-      candidate_id: 'live-authored-interface-check',
-      level: 'execution',
-      title: 'Interface compatibility check for change review (written by a model author)',
-      problem: `Reviews with release ${active.release_id} got ${seen.observation_ids.length} of ${seen.reviewed} development reviews wrong: ${Object.entries(seen.by_class).map(([k, v]) => `${k}×${v}`).join(', ')}.`,
-      failure_classes: Object.keys(seen.by_class),
-      hypothesis: author.report.hypothesis,
-      expected_benefit: 'Fewer approved breaking changes, with safe changes still approved.',
-      possible_regressions: ['Safe changes could be blocked', 'Each review runs one more step', ...author.report.remaining_uncertainty.slice(0, 3)],
-      change_summary: author.report.change_summary,
-      revises: null,
-      declared_simplification: false,
-      skill_patch: { skill_id: 'change-review', validators_add: files, validators_remove: [], procedure: [...skill.procedure.slice(0, -1), author.report.procedure_step, ...skill.procedure.slice(-1)], known_failure_cases: author.report.known_failure_cases },
-    };
-    writeFileSync(join(specDir, 'candidate.json'), JSON.stringify(spec, null, 2) + '\n');
-    const r = await runExperiment(rt, gate, spec.candidate_id, { spec_dir: specDir });
-    const rec = r.receipt;
-    const acc = rec.comparisons.find((c) => c.metric === 'accuracy');
-    process.stdout.write(`Gate decision: ${rec.decision} — ${rec.justification}\n`);
-
-    // 4. An accepted release is tried on fresh cases before it can become the default.
-    let canary: { status: string; observations: unknown[] } | null = null;
-    if (rec.decision === 'accept' && rec.release_manifest) {
-      const c = gate.startCanary(rec.release_manifest.release_id, { max_missions: 0 });
-      const observed = await gate.observeCanary(c.id);
-      const done = observed.status === 'running' ? gate.retain(c.id) : observed;
-      canary = { status: done.status, observations: done.observations };
-      process.stdout.write(`Canary: ${done.status}; active release is now ${rt.registry.active()}\n`);
-    }
-
-    summary.gate = {
-      decision: rec.decision,
-      justification: rec.justification,
-      holdout_set: rec.evaluation.holdout_set,
-      isolation_of_candidate_code: rec.isolation,
-      accuracy: acc ? { incumbent: acc.incumbent, candidate: acc.candidate, baseline: acc.baseline, difference: acc.diff_vs_incumbent, ci95: acc.ci95_vs_incumbent, n: acc.n } : null,
-      comparisons: rec.comparisons.map((c) => ({ metric: c.metric, incumbent: c.incumbent, candidate: c.candidate, difference: c.diff_vs_incumbent, ci95: c.ci95_vs_incumbent })),
-      gates_not_passed: rec.gates.filter((g) => g.verdict !== 'PASSED').map((g) => ({ id: g.id, verdict: g.verdict, meaning: g.meaning })),
-      development_accuracy_claimed_by_author: author.report.development_accuracy,
-      development_accuracy_measured_by_gate: r.dev?.accuracy ?? null,
-      release: rec.release_manifest?.release_id ?? null,
+      author_isolation: 'Harness-level: file tools scoped to the workspace, writes to candidate/ only, one shell command allowed. The author process ran as the operator user, so this is not OS-enforced; refused tool uses are listed per round.',
+      rounds,
+      held_out_sets_used: sets,
+      final_decision: lastReceipt?.decision ?? 'none',
       canary,
       active_release_after: rt.registry.active(),
+      author_cost_usd_list_price_estimate_total: Number(total.toFixed(4)),
       ledger_intact: gate.verifyLedger().ok,
-    };
-    writeEvidence(out, 'summary.json', summary);
-    writeEvidence(out, 'receipt.json', rec);
-    writeEvidence(out, 'receipt.md', renderReceipt(rec));
-    if (rec.release_manifest) writeEvidence(out, 'release-manifest.md', renderManifest(rt.registry.manifest(rec.release_manifest.release_id)));
-    for (const f of files) writeEvidence(out, `authored/${f}`, readFileSync(join(ws, 'candidate', 'validators', f), 'utf8'));
-    writeEvidence(out, 'authored/author-report.json', author.report);
-    writeEvidence(out, 'authored/TASK.md', prompt);
-    const lines = [
-      `# Live improvement run: ${name}`,
+      exploration: gate.exploration(),
+    });
+    lines.push(
+      `Held-out sets used by this line of work: ${sets.join(', ') || 'none'}. A revision is never scored on a set its lineage has already seen results for.`,
+      `Final decision: **${lastReceipt?.decision ?? 'none'}**. Active release afterwards: ${rt.registry.active()}.`,
       '',
-      '**LIVE MODEL AUTHOR.** A model wrote the candidate from development cases only. The review workload is SYNTHETIC, and the release gate judged the candidate by executing it on held-out cases — no model took part in the judging.',
+      `Isolation: candidate CODE was executed by the gate in mode \`${lastReceipt?.isolation.mode ?? 'unknown'}\`. The AUTHOR was confined by the worker harness only (file tools scoped to its workspace), not by the operating system; it ran as the operator user.`,
       '',
-      `- Observed: ${seen.observation_ids.length} verified failures in ${seen.reviewed} development reviews (accuracy ${Math.round(seen.accuracy * 100)}%).`,
-      `- Author: ${author.models_served.join(', ') || model}; ${Math.round(author.wall_ms / 1000)} s; ${author.turns ?? '—'} turns; ${author.development_check_runs} runs of the development check; ${author.output_tokens ?? '—'} output tokens; list-price cost estimate ${author.cost_usd_list_price_estimate ?? '—'} USD (not billing).`,
-      `- Tool uses refused by the worker harness: ${author.denials.length}${author.denials.length ? ` (${author.denials.map((d) => `${d.tool}: ${d.target}`).join('; ')})` : ''}.`,
-      `- Hypothesis (the author's): ${author.report.hypothesis}`,
-      `- Development accuracy: ${author.report.development_accuracy} claimed by the author; ${r.dev?.accuracy ?? '—'} measured by the gate on a different development sample.`,
-      `- **Gate decision: ${rec.decision}.** ${rec.justification}`,
-      acc ? `- Held-out accuracy on ${rec.evaluation.holdout_set}: ${acc.incumbent} → ${acc.candidate} (difference ${acc.diff_vs_incumbent}, 95% interval ${acc.ci95_vs_incumbent?.[0]} to ${acc.ci95_vs_incumbent?.[1]}, n=${acc.n}).` : '- No held-out comparison was made.',
-      ...rec.comparisons.filter((c) => c.metric !== 'accuracy').map((c) => `- ${c.metric.replace(/_/g, ' ')}: ${c.incumbent} → ${c.candidate}`),
-      canary ? `- Canary on fresh cases: ${canary.status}. Active release afterwards: ${rt.registry.active()}.` : '- No canary: nothing was accepted.',
-      '',
-      `Isolation: candidate CODE was executed by the gate in mode \`${rec.isolation.mode}\`. The AUTHOR was confined by the worker harness only (file tools scoped to its workspace), not by the operating system; it ran as the operator user.`,
-      '',
-      'Files: `summary.json`, `receipt.md` / `receipt.json`, `authored/` (the check the model wrote, its report, and the task it was given), `release-manifest.md` if a release was created.',
-    ];
-    writeEvidence(out, 'README.md', lines.join('\n') + '\n');
+      'Files: `summary.json`; per round `receipt.md` / `receipt.json` and `authored/` (the check the model wrote, its report, and the task it was given); `release-manifest.md` if a release was created.',
+    );
+    writeEvidence(out, 'README.md', lines.filter((l) => l !== undefined).join('\n') + '\n');
     process.stdout.write(`→ evidence/${name}/\n`);
   } finally {
     gate.close();

@@ -95,3 +95,45 @@ test('a malformed plan proposal is refused with a reason instead of breaking val
     cleanup();
   }
 });
+
+test('a request left out by discovery is a scope change for the chief of staff, not a silent narrowing', async () => {
+  for (const choice of ['separate', 'stop'] as const) {
+    const { rt, cleanup } = freshRuntime();
+    const co = new Coordinator(rt);
+    try {
+      const { cos, mission_id } = submitScenario(rt, `scope-${choice}`);
+      // INJECTED JUDGMENT: the analyst treats one authorized request as a separate need.
+      rt.store.setMeta(`faults:${mission_id}`, [{ task_key: 'discovery.analyze', attempt: 1, fault: 'defect:leaves_out_request' }]);
+      await co.runUntilIdle({ mission_id, max_ms: 120_000 });
+      await co.drain();
+
+      const d = rt.store.decisions.first(`"mission_id" = ? AND "kind" = 'scope_change'`, mission_id)!;
+      assert.ok(d, 'the narrowing is put to a person');
+      assert.equal(d.requires_human, true);
+      assert.match(d.question, /syn-req-002 \(syn-ben-supplychain/);
+      assert.match(d.question, /sibling need/, 'with the analyst\'s stated reason');
+      const need = rt.store.needs.first('"mission_id" = ? AND "request_id" = ?', mission_id, 'syn-req-002')!;
+      assert.equal(need.status, 'deferred', 'the stakeholder\'s need is kept as a record, marked not covered');
+      assert.equal(need.stakeholder, 'syn-ben-supplychain');
+      assert.equal(rt.store.missions.must(mission_id).status, 'review_ready', 'the rest of the mission is not held up');
+      const criteria = new Set(rt.store.verifications.where('"mission_id" = ?', mission_id).map((v) => v.criterion_id));
+      assert.equal(criteria.has('AC-SCHEMA-SUPPLY'), false, 'nothing claims the left-out need was delivered');
+      const att = cos.attention();
+      assert.ok(att.source !== 'unavailable' && att.items.some((i) => i.id === d.id));
+
+      const res = cos.resolveDecision({ command: 'resolveDecision', actor: 'paul', key: `scope-${choice}-decide`, data: { decision_id: d.id, chosen: choice, rationale: choice === 'separate' ? 'schema drift gets its own mission' : 'I asked for all four' } });
+      assert.ok(res.source !== 'unavailable');
+      if (choice === 'separate') {
+        assert.match(res.effect, /returned to intake/);
+        assert.equal(rt.store.requests.must('syn-req-002').mission_id, null, 'the request can now be proposed on its own');
+        assert.equal(rt.store.missions.must(mission_id).status, 'review_ready');
+      } else {
+        assert.equal(rt.store.missions.must(mission_id).status, 'cancelled');
+        assert.ok(rt.kernel.currentVersion(mission_id, 'discovery/overlap-report'), 'artifacts are kept');
+      }
+    } finally {
+      co.stop();
+      cleanup();
+    }
+  }
+});

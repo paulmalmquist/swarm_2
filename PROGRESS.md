@@ -1,56 +1,91 @@
 # Progress notes
 
-Durable working notes so the build survives a context reset. Newest state first.
+Durable notes so the work survives a context reset. Read this first, then `docs/handoff.md`.
 
-## Current state
+## State
 
-- **Increment 2 (durable runtime) — kernel done.** Contracts, SQLite store, kernel (tasks, leases with
-  fencing tokens, dependency graph, invalidation, hierarchical budgets, authority narrowing,
-  cancellation, recovery), scoped messaging, decisions, handoffs, request intake. 17 kernel tests pass.
-- Next: provider adapters (fixture worker process, `claude -p`), worktrees and integration queue,
-  the coordinator loop, then the first end-to-end mission.
+All seven increments of the build order are complete and pushed on branch
+`claude/swarm-2-agent-org-ffiy5j` (draft pull request #1).
 
-## Commands that work now
+| Increment | State | Where to look |
+|---|---|---|
+| 1. Environment, integration boundaries, repository | Done | `docs/capability-matrix.md`, `docs/integration.md` |
+| 2. Durable mission/task runtime and one provider | Done | `src/kernel/`, `src/store/`, `src/providers/` |
+| 3. One mission from intake to verified artifact and review packet | Done | `tests/mission.test.ts`, demonstration A |
+| 4. Cross-swarm coordination, integration, failure recovery | Done | `src/coordination/`, demonstration B |
+| 5. First improvement loop and protected evaluation boundary | Done | `src/gate/`, `src/evolution/loop.ts`, demonstrations C, E, F, G |
+| 6. Experiments on the improvement process itself | Done | `src/evolution/arena.ts`, `src/evolution/portfolio.ts`, demonstrations D, I |
+| 7. Review interface, demonstrations, handoff | Done | `src/ui/`, `demos/`, `evidence/`, `docs/` |
 
-```bash
-npm install            # dev-only: typescript, @types/node
+Beyond the seven: targeted comparisons against simpler configurations (demonstration H), live runs
+on real model workers (`evidence/live-*`), connector ports and analytical export.
+
+## Commands that work today
+
+```
 npm run typecheck
-npm test
+npm test                           # 48 tests, about two minutes
+npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
+npm run demo:a … demo:i            # one demonstration
+SWARM2_LIVE=1 npm run demo:live    # cross-swarm mission on real model workers (uses the account)
+SWARM2_LIVE=1 node demos/live-improve.ts   # a real model as candidate author
+node src/cli.ts help               # every operator command
+node src/cli.ts serve --run        # interface + coordinator, http://127.0.0.1:4317/
 ```
 
-## Build order (from the brief) and status
+## Decisions made, and why
 
-1. Inspect environment, define integration boundaries, establish repository — **done** (`docs/capability-matrix.md`)
-2. Durable mission/task runtime and one provider adapter — kernel done, adapters next
-3. One mission from intake through verified artifact and review packet
-4. Cross-swarm coordination, integration, failure recovery
-5. First improvement loop and protected evaluation boundary
-6. Experiments on the improvement process itself
-7. Review interface, demonstrations, handoff
+- **TypeScript on Node 22 with no runtime dependencies; SQLite through `node:sqlite`.** No incumbent
+  stack was reachable, and this is the smallest thing that gives transactions, leases and a durable log.
+- **The hierarchy lives in our own task model; workers are application-managed processes.**
+  Subagents are one layer deep here, Agent Teams are interactive-only, and neither gives shared
+  resumable state under headless execution (`docs/capability-matrix.md`).
+- **A swarm is a container task.** One delegation contract serves an agent and a swarm.
+- **Agents propose, the runtime decides.** Plans, results, claims and candidates are all proposals.
+- **The release gate is separate code with a separate store**, and reports the isolation mode it
+  actually got. Candidate code runs as another OS user where the host allows it.
+- **Held-out sets are a spent resource**, tracked per candidate lineage.
+- **A release qualified against a parent that is no longer active is refused.** Stricter than
+  necessary for independent levels, but it cannot silently drop a promotion (see open items).
+- **In a live mission, planning templates stay scripted** and are recorded as fixture attempts.
+  The work graph comes from the versioned coordination policy, not from a model.
 
-## Decisions taken
+## Open decisions for Paul
 
-- TypeScript on Node ≥ 22.18, no runtime dependencies, SQLite via `node:sqlite`. Matches the
-  incumbent "portable, no packages" convention and Paul OS's TypeScript contracts.
-- The hierarchy is swarm_2's own durable task model. A worker is an OS process leased per attempt
-  (`claude -p` for live work, a labeled fixture worker otherwise). Native subagents and Agent Teams
-  are not the substrate (see the capability matrix for why).
-- Fencing token = `g<generation>a<attempt>`. Upstream change bumps the generation; each lease bumps the attempt.
-- Inputs are pinned to exact artifact versions when a task is leased, not when it is planned.
-- Live model execution is off by default and fail-closed; a provider capacity error blocks the task
-  with an operator next-action and never falls back to another provider.
-- Promotion vocabulary follows `agent-promotion-control-plane`; hard gates are non-compensable.
+1. **Which chief-of-staff transport to wire first** — Paul OS calling the HTTP commands, or
+   importing the port in process. Nothing in swarm_2 depends on the choice.
+2. **A worker credential.** Model workers cannot authenticate as an unprivileged user with the
+   operator's credential, and should not be given it. A scoped credential (through Strongbox) would
+   make worker isolation OS-enforced instead of harness-enforced.
+3. **Who owns the acceptance tests.** In the fixture scenario they are pre-authored. In live use
+   they must be derived from the agreed criteria by the verification swarm, or supplied by a
+   person; the first live run showed what happens when a hidden test is stricter than its criterion.
+4. **The promotion rules** in `protected/policy.json` (margins, sample sizes, the experiment
+   allocation) are first guesses. Changing them is a decision, not an experiment.
 
-## Open decisions
+## Not done, in order of value
 
-- None blocking.
+1. A verification swarm that writes acceptance tests from criteria in live missions.
+2. Live plan proposals: let a model propose the work graph, validated by the runtime
+   (validation exists; the live schema deliberately does not offer the field yet).
+3. Real connectors (Paul OS, Slack, Jira, GitLab, BigQuery). Ports and requirements exist.
+4. Coordination-level and improvement-policy experiments on live missions. Today they run on
+   fixture episodes and a synthetic arena.
+5. Component-level rebase: re-qualifying an accepted change against a new default without
+   spending another held-out set when the evaluated component is untouched.
+6. Running improvement work as an Evolution-swarm mission inside the runtime (it is driven by the
+   gate and the portfolio today, with its own ledger and allocation).
 
-## Environment facts worth knowing
+## Next executable step
 
-- The account's 5-hour usage limit was hit at 16:05 UTC on 2026-11-14 (resets 20:50 UTC). Delegated
-  agents and nested `claude -p` workers return HTTP 429 until then. Live demonstrations wait for it.
-- Slack/Jira/Linear/Notion connectors are blocked by the egress proxy (403). No GitLab/dbt/Power BI/
-  OpenMetadata/Dreamcatcher/Strongbox access exists here.
-- Incumbent repos cloned read-only next to this one: `agent-promotion-control-plane`, `paulos-surfaces`,
-  and under `paulmalmquist/`: `swarm-court`, `swarm_receipt`, `swam_assumption_trial_ledger`,
-  `swarm_counterfactual`, `engineering_intelligence`.
+`SWARM2_LIVE=1 npm run demo:live`, then read `evidence/live-a/README.md`. If the mission stops for
+a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
+`node src/cli.ts --home var/live-a decide <id> retry --rationale "<guidance>"` sends the work back.
+
+## Environment notes
+
+- The account's five-hour usage limit was hit at 16:05 UTC on 2026-11-14 and cleared by 18:30 UTC.
+  While it lasted, delegated agents and nested model workers returned HTTP 429; the build was done
+  in one session and live runs were made afterwards.
+- `swarm_design` was not read: attaching it was declined by the session's permission check.
+- State directories under `var/` are not committed. `evidence/` is.

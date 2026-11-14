@@ -295,6 +295,17 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
           effect = 'correction recorded; mission held for rework';
         }
+      } else if (decision.kind === 'scope_change') {
+        if (decision.chosen === 'stop') {
+          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `scope was narrowed without authorization: ${cmd.data.rationale}` } });
+          effect = 'mission cancelled; artifacts kept';
+        } else if (decision.chosen === 'separate') {
+          // The request goes back to intake so that it can be proposed as a mission of its own.
+          const id = store.getMeta<string>(`decision:${decision.id}:request_id`);
+          const req = id ? store.requests.get(id) : undefined;
+          if (req) store.requests.put({ ...req, mission_id: null, cluster_id: null });
+          effect = req ? `${req.id} returned to intake; this mission continues without it` : 'recorded';
+        }
       } else if (decision.kind === 'failure_escalation' && decision.chosen === 'retry' && decision.task_id) {
         const t = store.tasks.must(decision.task_id);
         if (t.status === 'failed') {

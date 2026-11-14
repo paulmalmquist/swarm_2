@@ -24,6 +24,7 @@ export const DEV_PROFILE: LimitsProfile = {
   reserve: { verification: 0.15, recovery: 0.1, completion: 0.05 },
   lease_ms: 15_000,
   heartbeat_ms: 2_000,
+  live_attempt_floor_ms: 5 * 60 * 1000,
   live_execution_enabled: false,
 };
 

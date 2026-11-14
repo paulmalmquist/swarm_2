@@ -321,7 +321,9 @@ export class Coordinator {
         instructions: [defs.execution.agents[arch]?.instructions ?? '', context.text].filter(Boolean).join('\n\n'),
         model: route.model,
         effort: route.effort,
-        timeout_ms: Math.max(5_000, task.contract.resources.reservation.wall_ms),
+        // A share of a time budget is not a sensible deadline for one model call: a small slice
+        // timed real workers out. The mission's wall-clock ceiling still bounds the total.
+        timeout_ms: provider.mode === 'live' ? Math.max(this.rt.limits.live_attempt_floor_ms, task.contract.resources.reservation.wall_ms) : Math.max(5_000, task.contract.resources.reservation.wall_ms),
         max_budget_usd: provider.mode === 'live' ? task.contract.resources.reservation.cost_usd_est : null,
         faults,
         db_path: this.rt.paths.db,
@@ -506,7 +508,7 @@ export class Coordinator {
           mission_id,
           task_id: f.id,
           kind: 'failure_escalation',
-          question: `"${f.title}" could not be completed within its retry and repair limits. Last rejection: ${truncate(store.getMeta<{ reason: string }>(`task:${f.id}:rework`)?.reason ?? 'not recorded', 500)} What should happen?`,
+          question: `"${f.title}" could not be completed within its retry and repair limits. ${((why) => (why ? `Last rejection: ${truncate(why, 500)}` : `Last failure: ${truncate(kernel.attemptFor(f.id, f.attempt)?.error?.message ?? 'not recorded', 300)}.`))(store.getMeta<{ reason: string }>(`task:${f.id}:rework`)?.reason)} What should happen?`,
           owner_id: 'chief_of_staff',
           owner_kind: 'chief_of_staff',
           options: [

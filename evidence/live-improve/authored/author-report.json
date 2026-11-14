@@ -1,0 +1,20 @@
+{
+  "hypothesis": "If the change-review skill also runs interface_compat (a recursive structural diff of contract_before vs contract_after that blocks removed/renamed fields, type changes, unit/format/constraint changes, enum value removals, and requiredness changes while treating annotation-only changes and new optional fields as safe), then breaking interface changes (type_changed, field_removed, field_renamed, required_added, enum_value_removed and similar unseen kinds such as unit or nested-field changes) will be sent back with the correct dot-path field, raising accuracy above the current ~0.675 without increasing blocked safe changes; this is falsified if held-out accuracy does not rise, any breaking change is approved, or safe changes are blocked beyond the margin.",
+  "change_summary": "Added candidate/validators/interface_compat.mjs (id 'interface_compat'). It walks both schemas recursively through properties and items, building dot paths from the contract root. Blocking: field removed (reported as field_renamed if an added field has an identical schema), type set changed (including nullable), enum value removed / enum added / enum dropped, const changed, field became required or new required field, field became optional, and changes to non-annotation keywords such as x-unit, format, minimum/maximum, length, pattern, additionalProperties, plus x- extensions whose names suggest meaning (unit, scale, precision, timezone, currency, etc.). Advisory only: optional field added, enum value added, default changed, other x- extensions. Ignored: description, title, examples, deprecated and similar annotations. Development check: accuracy 1.0 (60/60), 0 of 38 breaking approved, 0 of 22 safe blocked, no errors.",
+  "procedure_step": "Compare contract_before with contract_after field by field (recursively, by dot path) and request changes if any field was removed or renamed, changed type, unit, format or constraints, lost an enum value, or changed whether it is required; treat documentation-only edits and new optional fields as safe.",
+  "known_failure_cases": [
+    "Enum value additions are only advisory; if held-out labels treat adding an enum value as breaking, those changes will be approved",
+    "Any constraint change (tightening or loosening), type widening, or required-to-optional is blocked; if held-out labels treat any of these as safe, they become false alarms",
+    "Changes inside oneOf/anyOf/allOf/$ref are compared as raw values rather than checked for compatibility, so equivalent rewrites are blocked against the parent path",
+    "A root-level type change, or a contract present on only one side, cannot be tied to a field (field null or advisory only)",
+    "Array element fields are reported as '<array>.<child>' without an items/[] marker, which may not match the expected path convention",
+    "Rename detection requires identical schemas; a rename combined with another edit is reported as field_removed on the old name (still blocked on the correct field)"
+  ],
+  "development_accuracy": 1,
+  "remaining_uncertainty": [
+    "The development cases only contain top-level field changes; nested-path handling (e.g. tolerance.lower) is untested against labels",
+    "Held-out change kinds (unit changes, nullability, bound changes, enum additions, format changes) have unknown labels; severity choices for them are judgment calls",
+    "The list of meaning-bearing x- extensions is a heuristic; unrecognised extensions that change meaning would only be advisory",
+    "100% development accuracy on 60 fairly uniform synthetic cases may overstate held-out performance"
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "label": "LIVE MODEL AUTHOR; SYNTHETIC review workload; evaluation by executing checks, with no model in the judging",
+  "ran_at": "2026-11-14T19:00:46.837Z",
+  "observed": {
+    "reviewed": 40,
+    "accuracy": 0.675,
+    "failures_by_class": {
+      "type_changed": 3,
+      "field_removed": 4,
+      "field_renamed": 3,
+      "required_added": 2,
+      "enum_value_removed": 1
+    }
+  },
+  "author": {
+    "ok": true,
+    "error": null,
+    "report": {
+      "hypothesis": "If the change-review skill also runs interface_compat (a recursive structural diff of contract_before vs contract_after that blocks removed/renamed fields, type changes, unit/format/constraint changes, enum value removals, and requiredness changes while treating annotation-only changes and new optional fields as safe), then breaking interface changes (type_changed, field_removed, field_renamed, required_added, enum_value_removed and similar unseen kinds such as unit or nested-field changes) will be sent back with the correct dot-path field, raising accuracy above the current ~0.675 without increasing blocked safe changes; this is falsified if held-out accuracy does not rise, any breaking change is approved, or safe changes are blocked beyond the margin.",
+      "change_summary": "Added candidate/validators/interface_compat.mjs (id 'interface_compat'). It walks both schemas recursively through properties and items, building dot paths from the contract root. Blocking: field removed (reported as field_renamed if an added field has an identical schema), type set changed (including nullable), enum value removed / enum added / enum dropped, const changed, field became required or new required field, field became optional, and changes to non-annotation keywords such as x-unit, format, minimum/maximum, length, pattern, additionalProperties, plus x- extensions whose names suggest meaning (unit, scale, precision, timezone, currency, etc.). Advisory only: optional field added, enum value added, default changed, other x- extensions. Ignored: description, title, examples, deprecated and similar annotations. Development check: accuracy 1.0 (60/60), 0 of 38 breaking approved, 0 of 22 safe blocked, no errors.",
+      "procedure_step": "Compare contract_before with contract_after field by field (recursively, by dot path) and request changes if any field was removed or renamed, changed type, unit, format or constraints, lost an enum value, or changed whether it is required; treat documentation-only edits and new optional fields as safe.",
+      "known_failure_cases": [
+        "Enum value additions are only advisory; if held-out labels treat adding an enum value as breaking, those changes will be approved",
+        "Any constraint change (tightening or loosening), type widening, or required-to-optional is blocked; if held-out labels treat any of these as safe, they become false alarms",
+        "Changes inside oneOf/anyOf/allOf/$ref are compared as raw values rather than checked for compatibility, so equivalent rewrites are blocked against the parent path",
+        "A root-level type change, or a contract present on only one side, cannot be tied to a field (field null or advisory only)",
+        "Array element fields are reported as '<array>.<child>' without an items/[] marker, which may not match the expected path convention",
+        "Rename detection requires identical schemas; a rename combined with another edit is reported as field_removed on the old name (still blocked on the correct field)"
+      ],
+      "development_accuracy": 1,
+      "remaining_uncertainty": [
+        "The development cases only contain top-level field changes; nested-path handling (e.g. tolerance.lower) is untested against labels",
+        "Held-out change kinds (unit changes, nullability, bound changes, enum additions, format changes) have unknown labels; severity choices for them are judgment calls",
+        "The list of meaning-bearing x- extensions is a heuristic; unrecognised extensions that change meaning would only be advisory",
+        "100% development accuracy on 60 fairly uniform synthetic cases may overstate held-out performance"
+      ]
+    },
+    "model_requested": "opus",
+    "models_served": [
+      "claude-opus-5-5"
+    ],
+    "session_id": "799b7f55-e3a9-4eca-a4d9-1a8ea0706b5b",
+    "wall_ms": 94494,
+    "turns": 10,
+    "output_tokens": 9558,
+    "cost_usd_list_price_estimate": 0.4188,
+    "denials": [
+      {
+        "tool": "Bash",
+        "target": "cd /home/user/swarm_2/var/live-improve/candidates/live-author/ws; node -e '\nconst cs=require(\"./dev-cases.json\");const m={};for(const {case:c,label:l} of cs){const k=l.defect_class+\"|\"+l.should_block;m[k]=(m[k]||0)+1}console.log(cs.length,m"
+      }
+    ],
+    "development_check_runs": 1,
+    "files_written": [
+      "interface_compat.mjs"
+    ],
+    "isolation": "Harness-level: file tools scoped to the workspace, writes to candidate/ only, one shell command allowed. The author process ran as the operator user, so this is not OS-enforced; refused tool uses are listed in denials."
+  },
+  "gate": {
+    "decision": "reject",
+    "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 10.0%, incumbent 0.0%; allowed margin 5.0%.",
+    "holdout_set": "holdout-A",
+    "isolation_of_candidate_code": {
+      "mode": "enforced",
+      "uid_separation": true,
+      "candidate_uid": 65534,
+      "node_permission_model": true,
+      "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "intact": true,
+      "notes": [
+        "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+      ]
+    },
+    "accuracy": {
+      "incumbent": 0.5,
+      "candidate": 0.9625,
+      "baseline": 0.5,
+      "difference": 0.4625,
+      "ci95": [
+        0.3375,
+        0.5875
+      ],
+      "n": 80
+    },
+    "comparisons": [
+      {
+        "metric": "accuracy",
+        "incumbent": 0.5,
+        "candidate": 0.9625,
+        "difference": 0.4625,
+        "ci95": [
+          0.3375,
+          0.5875
+        ]
+      },
+      {
+        "metric": "harm_per_review",
+        "incumbent": 2.5,
+        "candidate": 0.0375,
+        "difference": -2.4625,
+        "ci95": [
+          -3.075,
+          -1.8625
+        ]
+      },
+      {
+        "metric": "escaped_defect_rate",
+        "incumbent": 0.8,
+        "candidate": 0,
+        "difference": -0.8,
+        "ci95": null
+      },
+      {
+        "metric": "false_alarm_rate",
+        "incumbent": 0,
+        "candidate": 0.1,
+        "difference": 0.1,
+        "ci95": null
+      },
+      {
+        "metric": "steps_per_review",
+        "incumbent": 2,
+        "candidate": 3,
+        "difference": 1,
+        "ci95": [
+          1,
+          1
+        ]
+      },
+      {
+        "metric": "wall_ms_per_review",
+        "incumbent": 0.141,
+        "candidate": 0.193,
+        "difference": 0.052,
+        "ci95": null
+      }
+    ],
+    "gates_not_passed": [
+      {
+        "id": "false_alarms_within_margin",
+        "verdict": "FAILED",
+        "meaning": "Share of safe changes blocked: candidate 10.0%, incumbent 0.0%; allowed margin 5.0%."
+      },
+      {
+        "id": "cost",
+        "verdict": "FAILED",
+        "meaning": "Steps per review changed by 1."
+      }
+    ],
+    "development_accuracy_claimed_by_author": 1,
+    "development_accuracy_measured_by_gate": 1,
+    "release": null,
+    "canary": null,
+    "active_release_after": "r1",
+    "ledger_intact": true
+  }
+}

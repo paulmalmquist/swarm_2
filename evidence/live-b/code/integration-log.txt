@@ -1,0 +1,38 @@
+a94d0fc Integrate delivery.report.implement
+d5962f1 Integrate delivery.engine.implement
+0b08d66 delivery.report.implement: The only change I made was to render a null staleness as an…
+ src/report/report.ts       | 2 +-
+ test/report/report.test.ts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+e85c114 Integrate delivery.report.implement
+ea4bbad Integrate delivery.engine.implement
+bb54187 delivery.report.implement: Fixed the rejected case: the SLA report now shows a dash in…
+ src/report/report.ts       | 2 +-
+ test/report/report.test.ts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+89e61a9 Integrate delivery.report.implement
+fa16706 delivery.engine.implement: Implemented src/engine/evaluate.ts (exports evaluateHealth(…
+ src/engine/evaluate.ts       | 54 ++++++++++++++++++++++++++++++++++++++++++++
+ test/engine/evaluate.test.ts | 53 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+)
+56a6a4c Integrate delivery.engine.implement
+a6f069e delivery.report.implement: Implemented src/report/report.ts (renderSlaReport, alertPay…
+ src/report/report.ts       | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+ test/report/report.test.ts | 28 +++++++++++++++++++++
+ 2 files changed, 89 insertions(+)
+9b44302 Seed fixture application
+ .gitignore                        |  2 ++
+ README.md                         | 10 ++++++++++
+ data/datasets.json                | 11 +++++++++++
+ data/policies.json                | 11 +++++++++++
+ package.json                      |  1 +
+ src/lib/time.ts                   |  4 ++++
+ test/integration/pipeline.test.ts | 41 +++++++++++++++++++++++++++++++++++++++
+ test/support/validate.ts          | 19 ++++++++++++++++++
+ 8 files changed, 99 insertions(+)
+1b0a7c3 Pin inputs for delivery.engine.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+736bcf6 Pin inputs for delivery.report.implement
+ contracts/health-record.schema.json | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)

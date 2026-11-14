@@ -1,0 +1,280 @@
+{
+  "label": "LIVE MODEL EXECUTION on SYNTHETIC requests, datasets and fixture application",
+  "ran_at": "2026-11-14T18:59:12.066Z",
+  "coordinator_state": "idle",
+  "mission": {
+    "id": "msn_0mwgrru4t074697c080",
+    "status": "blocked",
+    "release_id": "r1",
+    "provider_mode": "live",
+    "data_class": "synthetic"
+  },
+  "reached_review": false,
+  "elapsed_ms": 193354,
+  "tasks": {
+    "total": 18,
+    "by_status": {
+      "accepted": 15,
+      "failed": 2,
+      "planned": 1
+    }
+  },
+  "execution": {
+    "model_attempts": 9,
+    "scripted_attempts": 3,
+    "scripted_steps": [
+      "planning.contract",
+      "planning.plan",
+      "delivery.decompose"
+    ],
+    "runtime_steps": 6,
+    "models_served": [
+      "claude-haiku-5-5",
+      "claude-sonnet-5-5"
+    ],
+    "tokens_out": 23679,
+    "tokens_in_including_cache": 324990,
+    "cost_usd_list_price_estimate": 0.4105,
+    "cost_note": "A client-side estimate at list prices. It is not billing.",
+    "worker_wall_ms": 140878
+  },
+  "attempts": [
+    {
+      "task": "discovery.analyze",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": "claude-haiku-5-5",
+      "status": "succeeded",
+      "wall_ms": 24326,
+      "output_tokens": 5481,
+      "cost_usd_list_price_estimate": 0.00336485,
+      "error": null
+    },
+    {
+      "task": "planning.criteria",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 22964,
+      "output_tokens": 3389,
+      "cost_usd_list_price_estimate": 0.0511025,
+      "error": null
+    },
+    {
+      "task": "planning.contract",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 11,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "planning.plan",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 13,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "delivery.decompose",
+      "attempt": 1,
+      "provider": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "status": "succeeded",
+      "wall_ms": 12,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": null
+    },
+    {
+      "task": "delivery.engine.implement",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 36783,
+      "output_tokens": 6785,
+      "cost_usd_list_price_estimate": 0.1302585,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 22615,
+      "output_tokens": 3758,
+      "cost_usd_list_price_estimate": 0.0870374,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt": 2,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 12288,
+      "output_tokens": 1543,
+      "cost_usd_list_price_estimate": 0.0604614,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt": 3,
+      "provider": "claude-cli",
+      "model_requested": "sonnet",
+      "model_actual": "claude-sonnet-5-5",
+      "status": "succeeded",
+      "wall_ms": 21902,
+      "output_tokens": 2723,
+      "cost_usd_list_price_estimate": 0.07831350000000001,
+      "error": null
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt": 1,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": null,
+      "status": "failed",
+      "wall_ms": null,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": "timeout"
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt": 2,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": null,
+      "status": "failed",
+      "wall_ms": null,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": "timeout"
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt": 3,
+      "provider": "claude-cli",
+      "model_requested": "haiku",
+      "model_actual": null,
+      "status": "failed",
+      "wall_ms": null,
+      "output_tokens": null,
+      "cost_usd_list_price_estimate": null,
+      "error": "timeout"
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "AC-CONTRACT",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-FRESH-PROPULSION",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-POLICY-FDE",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "criterion": "AC-SLA-QUALITY",
+      "verdict": "pass",
+      "independent": true,
+      "verdict_history": [
+        "fail",
+        "fail",
+        "pass"
+      ]
+    }
+  ],
+  "rework": [
+    {
+      "task": "delivery.report.implement",
+      "why": "independent acceptance failed: AC-SLA-QUALITY (latest verdict is fail: this did not hold: \"an unmeasured dataset shows unknown and a dash\" — it got: syn-ncr_dispositions | unknown | n/a | 720 | unknown)"
+    },
+    {
+      "task": "delivery.report.implement",
+      "why": "independent acceptance failed: AC-SLA-QUALITY (latest verdict is fail: this did not hold: \"an unmeasured dataset shows unknown and a dash\" — it got: syn-ncr_dispositions | unknown | - | 720 | unknown)"
+    }
+  ],
+  "integration_failures": 0,
+  "acceptance_failures": 3,
+  "harness_denials": [
+    {
+      "task": "delivery.engine.implement",
+      "count": 1,
+      "denials": [
+        {
+          "tool": "Bash",
+          "target": "mkdir -p src/engine test/engine\ncat > src/engine/evaluate.ts <<'EOF'\nimport { minutesBetween } from '../lib/time.ts';\n\nexport type Observation = {\n  dataset_id: string;\n  owner_team: string;\n  last_loaded_at: string | null;\n  observed_field"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "kind": "failure_escalation",
+      "status": "open",
+      "owner": "chief_of_staff",
+      "question": "\"Capture what this mission established\" could not be completed within its retry and repair limits. Last rejection: not recorded What should happen?"
+    }
+  ],
+  "waiting_for_a_person": 1,
+  "budget": {
+    "spent": {
+      "model_calls": 8,
+      "worker_invocations": 20,
+      "tokens": 71725,
+      "cost_usd_est": 0.650539,
+      "wall_ms": 186844
+    },
+    "limit": {
+      "model_calls": 120,
+      "worker_invocations": 120,
+      "tokens": 4000000,
+      "cost_usd_est": 20,
+      "wall_ms": 1800000
+    }
+  },
+  "events": 230,
+  "event_chain_intact": true
+}
