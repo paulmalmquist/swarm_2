@@ -27,6 +27,7 @@ The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure b
 |---|---|
 | Know what it can do today and how to run, inspect and stop it | [docs/handoff.md](docs/handoff.md) |
 | Investigate potentially affected hardware from a finding and lot hypothesis | [docs/manufacturing.md](docs/manufacturing.md) |
+| Inspect the Kimball grains, SC dimensions, bridges and dbt/BigQuery models | [warehouse/README.md](warehouse/README.md) |
 | Know what ran, what improved, what failed and what is unverified | [docs/evidence-report.md](docs/evidence-report.md) |
 | Operate it | [docs/operator-guide.md](docs/operator-guide.md) |
 | Understand the design | [docs/architecture.md](docs/architecture.md) |

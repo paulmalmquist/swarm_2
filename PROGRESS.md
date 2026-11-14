@@ -1,5 +1,15 @@
 # Progress notes
 
+## Kimball / dbt / BigQuery pass — 2026-11-14
+
+Added `warehouse/`: Staging → Intermediate → Mart → Consumer, conformed source/hardware/date
+dimensions, `sc_dim_hardware` knowledge history with separate physical validity, explicit identity
+and genealogy bridges, revision-grain facts, and Consumer views. Model contracts, grain/FK checks,
+historical reconstruction and deliberate negative tests are included. BigQuery is parsed offline;
+DuckDB executes synthetic local checks. Cloud compilation attempted credential-metadata discovery
+and was blocked; no BigQuery execution or deployment was performed. See `warehouse/README.md`
+and `evidence/warehouse/validation.json` for exact validation and limits.
+
 ## Research implementation — 2026-11-14
 
 Added a deterministic affected-hardware pilot: `src/manufacturing/`, a normalized local export

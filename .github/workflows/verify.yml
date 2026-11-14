@@ -26,3 +26,18 @@ jobs:
       - if: matrix.node == 24
         run: npm run demo:all
       - run: npm run demo:manufacturing
+  warehouse:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: warehouse/requirements-dev.txt
+      - run: python -m pip install -r warehouse/requirements-dev.txt
+      - run: python warehouse/scripts/verify.py

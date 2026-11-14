@@ -1,0 +1,17 @@
+swarm_manufacturing:
+  target: bigquery
+  outputs:
+    bigquery:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('SWARM_DBT_PROJECT') }}"
+      dataset: "{{ env_var('SWARM_DBT_DATASET', 'swarm_dev') }}"
+      location: "{{ env_var('SWARM_DBT_LOCATION', 'US') }}"
+      threads: 4
+      job_execution_timeout_seconds: 300
+      maximum_bytes_billed: 10000000000
+    local:
+      type: duckdb
+      path: "{{ env_var('SWARM_DBT_LOCAL_PATH', 'target/manufacturing.duckdb') }}"
+      schema: swarm_dev
+      threads: 1

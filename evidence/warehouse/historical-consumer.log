@@ -1,0 +1,29 @@
+23:17:05  Running with dbt=1.10.15
+23:17:06  Registered adapter: duckdb=1.10.1
+23:17:06  Unable to do partial parsing because config vars, config profile, or config target have changed
+23:17:08  Found 27 models, 129 data tests, 1 seed, 499 macros
+23:17:08
+23:17:08  Concurrency: 1 threads (target='local')
+23:17:08
+23:17:08  1 of 8 START sql view model swarm_dev_consumer.consumer_investigation_context .. [RUN]
+23:17:08  1 of 8 OK created sql view model swarm_dev_consumer.consumer_investigation_context  [OK in 0.07s]
+23:17:08  2 of 8 START sql view model swarm_dev_consumer.consumer_hardware_as_of ......... [RUN]
+23:17:08  2 of 8 OK created sql view model swarm_dev_consumer.consumer_hardware_as_of .... [OK in 0.03s]
+23:17:08  3 of 8 START sql view model swarm_dev_consumer.consumer_identity_as_of ......... [RUN]
+23:17:08  3 of 8 OK created sql view model swarm_dev_consumer.consumer_identity_as_of .... [OK in 0.02s]
+23:17:08  4 of 8 START sql view model swarm_dev_consumer.consumer_configuration_assertions  [RUN]
+23:17:08  4 of 8 OK created sql view model swarm_dev_consumer.consumer_configuration_assertions  [OK in 0.03s]
+23:17:08  5 of 8 START sql view model swarm_dev_consumer.consumer_evidence ............... [RUN]
+23:17:08  5 of 8 OK created sql view model swarm_dev_consumer.consumer_evidence .......... [OK in 0.03s]
+23:17:08  6 of 8 START sql view model swarm_dev_consumer.consumer_findings ............... [RUN]
+23:17:08  6 of 8 OK created sql view model swarm_dev_consumer.consumer_findings .......... [OK in 0.02s]
+23:17:08  7 of 8 START sql view model swarm_dev_consumer.consumer_genealogy .............. [RUN]
+23:17:08  7 of 8 OK created sql view model swarm_dev_consumer.consumer_genealogy ......... [OK in 0.02s]
+23:17:08  8 of 8 START sql view model swarm_dev_consumer.consumer_configuration_conflicts  [RUN]
+23:17:08  8 of 8 OK created sql view model swarm_dev_consumer.consumer_configuration_conflicts  [OK in 0.03s]
+23:17:08
+23:17:08  Finished running 8 view models in 0 hours 0 minutes and 0.42 seconds (0.42s).
+23:17:09
+23:17:09  Completed successfully
+23:17:09
+23:17:09  Done. PASS=8 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=8

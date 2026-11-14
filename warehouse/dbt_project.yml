@@ -1,0 +1,50 @@
+name: swarm_manufacturing
+version: '0.1.0'
+config-version: 2
+profile: swarm_manufacturing
+require-dbt-version: ['>=1.10.0', '<1.11.0']
+model-paths: [models]
+macro-paths: [macros]
+test-paths: [tests]
+seed-paths: [seeds]
+clean-targets: [target, dbt_packages]
+vars:
+  manufacturing_fixture_mode: false
+  raw_project: not-configured
+  raw_dataset: manufacturing_raw
+  consumer_dataset_id: null
+  consumer_known_sequence: null
+  consumer_valid_at: null
+  date_start: '2020-01-01'
+  date_end: '2035-12-31'
+models:
+  swarm_manufacturing:
+    +persist_docs: {relation: true, columns: true}
+    staging:
+      +schema: staging
+      +materialized: view
+      +tags: [internal]
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+      +tags: [internal]
+    mart:
+      +schema: mart
+      +materialized: table
+      +tags: [mart]
+    consumer:
+      +schema: consumer
+      +materialized: view
+      +tags: [consumer]
+seeds:
+  swarm_manufacturing:
+    +schema: fixture
+    +enabled: "{{ var('manufacturing_fixture_mode', false) }}"
+    raw_manufacturing_versions:
+      +column_types:
+        dataset_id: string
+        data_class: string
+        ingestion_sequence: bigint
+        known_from_text: string
+        record_hash: string
+        record_json: string

@@ -1,0 +1,733 @@
+version: 2
+models:
+- name: dim_source_system
+  description: One source-system code per dataset.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One source-system code per dataset.
+  columns:
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_system
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: dim_source_revision
+  description: One immutable source object/revision per dataset, including withdrawals and versions never current.
+    Provenance dimension, not a count of business incidents.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One immutable source object/revision per dataset, including withdrawals and versions never current.
+        Provenance dimension, not a count of business incidents.
+  columns:
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_type
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_native_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: record_kind
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: is_withdrawn
+    data_type: '{{ ''bool'' if target.type == ''bigquery'' else ''boolean'' }}'
+  - name: was_current
+    data_type: '{{ ''bool'' if target.type == ''bigquery'' else ''boolean'' }}'
+  - name: is_current
+    data_type: '{{ ''bool'' if target.type == ''bigquery'' else ''boolean'' }}'
+- name: dim_hardware
+  description: One durable enterprise hardware id per dataset; attributes are in SC Dim Hardware.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One durable enterprise hardware id per dataset; attributes are in SC Dim Hardware.
+  columns:
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: hardware_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: sc_dim_hardware
+  description: One accepted source version of a hardware identity. Type 2 on knowledge time; physical-validity interval
+    is separate.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One accepted source version of a hardware identity. Type 2 on knowledge time; physical-validity interval
+        is separate.
+  columns:
+  - name: hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_revision')
+          field: source_revision_key
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: hardware_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: hardware_label
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: hardware_kind
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: genealogy_status
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: is_current
+    data_type: '{{ ''bool'' if target.type == ''bigquery'' else ''boolean'' }}'
+- name: dim_date
+  description: One UTC calendar date, plus key 0 for unknown. Role-playing observed and recorded date.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One UTC calendar date, plus key 0 for unknown. Role-playing observed and recorded date.
+  columns:
+  - name: date_key
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: full_date
+    data_type: date
+  - name: calendar_year
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: calendar_month
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: day_of_month
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+- name: dim_evidence_class
+  description: One evidence class. Qualification and acceptance are separate members.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One evidence class. Qualification and acceptance are separate members.
+  columns:
+  - name: evidence_class_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: evidence_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: dim_configuration_attribute
+  description: One controlled configuration attribute, shared by assertions and evidence.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One controlled configuration attribute, shared by assertions and evidence.
+  columns:
+  - name: configuration_attribute_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: attribute_name
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: bridge_hardware_identity
+  description: One hardware version / exact source alias. Valid and knowledge intervals are explicit; ambiguous
+    aliases are retained.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One hardware version / exact source alias. Valid and knowledge intervals are explicit; ambiguous aliases
+        are retained.
+  columns:
+  - name: hardware_identity_bridge_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+- name: bridge_hardware_genealogy
+  description: One source relationship revision. From/to are role-playing hardware dimensions. No allocation weights
+    or additive quantities are inferred.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One source relationship revision. From/to are role-playing hardware dimensions. No allocation weights
+        or additive quantities are inferred.
+  columns:
+  - name: genealogy_bridge_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_revision')
+          field: source_revision_key
+    - not_null
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: relationship_type
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: from_identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: from_hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: from_hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: from_identity_resolution
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: to_identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: to_hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: to_hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: to_identity_resolution
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: bridge_evidence_configuration
+  description: One evidence revision / configuration attribute. Joining it changes the grain; aggregate before joining
+    facts.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One evidence revision / configuration attribute. Joining it changes the grain; aggregate before joining
+        facts.
+  columns:
+  - name: evidence_configuration_bridge_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: evidence_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('fact_evidence_revision')
+          field: evidence_revision_key
+    - not_null
+  - name: configuration_attribute_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_configuration_attribute')
+          field: configuration_attribute_key
+    - not_null
+  - name: recorded_value
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: fact_finding_revision
+  description: One accepted recorded revision of one finding. Multiple revisions are not multiple NCRs. Narrative
+    is non-additive descriptive context.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One accepted recorded revision of one finding. Multiple revisions are not multiple NCRs. Narrative
+        is non-additive descriptive context.
+  columns:
+  - name: finding_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_revision')
+          field: source_revision_key
+    - not_null
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: subject_identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: identity_resolution
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: observed_at
+    data_type: timestamp
+    data_tests:
+    - not_null
+  - name: observed_date_key
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_date')
+          field: date_key
+    - not_null
+  - name: recorded_date_key
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_date')
+          field: date_key
+    - not_null
+  - name: finding_description
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+- name: fact_configuration_assertion
+  description: One recorded hardware/configuration-attribute assertion revision. Factless observation; contradictory
+    assertions stay separate.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One recorded hardware/configuration-attribute assertion revision. Factless observation; contradictory
+        assertions stay separate.
+  columns:
+  - name: configuration_assertion_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_revision')
+          field: source_revision_key
+    - not_null
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: subject_identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: identity_resolution
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: configuration_attribute_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_configuration_attribute')
+          field: configuration_attribute_key
+    - not_null
+  - name: configuration_scope
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: asserted_value
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: recorded_date_key
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_date')
+          field: date_key
+    - not_null
+- name: fact_evidence_revision
+  description: One recorded evidence-object revision. No inferred pass/fail result, measured value or acceptance
+    claim.
+  config:
+    contract:
+      enforced: true
+    meta:
+      grain: One recorded evidence-object revision. No inferred pass/fail result, measured value or acceptance claim.
+  columns:
+  - name: evidence_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+    - unique
+  - name: source_revision_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_revision')
+          field: source_revision_key
+    - not_null
+  - name: source_object_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: source_system_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_source_system')
+          field: source_system_key
+    - not_null
+  - name: dataset_id
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: data_class
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: source_revision
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: record_hash
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: known_from
+    data_type: timestamp
+  - name: known_to
+    data_type: timestamp
+  - name: knowledge_from_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: knowledge_to_sequence
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+  - name: valid_from
+    data_type: timestamp
+  - name: valid_to
+    data_type: timestamp
+  - name: access_tags_json
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+  - name: subject_identity_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: hardware_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hardware')
+          field: hardware_key
+    - not_null
+  - name: hardware_version_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('sc_dim_hardware')
+          field: hardware_version_key
+    - not_null
+  - name: identity_resolution
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - not_null
+  - name: evidence_class_key
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_evidence_class')
+          field: evidence_class_key
+    - not_null
+  - name: recorded_date_key
+    data_type: '{{ ''int64'' if target.type == ''bigquery'' else ''bigint'' }}'
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_date')
+          field: date_key
+    - not_null
+  - name: evidence_description
+    data_type: '{{ ''string'' if target.type == ''bigquery'' else ''varchar'' }}'

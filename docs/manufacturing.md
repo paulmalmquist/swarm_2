@@ -92,10 +92,11 @@ hardware identities remain unresolved. A withdrawn source identity cannot later 
 to different hardware. Alias mappings in the export are operator-supplied assertions, not
 automatically verified reconciliation.
 
-The pilot's input is a normalized Consumer-layer export. A future BigQuery/dbt adapter should
-map the curated hardware dimension, relationship facts, configuration assertions, findings,
-and evidence into this contract. Source systems keep record ownership. No warehouse schema
-or operational connector is deployed by this addition.
+The pilot's input is a normalized Consumer-layer export. The [dbt/BigQuery project](../warehouse/README.md)
+now defines conformed dimensions, `sc_dim_hardware`, genealogy/identity bridges, revision-grain
+facts and Consumer views. A trusted warehouse export connector is still needed to map those
+curated records into this contract. Source systems keep record ownership. No warehouse schema
+or operational connector has been deployed.
 
 ## What the deterministic engine establishes
 
@@ -175,7 +176,7 @@ Research implementation status:
 | Exact identity reconciliation and genealogy | Implemented; mappings still require source validation |
 | Evidence applicability and explicit unknowns | Implemented as deterministic comparisons, never engineering acceptance |
 | Exact packet review and invalidation | Implemented; local operator policy, no live authorization service |
-| Manufacturing source adapters / BigQuery Consumer mart | Contract and fixtures only; real connections remain open |
+| Manufacturing source adapters / BigQuery Consumer mart | dbt models and local fixtures implemented; real connections and deployment remain open |
 | Agent investigations and independent model review | Deferred pending a measured advantage over the deterministic baseline |
 | Physical completion verification | Deferred; ticket or operation completion is never represented as physical verification |
 | External evaluation custody / manufacturing self-improvement | Deferred; public synthetic fixtures are not held-out operational evidence |

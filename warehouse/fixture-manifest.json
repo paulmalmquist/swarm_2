@@ -1,0 +1,16 @@
+{
+  "evidence_class": "synthetic",
+  "initial_sequence": 29,
+  "deliveries": 40,
+  "scenarios": [
+    "replay",
+    "late correction",
+    "out-of-order revision",
+    "Type 2 hardware change",
+    "finding revision",
+    "late-arriving dimension",
+    "ambiguous alias",
+    "withdrawal",
+    "dataset separation"
+  ]
+}
