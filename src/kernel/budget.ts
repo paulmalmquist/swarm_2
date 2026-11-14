@@ -116,6 +116,28 @@ export class Budget {
     });
   }
 
+  /**
+   * Reopen a closed account because its work has to be redone. What it had released went back to
+   * its parent, so it can only be reopened if the parent still has that much available.
+   * Closed ancestors are reopened first. Returns false when the money is no longer there.
+   */
+  reopen(id: string): boolean {
+    return this.store.db.tx(() => {
+      const acct = this.store.accounts.must(id);
+      if (acct.status === 'open') return true;
+      if (acct.parent_id) {
+        if (!this.reopen(acct.parent_id)) return false;
+        const need = subAmounts(maxAmounts(acct.limit, this.spent(id)), this.spent(id));
+        if (!fits(need, this.available(acct.parent_id))) return false;
+      }
+      acct.status = 'open';
+      acct.closed_at = null;
+      this.store.accounts.put(acct);
+      this.ledger(id, 'reopen', subAmounts(acct.limit, this.spent(id)), acct.owner_ref);
+      return true;
+    });
+  }
+
   /** Rebuild consumption from the ledger and compare with stored aggregates across the whole tree. */
   reconcile(root_id: string): { ok: boolean; discrepancies: string[]; accounts: number } {
     const discrepancies: string[] = [];

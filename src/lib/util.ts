@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import type { Iso, ResourceAmounts, Sha256 } from '../contracts/types.ts';
 
 // ───────── canonical JSON and hashing ─────────
@@ -175,12 +176,19 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/** True when a process exists and is not a zombie (a killed process that has not been reaped yet). */
 export function pidAlive(pid: number): boolean {
   try {
     process.kill(pid, 0);
-    return true;
   } catch {
     return false;
+  }
+  try {
+    // Linux: the state field follows the parenthesised command name.
+    const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
+    return stat.slice(stat.lastIndexOf(')') + 2, stat.lastIndexOf(')') + 3) !== 'Z';
+  } catch {
+    return true; // no /proc: fall back to the signal check
   }
 }
 

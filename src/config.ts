@@ -63,6 +63,7 @@ export function loadLimits(overrides: Partial<LimitsProfile> = {}): LimitsProfil
   const env: Partial<LimitsProfile> = {};
   if (process.env.SWARM2_MAX_CONCURRENT) env.max_concurrent_model_calls = Number(process.env.SWARM2_MAX_CONCURRENT);
   if (process.env.SWARM2_MAX_DEPTH) env.max_delegation_depth = Number(process.env.SWARM2_MAX_DEPTH);
+  if (process.env.SWARM2_LEASE_MS) env.lease_ms = Number(process.env.SWARM2_LEASE_MS);
   if (process.env.SWARM2_LIVE === '1') env.live_execution_enabled = true;
   const merged = { ...DEV_PROFILE, ...file, ...env, ...overrides };
   // The development profile is a ceiling for unattended work; the operator may lower it freely.

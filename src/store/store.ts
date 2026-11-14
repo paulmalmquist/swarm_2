@@ -296,8 +296,8 @@ export class Store {
       });
     } catch (err) {
       if (err instanceof SwarmError && err.code === 'idempotency_conflict') {
-        // Recorded outside the rolled-back transaction so the quarantine itself is durable.
-        this.emit({ type: 'idempotency_conflict_quarantined', actor_id: 'runtime', actor_kind: 'runtime', payload: { key, scope }, idempotency_key: key });
+        // Recorded after the surrounding transaction has rolled back, so the quarantine itself is durable.
+        this.db.afterTx(() => this.emit({ type: 'idempotency_conflict_quarantined', actor_id: 'runtime', actor_kind: 'runtime', payload: { key, scope }, idempotency_key: key }));
       }
       throw err;
     }

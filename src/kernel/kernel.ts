@@ -459,6 +459,7 @@ export class Kernel {
         const failed = kids.some((k) => k.status === 'failed');
         const anyAccepted = kids.some((k) => k.status === 'accepted');
         c.status = failed ? 'failed' : anyAccepted ? 'accepted' : 'cancelled';
+        if (c.status === 'accepted') c.currency = 'current';
         this.touch(c, null);
         this.budget.close(c.budget_account_id);
         if (c.swarm_id) {
@@ -566,17 +567,22 @@ export class Kernel {
   private ensureOpenAccount(task: Task): boolean {
     const acct = this.store.accounts.must(task.budget_account_id);
     if (acct.status === 'open') return true;
-    const want = task.contract.resources.reservation;
-    for (const parent of [acct.parent_id, this.classAccount(task.mission_id, 'recovery')]) {
-      if (!parent) continue;
-      try {
-        task.budget_account_id = this.budget.reserve(parent, `redo:${task.key}:g${task.generation}`, 'task', want).id;
-        return true;
-      } catch (err) {
-        if (!(err instanceof SwarmError) || !['budget_exceeded', 'budget_closed'].includes(err.code)) throw err;
-      }
+    // First choice: reopen the task's own account with whatever it had not spent.
+    if (this.budget.reopen(acct.id)) {
+      this.store.emit({ type: 'budget_reopened', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, available: this.budget.available(acct.id) } });
+      return true;
     }
-    return false;
+    // Otherwise a small reservation from the recovery reserve: enough for a couple of attempts.
+    const want = task.contract.resources.reservation;
+    const small = amounts({ worker_invocations: 2, model_calls: 2, tokens: Math.floor(want.tokens / 4), cost_usd_est: want.cost_usd_est / 4, wall_ms: want.wall_ms });
+    try {
+      task.budget_account_id = this.budget.reserve(this.classAccount(task.mission_id, 'recovery'), `redo:${task.key}:g${task.generation}`, 'task', small).id;
+      this.store.emit({ type: 'recovery_reserve_used', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, amount: small } });
+      return true;
+    } catch (err) {
+      if (!(err instanceof SwarmError) || !['budget_exceeded', 'budget_closed'].includes(err.code)) throw err;
+      return false;
+    }
   }
 
   private topUpFromRecovery(task: Task): boolean {
@@ -962,9 +968,12 @@ export class Kernel {
       .map((r) => r.task_id)
       .filter((id) => id !== producer);
     const reason = `input ${key} changed to v${version.version_no}`;
-    const visit = (task_id: string, why: string, direct: boolean): void => {
+    const directSet = new Set(consumers);
+    const visit = (task_id: string, whyDownstream: string, _direct: boolean): void => {
       if (seen.has(task_id)) return;
       seen.add(task_id);
+      const direct = directSet.has(task_id);
+      const why = direct ? reason : whyDownstream;
       const task = this.store.tasks.get(task_id);
       if (!task || task.mission_id !== mission_id) return;
       if (['cancelled', 'failed', 'not_selected'].includes(task.status)) return;
@@ -1073,7 +1082,7 @@ export class Kernel {
       task.currency = 'current';
       this.touch(task, null);
       this.budget.close(task.budget_account_id);
-      this.store.setMeta(`task:${task.id}:accepted`, { generation: task.generation, inputs: Object.fromEntries(task.contract.inputs.map((i) => [i.artifact_key, i.content_hash])) });
+      this.store.setMeta(`task:${task.id}:accepted`, { generation: task.generation, inputs: Object.fromEntries(task.contract.inputs.map((i) => [i.artifact_key, i.content_hash])), upstream: this.upstreamFingerprint(task) });
       this.store.emit({ type: 'task_accepted', mission_id: task.mission_id, task_id, actor_id: actor, actor_kind: 'runtime', payload: { key: task.key, generation: task.generation, attempt: task.attempt }, release_id: task.contract.release_id });
       return task;
     });
@@ -1087,8 +1096,10 @@ export class Kernel {
     return this.store.db.tx(() => {
       const task = this.store.tasks.must(task_id);
       if (task.currency !== 'needs_revalidation' || !['planned', 'ready'].includes(task.status)) return false;
-      const prior = this.store.getMeta<{ generation: number; inputs: Record<string, string> }>(`task:${task.id}:accepted`);
+      const prior = this.store.getMeta<{ generation: number; inputs: Record<string, string>; upstream: string }>(`task:${task.id}:accepted`);
       if (!prior) return false;
+      // Everything its prerequisites produced must also be byte-identical to what it was built on.
+      if (prior.upstream !== this.upstreamFingerprint(task)) return false;
       const keys = this.inputKeys(task.id);
       if (keys.length !== Object.keys(prior.inputs).length) return false;
       const pins: InputRef[] = [];
@@ -1112,10 +1123,31 @@ export class Kernel {
       task.status = 'accepted';
       task.currency = 'current';
       this.touch(task, null);
-      this.store.setMeta(`task:${task.id}:accepted`, { generation: task.generation, inputs: prior.inputs });
+      this.store.setMeta(`task:${task.id}:accepted`, { generation: task.generation, inputs: prior.inputs, upstream: prior.upstream });
       this.store.emit({ type: 'task_revalidated_without_rerun', mission_id: task.mission_id, task_id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, generation: task.generation, reason: 'all inputs have unchanged content' } });
       return true;
     });
+  }
+
+  /**
+   * Fingerprint of everything a task's prerequisites currently provide: the content hashes of the
+   * current artifacts produced by each prerequisite, including every task inside a prerequisite team.
+   */
+  upstreamFingerprint(task: Task): string {
+    const producers = new Set<string>();
+    const collect = (id: string): void => {
+      if (producers.has(id)) return;
+      producers.add(id);
+      for (const child of this.store.tasks.where('"parent_task_id" = ?', id)) collect(child.id);
+    };
+    for (const dep of this.dependenciesOf(task.id)) collect(dep);
+    const parts: string[] = [];
+    for (const id of producers) {
+      for (const v of this.store.versions.where('"produced_by_task_id" = ?', id)) {
+        if (v.currency === 'current') parts.push(`${v.key}=${v.content_hash}`);
+      }
+    }
+    return sha256(parts.sort().join('\n'));
   }
 
   /** Verification failed: send the work back, bounded by the repair limit. */

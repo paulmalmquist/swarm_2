@@ -13,6 +13,7 @@ export class Db {
   raw: DatabaseSync;
   path: string;
   private depth = 0;
+  private deferred: (() => void)[] = [];
 
   constructor(path: string) {
     this.path = path;
@@ -33,6 +34,7 @@ export class Db {
       const out = fn();
       this.depth--;
       this.raw.exec('COMMIT');
+      this.flush();
       return out;
     } catch (err) {
       this.depth--;
@@ -41,7 +43,29 @@ export class Db {
       } catch {
         /* the original error matters more */
       }
+      this.flush();
       throw err;
+    }
+  }
+
+  /**
+   * Run `fn` once the outermost transaction has ended, whether it committed or rolled back.
+   * Used for records that must survive the failure they describe.
+   */
+  afterTx(fn: () => void): void {
+    if (this.depth === 0) fn();
+    else this.deferred.push(fn);
+  }
+
+  private flush(): void {
+    const pending = this.deferred;
+    this.deferred = [];
+    for (const fn of pending) {
+      try {
+        fn();
+      } catch {
+        /* a failed after-commit record must not mask the original outcome */
+      }
     }
   }
 

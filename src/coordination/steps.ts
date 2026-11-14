@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import type { IntegrationItem } from '../contracts/runtime.ts';
 import type { AcceptanceCriterion, Mission, PlanProposal, ReviewPacket, Task, Verification, WorkOutput } from '../contracts/types.ts';
 import type { Token } from '../kernel/kernel.ts';
-import { SwarmError, newId, truncate } from '../lib/util.ts';
+import { SwarmError, hashOf, newId, truncate } from '../lib/util.ts';
 import { type RunResult, parseTap } from '../workspace/workspaces.ts';
 import type { Coordinator } from './coordinator.ts';
 import { materializePlan, validatePlan } from './plan.ts';
@@ -144,8 +144,14 @@ export class Steps {
     const m = store.missions.must(task.mission_id);
     const stored = this.storedOutput(task);
 
-    // A proposed plan is checked before the proposing task can be accepted.
-    if (stored?.plan) {
+    // A proposed plan is checked before the proposing task can be accepted. Proposing the same plan
+    // again after a rerun changes nothing; proposing a different one is a re-plan, which needs a decision.
+    const priorPlan = store.getMeta<string>(`task:${task.id}:plan_hash`);
+    if (stored?.plan && priorPlan && priorPlan !== hashOf(stored.plan)) {
+      kernel.rejectTask(task_id, VERIFIER_ID, 'the task proposes a different plan from the one already in effect; changing a plan in flight needs a decision from its owner', 'replan_requires_decision');
+      return;
+    }
+    if (stored?.plan && !priorPlan) {
       const errors = validatePlan(kernel, m, stored.plan, task);
       if (errors.length) {
         kernel.rejectTask(task_id, VERIFIER_ID, `proposed plan is not valid: ${errors.join('; ')}`, 'invalid_plan');
@@ -210,9 +216,9 @@ export class Steps {
       }
       if (Array.isArray(doc.notes)) this.co.onKnowledge?.(task, doc);
     }
-    if (stored?.plan && !store.getMeta<boolean>(`task:${task.id}:plan_materialized:g${task.generation}`)) {
+    if (stored?.plan && !store.getMeta<string>(`task:${task.id}:plan_hash`)) {
       materializePlan(kernel, m, stored.plan, task);
-      store.setMeta(`task:${task.id}:plan_materialized:g${task.generation}`, true);
+      store.setMeta(`task:${task.id}:plan_hash`, hashOf(stored.plan));
     }
     // Structured handoff to each downstream owner: artifact version, acceptance evidence, what is still uncertain.
     const evidence_ids = store.verifications.where('"task_id" = ? AND "generation" = ?', task.id, task.generation).flatMap((v) => v.evidence_ids);

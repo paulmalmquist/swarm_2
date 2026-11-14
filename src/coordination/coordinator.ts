@@ -6,6 +6,7 @@ import { SwarmError, globMatch, pidAlive, sleep, truncate } from '../lib/util.ts
 import { materializePlan } from './plan.ts';
 import { Steps } from './steps.ts';
 import { recordOutcome } from './metrics.ts';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 export interface FaultSpec {
@@ -90,10 +91,20 @@ export class Coordinator {
 
   // ───────── main loop ─────────
 
-  async runUntilIdle(opts: { mission_id?: string; max_ms?: number; poll_ms?: number } = {}): Promise<'idle' | 'timeout'> {
+  /** The operator's kill switch: while this file exists nothing is dispatched and running workers are stopped. */
+  stopRequested(): boolean {
+    return existsSync(join(this.rt.paths.home, 'STOP'));
+  }
+
+  async runUntilIdle(opts: { mission_id?: string; max_ms?: number; poll_ms?: number } = {}): Promise<'idle' | 'timeout' | 'stopped'> {
     const deadline = Date.now() + (opts.max_ms ?? 120_000);
     let quiet = 0;
     while (Date.now() < deadline) {
+      if (this.stopRequested()) {
+        this.stop();
+        this.rt.store.emit({ type: 'coordinator_stopped', actor_id: 'operator', actor_kind: 'operator', payload: { reason: 'STOP file present', workers_stopped: this.running.size } });
+        return 'stopped';
+      }
       const { active } = await this.tick(opts.mission_id);
       if (active) quiet = 0;
       else if (++quiet >= 2) return 'idle';
@@ -109,7 +120,9 @@ export class Coordinator {
     for (const { task, attempt } of kernel.expireLeases()) {
       progressed = true;
       this.log(`lease expired on ${task.key} (attempt ${attempt?.attempt_no})`);
-      if (attempt) this.killAttempt(attempt.id, attempt.pid);
+      // A worker that stopped heartbeating is stopped when it can be reached. One that cannot be
+      // reached (simulated by an injected fault) is left to the fencing token.
+      if (attempt && !store.getMeta<boolean>(`attempt:${attempt.id}:unreachable`)) this.killAttempt(attempt.id, attempt.pid);
     }
 
     const missions = store.missions
@@ -259,6 +272,7 @@ export class Coordinator {
       },
       { onHeartbeat: (info) => void kernel.heartbeat(task.id, token, info) },
     );
+    if (faults.some((f) => f.startsWith('stall_then_submit'))) store.setMeta(`attempt:${attempt.id}:unreachable`, true);
     this.running.set(attempt.id, { handle, task_id: task.id, token });
     this.log(`dispatched ${task.key} (${provider.name}, token g${token.generation}a${token.attempt}${faults.length ? `, INJECTED FAULT ${faults.join('+')}` : ''})`);
     const p = handle.done.then((res) => this.onWorkerDone(attempt.id, task.id, token, res, workspace)).catch((err) => this.log(`worker completion error on ${task.key}: ${String(err)}`));

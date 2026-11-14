@@ -85,7 +85,8 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         title: 'Propose the work graph',
         objective: 'Propose the organization and work graph: which swarms activate, how the work divides, where it integrates and how it is verified.',
         depends_on: ['planning.contract'],
-        input_keys: ['plan/acceptance-criteria', 'contract/health-record'],
+        // The plan depends on the criteria and on the interface existing, not on the interface's content.
+        input_keys: ['plan/acceptance-criteria'],
         outputs: [{ key: 'plan/work-graph', kind: 'plan', description: 'The proposed plan, as proposed' }],
         acceptance_criteria: [inspect('P-PLAN', 'A plan is proposed and recorded', 'nonempty', 'plan/work-graph')],
         budget_share: 0.3,
@@ -116,7 +117,7 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         role: 'lead',
         title: 'Decide how to divide the implementation',
         objective: 'Decide whether the implementation justifies subordinate teams, and if so give each a bounded purpose, budget, deliverable and stopping condition.',
-        input_keys: ['plan/acceptance-criteria', 'contract/health-record'],
+        input_keys: ['plan/acceptance-criteria'],
         outputs: [{ key: 'plan/delivery-decomposition', kind: 'plan', description: 'The delivery lead\'s decomposition, as proposed' }],
         acceptance_criteria: [inspect('L-DECOMP', 'A decomposition is proposed and recorded', 'nonempty', 'plan/delivery-decomposition')],
         budget_share: 0.06,
@@ -129,6 +130,8 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         title: 'Integrate the workstreams',
         objective: 'Merge the accepted workstreams one at a time and verify the combined result at the interface boundary.',
         depends_on: ['delivery.decompose'],
+        // The exact workstream commits being integrated are pinned like any other input.
+        input_keys: ['code/engine', 'code/report'],
         outputs: [{ key: 'code/integrated', kind: 'code', description: 'The integrated capability' }],
         acceptance_criteria: criteria,
         verification: { method: 'executable', independent: true },
