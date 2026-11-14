@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgq2b0ga2f65fd6f4",
-  "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+  "receipt_id": "rcpt_0mwgql5ewa2670a4baa",
+  "experiment_id": "exp_0mwgqkpgs9y19f32308",
   "level": "evolution",
   "problem": {
     "statement": "Improvement campaigns spend their budget on whatever is reported most often. Frequent complaints that were never verified, and fixes that would have failed a cheap check, consume budget that higher-value problems needed.",
@@ -37,11 +37,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/evolution",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:10:59.188Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:25:39.820Z",
     "workload_refs": [
       "improvement-arena:arena-A",
-      "snapshot:982f535ccd85c24c34eea9cc7792977925eb50071a69b046b7942b6147619981"
+      "snapshot:4ff53fac6bd60bfb433cb397d419d7bd90174d18b593db6d086796f8cd6ee42b"
     ],
     "holdout_set": "arena-A",
     "executor": "improvement-arena",
@@ -54,21 +54,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:11:02.101Z",
+      "at": "2026-11-14T18:25:42.638Z",
       "cases": 8,
       "note": "development episodes run by the policy author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:11:21.280Z",
+      "at": "2026-11-14T18:26:00.489Z",
       "cases": 30,
       "note": "one evaluation on arena-A"
     }
   ],
   "resource_use": {
     "experiment_units": 46866,
-    "wall_ms": 19179,
+    "wall_ms": 17851,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -321,7 +321,7 @@
   "decision": "accept",
   "justification": "Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:11:21.280Z",
+  "decided_at": "2026-11-14T18:26:00.489Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -339,14 +339,14 @@
         "content_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363"
       }
     },
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "evaluation_snapshot_hash": "982f535ccd85c24c34eea9cc7792977925eb50071a69b046b7942b6147619981",
-    "receipt_id": "rcpt_0mwgq2b0ga2f65fd6f4",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "evaluation_snapshot_hash": "4ff53fac6bd60bfb433cb397d419d7bd90174d18b593db6d086796f8cd6ee42b",
+    "receipt_id": "rcpt_0mwgql5ewa2670a4baa",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "simulation",
-    "created_at": "2026-11-14T18:11:21.280Z",
-    "manifest_hash": "9187655e84cbd438586901346e8dbf46432db6fc61eaa60e4091d747a7d75a28"
+    "created_at": "2026-11-14T18:26:00.488Z",
+    "manifest_hash": "07089503a47d09ece66da7330b1f59ba68a42cfbd80b5ec2a84c056f08b3d90b"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -354,13 +354,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "simulation",
-  "receipt_hash": "8794d33c0410c3c9503b98c7b872a53086024b0704cecd40ccb7352417c86a58"
+  "receipt_hash": "842da0934f313f3f1f46ee1cb65670a9bedf62b14e5c3459cae70e8d6874c2a4"
 }

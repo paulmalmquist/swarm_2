@@ -16,14 +16,14 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
     "evaluation_snapshot_hash": null,
     "receipt_id": null,
     "rollback_target": null,
     "status": "retired",
     "evidence_basis": "baseline",
-    "created_at": "2026-11-14T18:10:58.175Z",
-    "manifest_hash": "8ccef592642c5d577601145d53dd041b92274ed3839309a9e3a729733e819607"
+    "created_at": "2026-11-14T18:25:38.855Z",
+    "manifest_hash": "859dadf9dd91973a5f8000e52318a75144c3f4268493947bdf5005f7226d1b78"
   },
   {
     "release_id": "r2",
@@ -42,13 +42,13 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "evaluation_snapshot_hash": "341f487d9d0d1040931e06771e81294db6ac173486ad94c40ae18c6f96a32ddb",
-    "receipt_id": "rcpt_0mwgq1tv49s99cfe5fb",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "evaluation_snapshot_hash": "ea9332a0924db78ac5a0402a045945eed42533cc9a0e26e064b8df51014fb6b2",
+    "receipt_id": "rcpt_0mwgqkpe19sb575e895",
     "rollback_target": "r1",
     "status": "active",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T18:10:59.056Z",
-    "manifest_hash": "03a366cc7382187130e48ad4abbcee87e60e439a80cf03c855264f4a2c0562f3"
+    "created_at": "2026-11-14T18:25:39.721Z",
+    "manifest_hash": "77df01f0bdecbd03185fda2b276b383a16dd9da17c44f13997f646f5e4b05622"
   }
 ]

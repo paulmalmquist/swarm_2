@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgq2bb1a81633df03",
-  "experiment_id": "exp_0mwgq2b22a4bb063c80",
+  "receipt_id": "rcpt_0mwgql5r4a87a4711bf",
+  "experiment_id": "exp_0mwgql5fva44e6e0378",
   "level": "execution",
   "problem": {
     "statement": "Change review takes two steps per change; most changes are approved anyway.",
@@ -35,11 +35,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:11:21.338Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:26:00.523Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:ae59142ba7e70d18f55ccddf3bacbea892d355b592a549682eee113a6bfe18f3"
+      "snapshot:5139327941c19634f72d3f40a1455bb65df2dcaa6de703113b950a26dcbabc4e"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,21 +52,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:11:21.393Z",
+      "at": "2026-11-14T18:26:00.600Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:11:21.661Z",
+      "at": "2026-11-14T18:26:00.928Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 268,
+    "wall_ms": 328,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -163,12 +163,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.093,
-      "incumbent": 0.107,
-      "baseline": 0.105,
-      "diff_vs_incumbent": -0.014,
+      "candidate": 0.123,
+      "incumbent": 0.172,
+      "baseline": 0.133,
+      "diff_vs_incumbent": -0.049,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": -0.013,
+      "diff_vs_baseline": -0.01,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -355,7 +355,7 @@
   "decision": "reject",
   "justification": "Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:11:21.661Z",
+  "decided_at": "2026-11-14T18:26:00.928Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -363,13 +363,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "0fb951756b8abf33b1a09f656e831054e2d6bf6d8ed7d5301835ad7d198133f0"
+  "receipt_hash": "bd7acce48d7a34a1334a5b897030a9cead26ac609178267c78005dffd0f794de"
 }

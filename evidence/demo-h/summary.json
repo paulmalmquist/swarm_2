@@ -1,11 +1,11 @@
 {
   "demo": "h",
-  "title": "Targeted comparison against a simpler configuration",
+  "title": "Targeted comparisons against simpler configurations",
   "labels": [
     "DETERMINISTIC FIXTURE PROVIDER — scripted workers in real processes; no model was run",
     "SYNTHETIC DATA — every request, team, dataset and value is invented",
     "INJECTED DEFECTS — in about half of the episodes one worker's first attempt carries a defect its own tests do not catch",
-    "The defect rate is an assumption of this testbed. The comparison shows what the verification swarm catches when such defects occur, and what it costs; it does not show how often they occur in real work."
+    "ASSUMED RATES — how often defects occur, and how often two workstreams disagree about an interface nobody agreed, are parameters of this testbed. The comparisons show what each coordination step catches and costs when those things happen; they do not show how often they happen in real work."
   ],
   "steps": [
     {
@@ -20,7 +20,7 @@
     },
     {
       "claim": "The simpler configuration really is cheaper and faster",
-      "observed": "worker invocations per mission 12.875 → 10; completion 4195 ms → 3054 ms",
+      "observed": "worker invocations per mission 12.875 → 10; completion 4092 ms → 2995 ms",
       "ok": true
     },
     {
@@ -32,14 +32,37 @@
       "claim": "The decision follows the frozen rule",
       "observed": "reject: Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
       "ok": true
+    },
+    {
+      "claim": "A second simplification is put to the same gate: no interface agreement before parallel work",
+      "observed": "Removes the interface-agreement step: no contract task, and delivery workstreams take the acceptance criteria as input instead of a pinned contract. Run on missions-B; the workstreams disagreed about the shared record in 5 of 8 episodes (an assumed rate).",
+      "ok": true
+    },
+    {
+      "claim": "The cost of the step and the cost of going without it are both measured",
+      "observed": "the agreement step costs 1 worker invocations and 137.67 ms per mission; a mission where the workstreams disagreed cost 1 more invocations and 939.4 ms more than the same mission with the agreement",
+      "ok": true
+    },
+    {
+      "claim": "Integration failures and quality are reported, not assumed",
+      "observed": "integration failures per mission 0 → 0.625; truly correct missions 1 → 1; invocations 11.75 → 12 (difference 0.25, 95% interval -0.5 to 0.75); completion 3411 ms → 3947 ms",
+      "ok": true
+    },
+    {
+      "claim": "The decision follows the frozen rule, whatever it is",
+      "observed": "inconclusive: No demonstrated improvement: truly_correct_missions is no worse (95% interval 0 to 0, margin 0), but cost did not fall (worker_invocations_per_mission changed by 0.25), so the simplification saves nothing.",
+      "ok": true
     }
   ],
   "files": [
     "self-verification.receipt.json",
     "self-verification.receipt.md",
     "episodes.json",
+    "no-interface-agreement.receipt.json",
+    "no-interface-agreement.receipt.md",
+    "interface-agreement.json",
     "README.md"
   ],
   "ok": true,
-  "ms": 62613
+  "ms": 124274
 }

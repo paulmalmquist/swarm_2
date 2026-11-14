@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgq3rhv7f151db04c
+# Improvement receipt rcpt_0mwgqmkjd7f204fc37f
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.
 
-Decided by release-gate at 2026-11-14T18:12:29.299Z. Level: coordination. Experiment: `exp_0mwgq2f7cka08b8f80e`.
+Decided by release-gate at 2026-11-14T18:27:06.745Z. Level: coordination. Experiment: `exp_0mwgql9daka879f8bc6`.
 
 ## Problem and supporting observations
 
@@ -33,9 +33,9 @@ Sets independent_verification to false: no verification swarm is formed and the 
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T18:11:26.712Z, before the candidate was submitted
-- Policy hash: `19b51d6fce298df7`
-- Workload: mission-episodes:missions-A; snapshot:a71dd94684bff6b9a4c8b3b08659fbe85bf10d1c11e711d264d5f79ecc912d84
+- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T18:26:05.614Z, before the candidate was submitted
+- Policy hash: `a79f643c873bbd0d`
+- Workload: mission-episodes:missions-A; snapshot:f3c318cf39c3ccf81a844c215f0f56d95dbadfb2ff63ddb478cb86c03385edc9
 - Held-out set: missions-A
 - Executor: mission-episodes (stochastic; rerun; 1 pass)
 
@@ -45,7 +45,7 @@ Sets independent_verification to false: no verification swarm is formed and the 
 |---|---|---|---|
 | 1 | holdout | 8 | one evaluation on missions-A |
 
-Resource use: 183 experiment units, 62584 ms, 0 model calls, cost not measured.
+Resource use: 183 experiment units, 61128 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -54,8 +54,9 @@ Resource use: 183 experiment units, 62584 ms, 0 model calls, cost not measured.
 | truly_correct_missions (higher is better) | 0.375 | 1 | 1 | -0.625 | -0.875 to -0.25 | 8 |
 | escaped_defects_per_mission (lower is better) | 0.625 | 0 | 0 | 0.625 | 0.25 to 0.875 | 8 |
 | worker_invocations_per_mission (lower is better) | 10 | 12.875 | 12.875 | -2.875 | -3.625 to -1.75 | 8 |
-| completion_ms (lower is better) | 3054 | 4195.125 | 4195.125 | -1141.125 | -1580.75 to -575 | 8 |
+| completion_ms (lower is better) | 2995 | 4092 | 4092 | -1097 | -1535.125 to -580.25 | 8 |
 | rework_per_mission (lower is better) | 0 | 0.625 | 0.625 | -0.625 | -0.875 to -0.25 | 8 |
+| integration_failures_per_mission (lower is better) | 0 | 0 | 0 | 0 | 0 to 0 | 8 |
 
 Method for the primary metric: paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 5 worse, 3 same, p=0.0625.
 
@@ -82,6 +83,7 @@ Method for the primary metric: paired bootstrap over the same 8 mission episodes
 - A defect is injected into one worker's first attempt in about 50% of episodes. That rate is an assumption of this testbed; the size of any effect depends on it.
 - The oracle is the same protected acceptance suite the verification swarm uses, so this measures what happens when nobody runs it — not whether it is a complete specification.
 - 8 episodes per arm: intervals are wide.
+- Where a policy has no interface agreement, the consuming workstream misreads the shared record in about 50% of episodes. That rate is also an assumption of this testbed. What the runtime measures is what each such mismatch costs and what the agreement step costs.
 
 ## Isolation
 
@@ -93,4 +95,4 @@ Method for the primary metric: paired bootstrap over the same 8 mission episodes
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `eb246d6b68ade2ea7f1e8cac9bf68e937923ba72704480c721a796106667fe6c`
+Receipt hash: `d4591eef6b17579bf49cce6c38995b5beff2a212d98d91700407fa95790f2301`

@@ -514,9 +514,41 @@ async function demoH(): Promise<DemoResult> {
     saveReceipt(rep, 'self-verification', rec);
     const snap = JSON.parse(readFileSync(join(rt.paths.protected, 'evaluations', `${r.experiment.id}.json`), 'utf8')) as { snapshot: { incumbent: unknown; candidate: unknown } };
     rep.file('episodes.json', { note: 'Per-episode results. Injected defects are labeled.', incumbent_independent_verification: snap.snapshot.incumbent, candidate_self_verification: snap.snapshot.candidate });
-    return finish('h', 'Targeted comparison against a simpler configuration', [...FIXTURE_LABELS, 'INJECTED DEFECTS — in about half of the episodes one worker\'s first attempt carries a defect its own tests do not catch', 'The defect rate is an assumption of this testbed. The comparison shows what the verification swarm catches when such defects occur, and what it costs; it does not show how often they occur in real work.'], rep, t0, [
+
+    // Second comparison: is the interface agreement before parallel work worth its step?
+    type Ep = { seed: string; interface_mismatch: boolean; worker_invocations: number; elapsed_ms: number; integration_failures: number; rework: number; truly_correct: boolean };
+    const r2 = await runExperiment(rt, gate, 'coord-no-interface-agreement');
+    const rec2 = r2.receipt;
+    const get2 = (m: string) => rec2.comparisons.find((c) => c.metric === m)!;
+    const snap2 = (JSON.parse(readFileSync(join(rt.paths.protected, 'evaluations', `${r2.experiment.id}.json`), 'utf8')) as { snapshot: { incumbent: Ep[]; candidate: Ep[] } }).snapshot;
+    const avg = (xs: number[]): number | null => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 100) / 100 : null);
+    const pairs = snap2.candidate.map((c, i) => ({ c, inc: snap2.incumbent[i]! }));
+    const clean = pairs.filter((x) => !x.c.interface_mismatch);
+    const clash = pairs.filter((x) => x.c.interface_mismatch);
+    // Paired on the same episode, so whatever else was injected is the same in both arms.
+    const stepCost = { invocations: avg(clean.map((x) => x.inc.worker_invocations - x.c.worker_invocations)), ms: avg(clean.map((x) => x.inc.elapsed_ms - x.c.elapsed_ms)) };
+    const clashCost = { invocations: avg(clash.map((x) => x.c.worker_invocations - x.inc.worker_invocations)), ms: avg(clash.map((x) => x.c.elapsed_ms - x.inc.elapsed_ms)) };
+    const perClash = stepCost.invocations !== null && clashCost.invocations !== null ? clashCost.invocations + stepCost.invocations : null;
+    const breakEven = perClash && stepCost.invocations !== null && perClash > 0 ? Math.round((stepCost.invocations / perClash) * 100) : null;
+    const integ = get2('integration_failures_per_mission');
+    const inv2 = get2('worker_invocations_per_mission');
+    const time2 = get2('completion_ms');
+    const correct2 = get2('truly_correct_missions');
+    rep.check('A second simplification is put to the same gate: no interface agreement before parallel work', rec2.level === 'coordination' && rec2.evaluation.holdout_set !== null, `${rec2.change.summary} Run on ${rec2.evaluation.holdout_set}; the workstreams disagreed about the shared record in ${clash.length} of ${pairs.length} episodes (an assumed rate).`);
+    rep.check('The cost of the step and the cost of going without it are both measured', stepCost.invocations !== null && clashCost.invocations !== null, `the agreement step costs ${stepCost.invocations} worker invocations and ${stepCost.ms} ms per mission; a mission where the workstreams disagreed cost ${clashCost.invocations} more invocations and ${clashCost.ms} ms more than the same mission with the agreement`);
+    rep.check('Integration failures and quality are reported, not assumed', integ.candidate !== null, `integration failures per mission ${integ.incumbent} → ${integ.candidate}; truly correct missions ${correct2.incumbent} → ${correct2.candidate}; invocations ${inv2.incumbent} → ${inv2.candidate} (difference ${inv2.diff_vs_incumbent}, 95% interval ${inv2.ci95_vs_incumbent![0]} to ${inv2.ci95_vs_incumbent![1]}); completion ${Math.round(time2.incumbent!)} ms → ${Math.round(time2.candidate!)} ms`);
+    rep.check('The decision follows the frozen rule, whatever it is', ['accept', 'reject', 'inconclusive'].includes(rec2.decision), `${rec2.decision}: ${rec2.justification}`);
+    saveReceipt(rep, 'no-interface-agreement', rec2);
+    rep.file('interface-agreement.json', {
+      note: 'Per-episode results for the interface-agreement comparison. The share of episodes in which the workstreams disagree is an ASSUMPTION of the testbed; the costs are measured. Fixture step durations are synthetic, and a fixture counts every worker invocation the same, whereas real rework usually costs more than a planning step.',
+      measured: { agreement_step_cost: stepCost, extra_cost_of_a_mission_with_a_mismatch: clashCost, break_even_mismatch_rate_percent_on_invocations: breakEven },
+      incumbent_with_agreement: snap2.incumbent, candidate_without_agreement: snap2.candidate,
+    });
+    return finish('h', 'Targeted comparisons against simpler configurations', [...FIXTURE_LABELS, 'INJECTED DEFECTS — in about half of the episodes one worker\'s first attempt carries a defect its own tests do not catch', 'ASSUMED RATES — how often defects occur, and how often two workstreams disagree about an interface nobody agreed, are parameters of this testbed. The comparisons show what each coordination step catches and costs when those things happen; they do not show how often they happen in real work.'], rep, t0, [
       'Does the independent verification swarm earn its cost? The question is put to the release gate as a coordination-level simplification: retire the verification swarm and trust delivery\'s own combined tests.',
       'Each configuration runs the same eight seeded missions on the real runtime. Afterwards an oracle runs the protected acceptance suite on whatever each mission accepted.',
+      'Does the interface agreement before parallel work earn its step? The second simplification removes it: no contract task, and the two delivery workstreams start from the acceptance criteria alone.',
+      breakEven === null ? 'A break-even rate could not be computed from these episodes.' : `Counting worker invocations only, the agreement pays for itself when the workstreams would otherwise disagree in more than about ${breakEven}% of missions. In this fixture every invocation counts the same; real rework usually costs more than a planning step, which would lower that figure.`,
     ]);
   } finally {
     gate.close();

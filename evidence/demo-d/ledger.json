@@ -3,24 +3,24 @@
     "seq": 1,
     "experiment_id": null,
     "kind": "protected_store_sealed",
-    "at": "2026-11-14T18:10:59.187Z",
+    "at": "2026-11-14T18:25:39.819Z",
     "payload": {
-      "digest": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-      "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+      "digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
       "isolation": "enforced"
     },
-    "hash": "9dac9728f875c167e13ce04b996bd8366a5b414ccdb1e401906ab1ab4c03f7c5"
+    "hash": "2cc521ed8e0d8393a4bf0839793f2e200b13e5ee0643cca2069cdcf019f8c026"
   },
   {
     "seq": 2,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "experiment_opened",
-    "at": "2026-11-14T18:10:59.188Z",
+    "at": "2026-11-14T18:25:39.821Z",
     "payload": {
       "level": "evolution",
       "title": "Prioritize improvement work by expected value, pilot before submitting, and stop when nothing is worth its cost",
       "hypothesis": "If the improvement process ranks problems by verified failures times severity per unit of cost, pilots a built fix on observed cases before paying for a held-out evaluation, and stops when no remaining problem is worth its cost, then with the same budget on unseen failure episodes it will deliver more independently validated harm reduction and spend less on experiments that fail.",
-      "lineage_id": "exp_0mwgq1tys9yfe2e8d52",
+      "lineage_id": "exp_0mwgqkpgs9y19f32308",
       "revises": null,
       "parent": {
         "component": "evolution",
@@ -28,32 +28,32 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "hash": "770af8968797b7e53c5d9e3f1c1209a59aa5a0d62886e2d0ec8fbc6fab9800a0"
+    "hash": "41db5bcd219e9d8caf073031aca33f2b95f9b3c1fda0a3b5187c3be3a44694e5"
   },
   {
     "seq": 3,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "protocol_frozen",
-    "at": "2026-11-14T18:10:59.188Z",
+    "at": "2026-11-14T18:25:39.821Z",
     "payload": {
       "protocol_id": "promotion-policy@1/evolution",
-      "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-      "protected_digest": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "protected_digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
       "holdout_set": "arena-A",
       "workload": "improvement-arena",
       "cases": 60,
-      "frozen_at": "2026-11-14T18:10:59.188Z",
+      "frozen_at": "2026-11-14T18:25:39.820Z",
       "executor": "improvement-arena",
       "budget_units": 2000,
       "note": "frozen before any candidate was submitted"
     },
-    "hash": "12dd7a2e74d1bc49503f9856b0f3b787605274aed2a9fdb98b99d845ffac48cc"
+    "hash": "aa0b4d62ef840daff61479ad3771de1590b55859425a279702396f6afe78450f"
   },
   {
     "seq": 4,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "candidate_submitted",
-    "at": "2026-11-14T18:10:59.192Z",
+    "at": "2026-11-14T18:25:39.824Z",
     "payload": {
       "candidate_id": "evo-expected-value",
       "candidate_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363",
@@ -62,13 +62,13 @@
         "policy.mjs"
       ]
     },
-    "hash": "58eab14e1b840c2a4bf623657bce1d155618ef0ce6d28610fb13ffe7e23d1766"
+    "hash": "d51af400a90e241f1664a2f0a400a63317d73a0978a82b4fddf6230b0f819905"
   },
   {
     "seq": 5,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "development_attempt",
-    "at": "2026-11-14T18:11:02.101Z",
+    "at": "2026-11-14T18:25:42.638Z",
     "payload": {
       "note": "development episodes run by the policy author",
       "cases": 8,
@@ -76,36 +76,36 @@
       "incumbent_mean_benefit": 174.25,
       "units": 6252
     },
-    "hash": "6316f82d17600891fb0933edf8a14bc13a358c86b95901afc2494835f0920071"
+    "hash": "4316ac2f6e9eaeedc4e1764ed06e58a91d2cd4c6414cfbabc663b7a4ea2f4a31"
   },
   {
     "seq": 6,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "holdout_evaluation",
-    "at": "2026-11-14T18:11:21.281Z",
+    "at": "2026-11-14T18:26:00.490Z",
     "payload": {
       "set": "arena-A",
       "cases": 30,
       "units": 46858,
-      "evaluation_snapshot_hash": "982f535ccd85c24c34eea9cc7792977925eb50071a69b046b7942b6147619981",
+      "evaluation_snapshot_hash": "4ff53fac6bd60bfb433cb397d419d7bd90174d18b593db6d086796f8cd6ee42b",
       "intact": true
     },
-    "hash": "a3e9541350dfa131238a162257d5d9abc27405d226212b983f07b24e449c8715"
+    "hash": "76a16440ff9a680c275b4bab81c256844e884c05e1cd112a626163b10007227c"
   },
   {
     "seq": 7,
-    "experiment_id": "exp_0mwgq1tys9yfe2e8d52",
+    "experiment_id": "exp_0mwgqkpgs9y19f32308",
     "kind": "decision",
-    "at": "2026-11-14T18:11:21.282Z",
+    "at": "2026-11-14T18:26:00.490Z",
     "payload": {
       "decision": "accept",
       "justification": "Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.",
-      "receipt_id": "rcpt_0mwgq2b0ga2f65fd6f4",
-      "receipt_hash": "8794d33c0410c3c9503b98c7b872a53086024b0704cecd40ccb7352417c86a58",
-      "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-      "evaluation_snapshot_hash": "982f535ccd85c24c34eea9cc7792977925eb50071a69b046b7942b6147619981",
+      "receipt_id": "rcpt_0mwgql5ewa2670a4baa",
+      "receipt_hash": "842da0934f313f3f1f46ee1cb65670a9bedf62b14e5c3459cae70e8d6874c2a4",
+      "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+      "evaluation_snapshot_hash": "4ff53fac6bd60bfb433cb397d419d7bd90174d18b593db6d086796f8cd6ee42b",
       "release_id": "r2"
     },
-    "hash": "b0cb55140ebb99182cb532e73ef876f18f61a8942234ac34c542df99ff75125b"
+    "hash": "d508918d6857936217b161009d32961310a90a4b97c00335af622a6896b3838e"
   }
 ]

@@ -1,22 +1,22 @@
 {
-  "receipt_id": "rcpt_0mwgq1tkh9m95aba3ac",
-  "experiment_id": "exp_0mwgq1t8s9i5ad4fcbb",
+  "receipt_id": "rcpt_0mwgqkp419m68a26a6c",
+  "experiment_id": "exp_0mwgqkorr9i3fbf30e2",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract: removed, renamed and retyped fields pass because the procedure never compares the contract before and after.",
     "observation_ids": [
-      "obs_0mwgq1t8p948e19da4f",
-      "obs_0mwgq1t8p9598591376",
-      "obs_0mwgq1t8p96bc05d697",
-      "obs_0mwgq1t8p978047450e",
-      "obs_0mwgq1t8p98985feea3",
-      "obs_0mwgq1t8p99da645bdc",
-      "obs_0mwgq1t8p9a16ba3141",
-      "obs_0mwgq1t8q9c70f3cf89",
-      "obs_0mwgq1t8q9d9d5b2945",
-      "obs_0mwgq1t8q9e0ae332bb",
-      "obs_0mwgq1t8q9f8bdde27e",
-      "obs_0mwgq1t8q9gf22338aa"
+      "obs_0mwgqkoro94772d8826",
+      "obs_0mwgqkoro95667601d5",
+      "obs_0mwgqkoro9620767e63",
+      "obs_0mwgqkoro97ad81c395",
+      "obs_0mwgqkoro9877c80f00",
+      "obs_0mwgqkoro995f7e35ea",
+      "obs_0mwgqkoro9ac224979f",
+      "obs_0mwgqkorp9c30344af6",
+      "obs_0mwgqkorp9d5dd85bcd",
+      "obs_0mwgqkorp9ecf2b833a",
+      "obs_0mwgqkorp9f6d033b42",
+      "obs_0mwgqkorp9gd9df12c5"
     ],
     "observed_failure_count": 12
   },
@@ -49,11 +49,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:10:58.252Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:25:38.919Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:1df59ee19ef488368da8cda4db29cf7143623fa8ef13c1669b44e4b7e60170ce"
+      "snapshot:563304e9c8c1745ade75201a2acf6bbacf865eb5017ec0cceb22c7180d0fe162"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -66,21 +66,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:10:58.319Z",
+      "at": "2026-11-14T18:25:38.977Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:10:58.673Z",
+      "at": "2026-11-14T18:25:39.362Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 353,
+    "wall_ms": 384,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -177,12 +177,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.195,
-      "incumbent": 0.154,
-      "baseline": 0.139,
-      "diff_vs_incumbent": 0.041,
+      "candidate": 0.18,
+      "incumbent": 0.13,
+      "baseline": 0.135,
+      "diff_vs_incumbent": 0.05,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.057,
+      "diff_vs_baseline": 0.045,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -371,7 +371,7 @@
   "decision": "reject",
   "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:10:58.673Z",
+  "decided_at": "2026-11-14T18:25:39.362Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -379,13 +379,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "9ce333fa4ea12cba5716ef62d4bfb8a0e99975912396d802268cb3806730b81a"
+  "receipt_hash": "4d2bfe6ce5b137d67d65797e5d8d4eebccf78b25d5aa24f355ba49fc1c593c40"
 }

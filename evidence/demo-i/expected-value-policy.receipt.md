@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgq48uu9f556c5a41
+# Improvement receipt rcpt_0mwgqodnh1nb37a86e3
 
 > SIMULATION — a synthetic testbed; results describe the testbed, not real work
 
 **Decision: ACCEPT** — Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.
 
-Decided by release-gate at 2026-11-14T18:12:51.798Z. Level: evolution. Experiment: `exp_0mwgq3sgf9b90289cbe`.
+Decided by release-gate at 2026-11-14T18:28:31.134Z. Level: evolution. Experiment: `exp_0mwgqny6n1jb9925e65`.
 
 ## Problem and supporting observations
 
@@ -36,9 +36,9 @@ Replaces the frequency-first improvement policy with an expected-value policy: p
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/evolution, frozen at 2026-11-14T18:12:30.543Z, before the candidate was submitted
-- Policy hash: `19b51d6fce298df7`
-- Workload: improvement-arena:arena-A; snapshot:5641338be846b54eaf873ffa2b1ad7620c148f3f437610074ddeb412d77030ac
+- Protocol: promotion-policy@1/evolution, frozen at 2026-11-14T18:28:11.087Z, before the candidate was submitted
+- Policy hash: `a79f643c873bbd0d`
+- Workload: improvement-arena:arena-A; snapshot:49a8ad7b7910edaab5cf85316182c37e7ac9a5d69ff4be6d836ad061eff8e568
 - Held-out set: arena-A
 - Executor: improvement-arena (deterministic; rerun; 1 pass)
 
@@ -49,7 +49,7 @@ Replaces the frequency-first improvement policy with an expected-value policy: p
 | 1 | development | 8 | development episodes run by the policy author |
 | 2 | holdout | 30 | one evaluation on arena-A |
 
-Resource use: 46866 experiment units, 18422 ms, 0 model calls, cost not measured.
+Resource use: 46866 experiment units, 17421 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -105,8 +105,8 @@ Release **r2** (canary; evidence basis: simulation; parent r1)
 | coordination | v1 | `a2731e7d2ba012c8` |
 | evolution | v2 | `041479c9ba065b03` |
 
-Policy hash `19b51d6fce298df7`; evaluation snapshot `5641338be846b54e`; receipt rcpt_0mwgq48uu9f556c5a41; manifest hash `aeb7eace99457584`.
+Policy hash `a79f643c873bbd0d`; evaluation snapshot `49a8ad7b7910edaa`; receipt rcpt_0mwgqodnh1nb37a86e3; manifest hash `22e5b1e97cc7faf3`.
 
 Rollback target: r1.
 
-Receipt hash: `f47f3a67365b8aa43afcf4d7015b0e84b7718c3533bb55ac94f6c587d9282871`
+Receipt hash: `e63c5cebd589e3767fa3b83ea605f81c436c0446cc0368bc0c2ee10e1a5fa741`

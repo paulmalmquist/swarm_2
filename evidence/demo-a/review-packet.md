@@ -27,7 +27,7 @@ Shared capability: A shared, policy-driven dataset-health capability: freshness 
 
 ## Exact changes
 
-Base `3278dec8f9` → head `cba66c9968` on `integration`
+Base `58690ac4c8` → head `685cc5afdf` on `integration`
 
 - A contracts/health-record.schema.json
 - A src/engine/evaluate.ts
@@ -39,11 +39,11 @@ Base `3278dec8f9` → head `cba66c9968` on `integration`
 
 | Criterion | For | Verdict | Independent | Evidence |
 |---|---|---|---|---|
-| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgq1md76g5d657c8a |
-| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgq1md76g5d657c8a |
-| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgq1md76g5d657c8a |
-| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgq1md76g5d657c8a |
-| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgq1md76g5d657c8a |
+| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgqki3z6g6c7ecb50 |
+| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgqki3z6g6c7ecb50 |
+| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgqki3z6g6c7ecb50 |
+| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgqki3z6g6c7ecb50 |
+| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgqki3z6g6c7ecb50 |
 
 ## Remaining concerns
 
@@ -53,7 +53,7 @@ Base `3278dec8f9` → head `cba66c9968` on `integration`
 - No request says how long drift may persist before it matters
 - The contract carries no severity ranking; the weekly review may want one
 - Thresholds in the criteria come from the requests and have not been confirmed by dataset owners
-- Open question from agt_0mwgq1k8m0ue9f275d1: Should a stale-data alert page someone, or only appear in the report? No request says.
+- Open question from agt_0mwgqkgaq0u11b9e9d1: Should a stale-data alert page someone, or only appear in the report? No request says.
 
 ## Decision requested
 
@@ -68,4 +68,4 @@ Approval marks the merge request draft approved. The merge itself stays with the
 - Model calls: 0
 - Tokens: 0
 - Cost: not measured
-- Worker wall time: 1120 ms
+- Worker wall time: 930 ms

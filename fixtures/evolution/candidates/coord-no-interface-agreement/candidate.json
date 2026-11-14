@@ -1,0 +1,23 @@
+{
+  "candidate_id": "coord-no-interface-agreement",
+  "level": "coordination",
+  "title": "Start parallel delivery from the acceptance criteria, without a separate interface agreement",
+  "problem": "Every mission with two workstreams spends a planning step agreeing a versioned interface before delivery starts. Integration is verified afterwards in any case.",
+  "failure_classes": [],
+  "hypothesis": "If parallel workstreams start from the acceptance criteria and integration verification stays as it is, missions will finish with fewer worker invocations and no more defects reaching an accepted result.",
+  "expected_benefit": "One fewer planning step per mission; delivery starts sooner.",
+  "possible_regressions": [
+    "The two workstreams interpret the shared record differently, which only shows at integration and has to be reworked",
+    "More integration failures and a longer critical path when that happens"
+  ],
+  "change_summary": "Removes the interface-agreement step: no contract task, and delivery workstreams take the acceptance criteria as input instead of a pinned contract.",
+  "revises": null,
+  "declared_simplification": true,
+  "definition_patch": {
+    "decomposition": {
+      "interface_agreement_before_parallel": false,
+      "max_parallel_workstreams": 4,
+      "single_agent_below_tasks": 2
+    }
+  }
+}

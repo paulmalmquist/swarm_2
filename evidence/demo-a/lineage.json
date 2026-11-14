@@ -1,6 +1,6 @@
 {
   "mission": {
-    "id": "msn_0mwgq1k8507cf4ff4d1",
+    "id": "msn_0mwgqkgac07cec58010",
     "title": "Shared dataset-health capability",
     "status": "review_ready",
     "release_id": "r1",
@@ -10,7 +10,7 @@
     {
       "key": "delivery",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwa2n87a0d432",
+      "owner_id": "agt_0mwgqkgur2n4a192720",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -20,7 +20,7 @@
     {
       "key": "delivery.decompose",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwe355ce25971",
+      "owner_id": "agt_0mwgqkguu35f2a15f7d",
       "generation": 1,
       "attempts": [
         {
@@ -33,7 +33,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1l3g3zbcdf598d",
+          "id": "evd_0mwgqkh0r3zc97ba196",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -55,7 +55,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1l3g3zbcdf598d"
+            "evd_0mwgqkh0r3zc97ba196"
           ]
         }
       ]
@@ -63,7 +63,7 @@
     {
       "key": "delivery.engine",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1l3i43b9c2ca67",
+      "owner_id": "agt_0mwgqkh0t43949533f8",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -73,7 +73,7 @@
     {
       "key": "delivery.engine.implement",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1l3k4fb69cd416",
+      "owner_id": "agt_0mwgqkh0v4fd77c95cb",
       "generation": 1,
       "attempts": [
         {
@@ -86,7 +86,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1lk0533f057fcc",
+          "id": "evd_0mwgqkhfj5370a4e317",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -98,7 +98,7 @@
           "key": "code/engine",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "c3b706f7a2f4b9d5f2cbcb94f9c2dae3b621484bc61e96e5ebd5fe2123c1b038"
+          "content_hash": "0da17b4bd409e0bc8649a5da02287845876730e051ea3e919805c1bc2350ee3b"
         }
       ],
       "verifications": [
@@ -108,7 +108,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1lk0533f057fcc"
+            "evd_0mwgqkhfj5370a4e317"
           ]
         }
       ]
@@ -116,7 +116,7 @@
     {
       "key": "delivery.integrate",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwf398b9db88f",
+      "owner_id": "agt_0mwgqkguu39d7e84495",
       "generation": 1,
       "attempts": [
         {
@@ -129,35 +129,35 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1ltv5rb87c9769",
+          "id": "evd_0mwgqkhot5r243e100c",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "after merging delivery.engine.implement: node --test test/engine/**/*.test.ts: 4 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgq1m025yd54b98b1",
+          "id": "evd_0mwgqkhu85y519cd377",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "after merging delivery.report.implement: node --test test/report/**/*.test.ts: 3 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgq1m666307435203",
+          "id": "evd_0mwgqkhys634494fd1f",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "combined result: node --test test/**/*.test.ts: 10 passed, 0 failed, exit 0"
         },
         {
-          "id": "evd_0mwgq1m6n67e849088c",
+          "id": "evd_0mwgqkhz6672d7af0fd",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "Combined result passes 10 tests"
         },
         {
-          "id": "evd_0mwgq1md76g5d657c8a",
+          "id": "evd_0mwgqki3z6g6c7ecb50",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -169,7 +169,7 @@
           "key": "code/integrated",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "7a469b7416d29ecd1bd16a1b4972545ff1c152624da0d306363c25aeaeb8c007"
+          "content_hash": "661d4a9f674c3081566c8b4b2018ba602c5e8f72d64ea5e1e383716ae7e8a39b"
         }
       ],
       "verifications": [
@@ -179,7 +179,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1md76g5d657c8a"
+            "evd_0mwgqki3z6g6c7ecb50"
           ]
         },
         {
@@ -188,7 +188,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1md76g5d657c8a"
+            "evd_0mwgqki3z6g6c7ecb50"
           ]
         },
         {
@@ -197,7 +197,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1md76g5d657c8a"
+            "evd_0mwgqki3z6g6c7ecb50"
           ]
         },
         {
@@ -206,7 +206,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1md76g5d657c8a"
+            "evd_0mwgqki3z6g6c7ecb50"
           ]
         },
         {
@@ -215,7 +215,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1md76g5d657c8a"
+            "evd_0mwgqki3z6g6c7ecb50"
           ]
         }
       ]
@@ -223,7 +223,7 @@
     {
       "key": "delivery.report",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1l3j4991c8bbc2",
+      "owner_id": "agt_0mwgqkh0u495a5f241b",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -233,7 +233,7 @@
     {
       "key": "delivery.report.implement",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1l3l4jc9964887",
+      "owner_id": "agt_0mwgqkh0v4jb771ba59",
       "generation": 1,
       "attempts": [
         {
@@ -246,7 +246,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1lle5c6d1e7848",
+          "id": "evd_0mwgqkhgm5cebbc1232",
           "kind": "test_result",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -258,7 +258,7 @@
           "key": "code/report",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "74b2fb33249a019997e795939c072d270a1ca5b78f640f8fc90f6c5fbe7305d1"
+          "content_hash": "8d8d3ec71c868d01d764fb64810fdddbb76a0fbb6e858e1411248aad90933a0e"
         }
       ],
       "verifications": [
@@ -268,7 +268,7 @@
           "independent": true,
           "method": "executable",
           "evidence_ids": [
-            "evd_0mwgq1lle5c6d1e7848"
+            "evd_0mwgqkhgm5cebbc1232"
           ]
         }
       ]
@@ -276,7 +276,7 @@
     {
       "key": "discovery",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8j0if77bf53d",
+      "owner_id": "agt_0mwgqkgan0i26bb4f6a",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -286,7 +286,7 @@
     {
       "key": "discovery.analyze",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8m0ue9f275d1",
+      "owner_id": "agt_0mwgqkgaq0u11b9e9d1",
       "generation": 1,
       "attempts": [
         {
@@ -299,49 +299,49 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1kd60441706495",
+          "id": "evd_0mwgqkgeh0486a857b5",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-001 (Propulsion Test) states: \"Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_t…"
         },
         {
-          "id": "evd_0mwgq1kd605261427b1",
+          "id": "evd_0mwgqkgeh05d382337b",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-002 (Supply Chain Analytics) states: \"The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check tha…"
         },
         {
-          "id": "evd_0mwgq1kd606d0c804d2",
+          "id": "evd_0mwgqkgeh0658075ecb",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-003 (Manufacturing Quality) states: \"For the weekly ops review I need an SLA report on the freshness of our NCR tables, grouped by owner team. If a dat…"
         },
         {
-          "id": "evd_0mwgq1kd6073486f893",
+          "id": "evd_0mwgqkgeh072ec56305",
           "kind": "source_excerpt",
           "epistemic": "observed_fact",
           "origin": "business",
           "statement": "syn-req-004 (Forward Deployed Engineering) states: \"Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresho…"
         },
         {
-          "id": "evd_0mwgq1kd60850a81027",
+          "id": "evd_0mwgqkgeh08551417cb",
           "kind": "analysis",
           "epistemic": "interpretation",
           "origin": "agent",
           "statement": "The consolidated requests can be served by one capability. This is an interpretation: lexical overlap nominated it and the stakeholders have not confirmed it."
         },
         {
-          "id": "evd_0mwgq1kdp1ga6170f79",
+          "id": "evd_0mwgqkgep1g6f485547",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
           "statement": "inspect:overlap_report on discovery/overlap-report: 4 distinct needs recorded for 4 consolidated requests"
         },
         {
-          "id": "evd_0mwgq1kdq1j79e97543",
+          "id": "evd_0mwgqkgeq1jd1ab251c",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -363,7 +363,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1kdp1ga6170f79"
+            "evd_0mwgqkgep1g6f485547"
           ]
         },
         {
@@ -372,7 +372,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1kdq1j79e97543"
+            "evd_0mwgqkgeq1jd1ab251c"
           ]
         }
       ]
@@ -380,7 +380,7 @@
     {
       "key": "planning",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8l0o6591ab81",
+      "owner_id": "agt_0mwgqkgap0o475f7f6b",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -390,7 +390,7 @@
     {
       "key": "planning.contract",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8n0y6fa20591",
+      "owner_id": "agt_0mwgqkgar0y8137436d",
       "generation": 1,
       "attempts": [
         {
@@ -403,7 +403,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1kq4287ae94ce5",
+          "id": "evd_0mwgqkgpt28897d9d26",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -425,7 +425,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1kq4287ae94ce5"
+            "evd_0mwgqkgpt28897d9d26"
           ]
         }
       ]
@@ -433,7 +433,7 @@
     {
       "key": "planning.criteria",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8n0y6fa20591",
+      "owner_id": "agt_0mwgqkgar0y8137436d",
       "generation": 1,
       "attempts": [
         {
@@ -446,7 +446,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1kl220962f9821",
+          "id": "evd_0mwgqkgkx200a2f8c36",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -468,7 +468,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1kl220962f9821"
+            "evd_0mwgqkgkx200a2f8c36"
           ]
         }
       ]
@@ -476,7 +476,7 @@
     {
       "key": "planning.plan",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1k8o15a2342956",
+      "owner_id": "agt_0mwgqkgat153b97b98f",
       "generation": 1,
       "attempts": [
         {
@@ -489,7 +489,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1kw82j9fc2712e",
+          "id": "evd_0mwgqkgup2jcb3b0fd6",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -511,7 +511,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1kw82j9fc2712e"
+            "evd_0mwgqkgup2jcb3b0fd6"
           ]
         }
       ]
@@ -519,7 +519,7 @@
     {
       "key": "reliability",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwd2zb5a9f8e4",
+      "owner_id": "agt_0mwgqkgut2z0a904f72",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -529,7 +529,7 @@
     {
       "key": "reliability.knowledge",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwg3hdc7f9644",
+      "owner_id": "agt_0mwgqkguv3hcfd7988f",
       "generation": 1,
       "attempts": [
         {
@@ -542,7 +542,7 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1mim7604dd2225",
+          "id": "evd_0mwgqki89765d88cf41",
           "kind": "inspection",
           "epistemic": "observed_fact",
           "origin": "runtime",
@@ -564,7 +564,7 @@
           "independent": true,
           "method": "inspection",
           "evidence_ids": [
-            "evd_0mwgq1mim7604dd2225"
+            "evd_0mwgqki89765d88cf41"
           ]
         }
       ]
@@ -572,7 +572,7 @@
     {
       "key": "review.packet",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwh3l787175ee",
+      "owner_id": "agt_0mwgqkguw3lec70052b",
       "generation": 1,
       "attempts": [
         {
@@ -589,13 +589,13 @@
           "key": "review/packet",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "e1d678e68809246956e57d04c4fc4156ecba404ce30bfce9d89aad4d33c30dbc"
+          "content_hash": "9852c73182cd495f2dcdaedbdd8dbd521a1dd9f653b76dc78f0be33991318d8f"
         },
         {
           "key": "review/packet.md",
           "version_no": 1,
           "currency": "current",
-          "content_hash": "19aa689bd63e109686d320942c7437da48cd2ee0385cc1ad4d6cfd8f99820ffd"
+          "content_hash": "0f20db77df5177af3c5e0a495ab7a1fdd221ef5f7f21fe56aa10ac298bc27943"
         }
       ],
       "verifications": []
@@ -603,7 +603,7 @@
     {
       "key": "verification",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwc2t7d5142fb",
+      "owner_id": "agt_0mwgqkgus2t06a83884",
       "generation": 1,
       "attempts": [],
       "evidence": [],
@@ -613,7 +613,7 @@
     {
       "key": "verification.acceptance",
       "status": "accepted",
-      "owner_id": "agt_0mwgq1kwg3dca93eb15",
+      "owner_id": "agt_0mwgqkguv3da5778fed",
       "generation": 1,
       "attempts": [
         {
@@ -626,11 +626,11 @@
       ],
       "evidence": [
         {
-          "id": "evd_0mwgq1md96r6ce0df70",
+          "id": "evd_0mwgqki426r22bec638",
           "kind": "verification",
           "epistemic": "observed_fact",
           "origin": "runtime",
-          "statement": "delivery.integrate: 5/5 criteria pass at cba66c9968"
+          "statement": "delivery.integrate: 5/5 criteria pass at 685cc5afdf"
         }
       ],
       "artifacts": [],
@@ -639,7 +639,7 @@
   ],
   "decisions": [
     {
-      "id": "dec_0mwgq1mlf7k39f47cc9",
+      "id": "dec_0mwgqkiaz7k333c4a84",
       "kind": "outward_action",
       "status": "open",
       "chosen": null,
@@ -648,8 +648,8 @@
     }
   ],
   "outcome": {
-    "id": "out_0mwgq1mmv7wf9a7a573",
-    "mission_id": "msn_0mwgq1k8507cf4ff4d1",
+    "id": "out_0mwgqkice7w4829f925",
+    "mission_id": "msn_0mwgqkgac07cec58010",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -735,38 +735,38 @@
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 1136
+      "wall_ms": 943
     },
-    "elapsed_ms": 3120,
-    "critical_path_wait_ms": 146,
+    "elapsed_ms": 2664,
+    "critical_path_wait_ms": 103,
     "messages": 1,
     "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T18:10:49.690Z"
+    "created_at": "2026-11-14T18:25:30.593Z"
   },
   "memories": [
     {
-      "id": "mem_0mwgq1mio7a64967baf",
+      "id": "mem_0mwgqki8b7aef456769",
       "kind": "fact",
       "certainty": "verified",
       "status": "active"
     },
     {
-      "id": "mem_0mwgq1mio7b9436d928",
+      "id": "mem_0mwgqki8b7bb60aa8e1",
       "kind": "decision",
       "certainty": "verified",
       "status": "active"
     },
     {
-      "id": "mem_0mwgq1mip7cee679cea",
+      "id": "mem_0mwgqki8b7c0ce7d361",
       "kind": "procedure",
       "certainty": "untested",
       "status": "active"
     },
     {
-      "id": "mem_0mwgq1mip7d9129ebc6",
+      "id": "mem_0mwgqki8b7dde98b471",
       "kind": "skill_candidate",
       "certainty": "untested",
       "status": "active"

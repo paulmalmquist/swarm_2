@@ -99,7 +99,8 @@ export const behaviors: Record<string, Behavior> = {
     let needs = report.distinct_needs;
     // INJECTED DEFECT: silently drop one stakeholder's need while consolidating.
     if (fault(ctx, 'drop_need')) needs = needs.slice(0, -1);
-    const criteria = [...needs.map((n) => ANALYSIS[n.request_id]!.criterion), SHARED_CRITERION];
+    // The shared criterion exists only when the coordination policy has the workstreams agree an interface.
+    const criteria = [...needs.map((n) => ANALYSIS[n.request_id]!.criterion), ...(ctx.coordination.decomposition.interface_agreement_before_parallel ? [SHARED_CRITERION] : [])];
     const doc = {
       synthetic: true,
       outcome: 'Any team can see, from one policy-driven capability, which datasets are stale, drifting or unmeasured, and who owns them.',
@@ -170,12 +171,18 @@ export const behaviors: Record<string, Behavior> = {
   },
 
   'reliability.knowledge': (ctx) => {
+    // With no interface agreement there is no contract to cite, and nothing is claimed about one.
+    const agreed = Boolean(ctx.inputs['contract/health-record']);
     const contract = JSON.parse(ctx.inputs['contract/health-record'] ?? '{"version":1}') as { version: number };
     const failures = ctx.store.observations.where('"mission_id" = ?', ctx.mission.id).filter((o) => ['rework', 'integration_failure', 'acceptance_failure'].includes(o.kind));
     const notes = [
       { kind: 'fact', statement: 'Four synthetic teams asked for dataset freshness or schema checks within two days; one shared capability covers all four needs.', scope: ['scenario:shared-capability', 'archetype:discovery'], source_refs: ['discovery/overlap-report'], certainty: 'verified', fresh_for_days: 30 },
-      { kind: 'decision', statement: `The engine and the report meet at HealthRecord contract version ${contract.version}; both pin it before implementation.`, scope: ['scenario:shared-capability', 'archetype:planning', 'archetype:delivery'], source_refs: ['contract/health-record'], certainty: 'verified', fresh_for_days: 90 },
-      { kind: 'procedure', statement: 'Pin the shared record as a versioned contract artifact before starting parallel producer and consumer workstreams, then verify the merged result against that contract.', scope: ['archetype:planning', 'archetype:delivery', 'pattern:producer-consumer'], source_refs: ['plan/work-graph', 'contract/health-record'], certainty: 'untested', fresh_for_days: 180 },
+      ...(agreed
+        ? [
+            { kind: 'decision', statement: `The engine and the report meet at HealthRecord contract version ${contract.version}; both pin it before implementation.`, scope: ['scenario:shared-capability', 'archetype:planning', 'archetype:delivery'], source_refs: ['contract/health-record'], certainty: 'verified', fresh_for_days: 90 },
+            { kind: 'procedure', statement: 'Pin the shared record as a versioned contract artifact before starting parallel producer and consumer workstreams, then verify the merged result against that contract.', scope: ['archetype:planning', 'archetype:delivery', 'pattern:producer-consumer'], source_refs: ['plan/work-graph', 'contract/health-record'], certainty: 'untested', fresh_for_days: 180 },
+          ]
+        : []),
       ...failures.map((o) => ({ kind: 'failed_approach', statement: `${o.failure_class}: ${String((o.details as { reason?: string }).reason ?? o.kind)}`.slice(0, 400), scope: ['scenario:shared-capability', `component:${o.component ?? 'unknown'}`], source_refs: [o.id], certainty: o.certainty, fresh_for_days: 60 })),
     ];
     const doc = {

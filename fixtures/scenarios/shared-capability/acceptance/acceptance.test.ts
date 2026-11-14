@@ -3,14 +3,16 @@
 // delivery workers never see it. Each test name starts with the acceptance criterion it decides.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { validate } from './validate.ts';
 
 const root = new URL('../', import.meta.url);
 const read = (p: string) => JSON.parse(readFileSync(new URL(p, root), 'utf8'));
 const data = read('data/datasets.json');
 const policies = read('data/policies.json');
-const contract = read('contracts/health-record.schema.json');
+// The contract is the one the mission agreed and pinned. A mission run without an interface
+// agreement has none, and its criteria do not include AC-CONTRACT.
+const contract = existsSync(new URL('contracts/health-record.schema.json', root)) ? read('contracts/health-record.schema.json') : null;
 
 async function load() {
   const { evaluateHealth } = await import('../src/engine/evaluate.ts');
@@ -60,7 +62,8 @@ test('AC-POLICY-FDE: thresholds come from policy configuration, not code', async
   assert.equal(after.freshness.status, 'stale', 'changing only the policy changes the result');
 });
 
-test('AC-CONTRACT: every record conforms to the pinned HealthRecord contract', async () => {
+test('AC-CONTRACT: every record conforms to the pinned HealthRecord contract', async (t) => {
+  if (!contract) return t.skip('no interface contract was agreed for this mission');
   const { evaluateHealth } = await load();
   const records = evaluateHealth(data.datasets, policies, data.as_of);
   assert.equal(records.length, data.datasets.length);

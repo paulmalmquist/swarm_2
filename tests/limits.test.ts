@@ -134,3 +134,46 @@ test('coordination episodes: independent verification catches an injected defect
     rmSync(home, { recursive: true, force: true });
   }
 });
+
+test('coordination episodes: without an interface agreement, a disagreement surfaces at integration and is reworked', async () => {
+  const { cpSync, readFileSync, writeFileSync } = await import('node:fs');
+  const { rng, seedFrom } = await import('../src/lib/util.ts');
+  const incumbentDir = join(REPO_ROOT, 'definitions', 'coordination', 'v1');
+  const home = mkdtempSync(join(tmpdir(), 'swarm2-episode-test-'));
+  try {
+    const candidateDir = join(home, 'coordination');
+    cpSync(incumbentDir, candidateDir, { recursive: true });
+    const p = join(candidateDir, 'coordination.json');
+    const def = JSON.parse(readFileSync(p, 'utf8')) as { decomposition: { interface_agreement_before_parallel: boolean } };
+    def.decomposition.interface_agreement_before_parallel = false;
+    writeFileSync(p, JSON.stringify(def, null, 2));
+
+    // Development seeds chosen from the testbed's own seeded assumptions: no other defect injected,
+    // one where the workstreams disagree and one where they do not.
+    const seeds = Array.from({ length: 60 }, (_, i) => `dev-interface-${i}`);
+    const quiet = (s: string): boolean => rng(seedFrom(`episode:${s}`))() >= 0.5;
+    const disagrees = (s: string): boolean => rng(seedFrom(`episode:${s}:interface`))() < 0.5;
+    const clash = seeds.find((s) => quiet(s) && disagrees(s))!;
+    const calm = seeds.find((s) => quiet(s) && !disagrees(s))!;
+    const opts = { defect_rate: 0.5, mismatch_rate_without_agreement: 0.5 };
+
+    const agreed = await runEpisode(incumbentDir, clash, opts);
+    assert.equal(agreed.interface_mismatch, false, 'with an agreed contract the workstreams do not disagree');
+    assert.equal(agreed.integration_failures, 0);
+    assert.equal(agreed.truly_correct, true);
+
+    const without = await runEpisode(candidateDir, clash, opts);
+    assert.equal(without.interface_mismatch, true);
+    assert.ok(without.integration_failures >= 1, 'the disagreement shows at the integration boundary');
+    assert.ok(without.rework >= 1);
+    assert.equal(without.truly_correct, true, 'and is repaired before anything is accepted');
+    assert.equal(without.tasks, agreed.tasks - 1, 'the simpler plan has no contract task');
+
+    const smooth = await runEpisode(candidateDir, calm, opts);
+    assert.equal(smooth.integration_failures, 0);
+    assert.equal(smooth.truly_correct, true);
+    assert.ok(smooth.worker_invocations < agreed.worker_invocations, 'when nothing goes wrong, skipping the step is cheaper');
+  } finally {
+    rmSync(home, { recursive: true, force: true });
+  }
+});

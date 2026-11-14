@@ -1,7 +1,7 @@
 {
   "outcome": {
-    "id": "out_0mwgq1mmv7wf9a7a573",
-    "mission_id": "msn_0mwgq1k8507cf4ff4d1",
+    "id": "out_0mwgqkice7w4829f925",
+    "mission_id": "msn_0mwgqkgac07cec58010",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -87,16 +87,16 @@
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 1136
+      "wall_ms": 943
     },
-    "elapsed_ms": 3120,
-    "critical_path_wait_ms": 146,
+    "elapsed_ms": 2664,
+    "critical_path_wait_ms": 103,
     "messages": 1,
     "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T18:10:49.690Z"
+    "created_at": "2026-11-14T18:25:30.593Z"
   },
   "critical_path": {
     "keys": [
@@ -105,7 +105,7 @@
       "reliability.knowledge",
       "review.packet"
     ],
-    "wait_ms": 146
+    "wait_ms": 103
   },
   "communication": {
     "messages": 1,
@@ -127,16 +127,38 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 12,
+        "wall_ms": 9,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:46.742Z"
+        "observed_at": "2026-11-14T18:25:28.070Z"
       }
     },
     {
       "task": "planning.criteria",
+      "provider": "fixture",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "fixture-worker",
+        "meter_kind": "fixture_declared",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 8,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T18:25:28.284Z"
+      }
+    },
+    {
+      "task": "planning.contract",
       "provider": "fixture",
       "mode": "fixture",
       "model_requested": null,
@@ -154,29 +176,7 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:46.999Z"
-      }
-    },
-    {
-      "task": "planning.contract",
-      "provider": "fixture",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "fixture-worker",
-        "meter_kind": "fixture_declared",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 13,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:47.204Z"
+        "observed_at": "2026-11-14T18:25:28.459Z"
       }
     },
     {
@@ -193,12 +193,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 13,
+        "wall_ms": 9,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:47.408Z"
+        "observed_at": "2026-11-14T18:25:28.637Z"
       }
     },
     {
@@ -215,12 +215,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 10,
+        "wall_ms": 9,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:47.662Z"
+        "observed_at": "2026-11-14T18:25:28.869Z"
       }
     },
     {
@@ -237,12 +237,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 65,
+        "wall_ms": 64,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:48.091Z"
+        "observed_at": "2026-11-14T18:25:29.215Z"
       }
     },
     {
@@ -259,12 +259,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 53,
+        "wall_ms": 48,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:48.150Z"
+        "observed_at": "2026-11-14T18:25:29.257Z"
       }
     },
     {
@@ -281,12 +281,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 709,
+        "wall_ms": 594,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:49.100Z"
+        "observed_at": "2026-11-14T18:25:30.112Z"
       }
     },
     {
@@ -303,12 +303,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 224,
+        "wall_ms": 171,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:49.341Z"
+        "observed_at": "2026-11-14T18:25:30.290Z"
       }
     },
     {
@@ -325,12 +325,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 12,
+        "wall_ms": 9,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:49.501Z"
+        "observed_at": "2026-11-14T18:25:30.416Z"
       }
     },
     {
@@ -347,12 +347,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 16,
+        "wall_ms": 13,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T18:10:49.638Z"
+        "observed_at": "2026-11-14T18:25:30.541Z"
       }
     }
   ]

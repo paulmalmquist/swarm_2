@@ -33,7 +33,7 @@
     },
     {
       "claim": "Two workstreams execute concurrently",
-      "observed": "engine leased #91 2026-11-14T18:10:47.736Z → submitted #94; report leased #92 2026-11-14T18:10:47.874Z → submitted #97",
+      "observed": "engine leased #91 2026-11-14T18:25:28.921Z → submitted #94; report leased #92 2026-11-14T18:25:29.016Z → submitted #97",
       "ok": true
     },
     {
@@ -43,7 +43,7 @@
     },
     {
       "claim": "The workstreams meet at a real integration boundary",
-      "observed": "delivery.engine.implement merged as ae11c9f114; delivery.report.implement merged as cba66c9968",
+      "observed": "delivery.engine.implement merged as a56d350217; delivery.report.implement merged as 685cc5afdf",
       "ok": true
     },
     {
@@ -63,7 +63,7 @@
     },
     {
       "claim": "Resource accounting reconciles across the whole task tree",
-      "observed": "24 accounts reconcile; 11 worker invocations and 1136 ms of worker time used",
+      "observed": "24 accounts reconcile; 11 worker invocations and 943 ms of worker time used",
       "ok": true
     },
     {
@@ -87,5 +87,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 3479
+  "ms": 2901
 }

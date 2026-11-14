@@ -1,7 +1,8 @@
-import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { REPO_ROOT } from '../config.ts';
+import type { CoordinationDef } from '../contracts/definitions.ts';
 import type { GateResult, MetricComparison } from '../contracts/types.ts';
 import { Coordinator, type FaultSpec } from '../coordination/coordinator.ts';
 import { LocalChiefOfStaff, type RawRequest } from '../cos/port.ts';
@@ -36,6 +37,9 @@ export interface EpisodeResult {
   worker_invocations: number;
   elapsed_ms: number;
   rework: number;
+  integration_failures: number;
+  /** TESTBED ASSUMPTION: without an interface agreement, the two workstreams read the shared record differently in this episode. */
+  interface_mismatch: boolean;
   tasks: number;
   swarms: number;
   messages: number;
@@ -51,7 +55,7 @@ function requests(): RawRequest[] {
 }
 
 /** Run one mission under the coordination definitions in `coordinationDir`, then ask the oracle. */
-export async function runEpisode(coordinationDir: string, seed: string, opts: { defect_rate: number }): Promise<EpisodeResult> {
+export async function runEpisode(coordinationDir: string, seed: string, opts: { defect_rate: number; mismatch_rate_without_agreement?: number }): Promise<EpisodeResult> {
   const home = mkdtempSync(join(tmpdir(), 'swarm2-episode-'));
   const rt = openRuntime({ home });
   const co = new Coordinator(rt);
@@ -68,9 +72,14 @@ export async function runEpisode(coordinationDir: string, seed: string, opts: { 
     const m = sub.mission;
     const r = rng(seedFrom(`episode:${seed}`));
     const injected = r() < opts.defect_rate ? DEFECTS[Math.floor(r() * DEFECTS.length)]! : null;
-    if (injected) {
-      rt.store.setMeta(`faults:${m.id}`, [injected]);
-      rt.store.emit({ type: 'fault_plan_installed', mission_id: m.id, actor_id: 'episode-runner', actor_kind: 'operator', payload: { label: 'INJECTED DEFECT', faults: [injected] } });
+    // TESTBED ASSUMPTION: when the policy has no interface agreement, the consuming workstream reads
+    // a field name the producer does not write in a share of episodes. With an agreement it never does.
+    const agreed = (JSON.parse(readFileSync(join(coordinationDir, 'coordination.json'), 'utf8')) as CoordinationDef).decomposition.interface_agreement_before_parallel;
+    const mismatch = !agreed && rng(seedFrom(`episode:${seed}:interface`))() < (opts.mismatch_rate_without_agreement ?? 0);
+    const faults: FaultSpec[] = [...(injected ? [injected] : []), ...(mismatch ? [{ task_key: 'delivery.report.implement', attempt: 1, fault: 'defect:field_mismatch' }] : [])];
+    if (faults.length) {
+      rt.store.setMeta(`faults:${m.id}`, faults);
+      rt.store.emit({ type: 'fault_plan_installed', mission_id: m.id, actor_id: 'episode-runner', actor_kind: 'operator', payload: { label: 'INJECTED DEFECT', faults } });
     }
     const t0 = Date.now();
     const state = await co.runUntilIdle({ mission_id: m.id, max_ms: 120_000 });
@@ -84,6 +93,12 @@ export async function runEpisode(coordinationDir: string, seed: string, opts: { 
     if (completed && integrated?.content_ref.startsWith('git:')) {
       const dir = rt.workspaces.checkoutForVerification(m.id, integrated.content_ref.slice(4), 'oracle');
       cpSync(join(REPO_ROOT, 'fixtures/scenarios/shared-capability/acceptance'), join(dir, 'acceptance'), { recursive: true });
+      // The oracle judges every arm against the same reference contract, whether or not the mission agreed one.
+      const pinned = join(dir, 'contracts', 'health-record.schema.json');
+      if (!existsSync(pinned)) {
+        mkdirSync(join(dir, 'contracts'), { recursive: true });
+        cpSync(join(REPO_ROOT, 'fixtures/scenarios/shared-capability/contracts/health-record.v1.json'), pinned);
+      }
       const run = await rt.workspaces.run(dir, ['node', '--disable-warning=ExperimentalWarning', '--test', 'acceptance/**/*.test.ts'], 90_000);
       const results = parseTap(run.stdout);
       failing = results.length ? results.filter((x) => !x.ok).length : -1;
@@ -98,6 +113,8 @@ export async function runEpisode(coordinationDir: string, seed: string, opts: { 
       worker_invocations: rt.kernel.budget.spent(m.budget_account_id).worker_invocations,
       elapsed_ms,
       rework: rt.store.observations.where('"mission_id" = ?', m.id).filter((o) => o.kind === 'rework').length,
+      integration_failures: rt.store.observations.where('"mission_id" = ?', m.id).filter((o) => o.kind === 'integration_failure').length,
+      interface_mismatch: mismatch,
       tasks: tasks.filter((t) => t.executor !== 'container').length,
       swarms: rt.store.swarms.count('"mission_id" = ?', m.id),
       messages: rt.store.messages.count('"mission_id" = ?', m.id),
@@ -113,7 +130,7 @@ const mean = (xs: number[]): number => xs.reduce((a, b) => a + b, 0) / Math.max(
 
 /** Level 2 evaluation: a coordination policy against the incumbent on the same seeded mission episodes. */
 export async function evaluateCoordination(gate: Gate, exp: Experiment): Promise<LevelEvaluation> {
-  const pol = gate.policy().levels.coordination as unknown as { holdout_episodes: number; minimum_samples: number; defect_rate: number };
+  const pol = gate.policy().levels.coordination as unknown as { holdout_episodes: number; minimum_samples: number; defect_rate: number; mismatch_rate_without_agreement?: number };
   const { registry } = gate.rt;
   const cand = exp.candidate!;
   const set = exp.protocol!.holdout_set;
@@ -123,6 +140,7 @@ export async function evaluateCoordination(gate: Gate, exp: Experiment): Promise
     `A defect is injected into one worker's first attempt in about ${Math.round(pol.defect_rate * 100)}% of episodes. That rate is an assumption of this testbed; the size of any effect depends on it.`,
     'The oracle is the same protected acceptance suite the verification swarm uses, so this measures what happens when nobody runs it — not whether it is a complete specification.',
     `${pol.holdout_episodes} episodes per arm: intervals are wide.`,
+    `Where a policy has no interface agreement, the consuming workstream misreads the shared record in about ${Math.round((pol.mismatch_rate_without_agreement ?? 0) * 100)}% of episodes. That rate is also an assumption of this testbed. What the runtime measures is what each such mismatch costs and what the agreement step costs.`,
   ];
   const screening = gate.staticScreen(cand.ingested_dir);
   gates.push(gateResult('no_forbidden_capabilities', 'No forbidden capabilities', 'HARD_GATE', screening.length ? 'FAILED' : 'PASSED', screening.length ? screening.join('; ') : 'A coordination policy is data; the bundle contains no code that uses a forbidden capability.'));
@@ -158,12 +176,14 @@ export async function evaluateCoordination(gate: Gate, exp: Experiment): Promise
   const invocations = paired('worker_invocations_per_mission', 'worker invocations', false, (e) => e.worker_invocations, seed + 4);
   const time = paired('completion_ms', 'milliseconds from start to a reviewable result', false, (e) => e.elapsed_ms, seed + 6);
   const rework = paired('rework_per_mission', 'times work was sent back', false, (e) => e.rework, seed + 8);
+  const integration = paired('integration_failures_per_mission', 'times the combined result failed at integration', false, (e) => e.integration_failures, seed + 10);
   gates.push(gateResult('correctness', 'Truly correct missions', 'WEIGHTED', primary.diff_vs_incumbent! >= 0 ? 'PASSED' : 'FAILED', `Share of missions that are truly correct changed by ${primary.diff_vs_incumbent}.`, { measurement_value: primary.diff_vs_incumbent, measurement_unit: 'share', comparison_operator: '>=', threshold: 0, weight: 0.7, samples: seeds.length, minimum_samples: pol.minimum_samples }));
   gates.push(gateResult('cost', 'Worker invocations per mission', 'WEIGHTED', invocations.diff_vs_incumbent! <= 0 ? 'PASSED' : 'FAILED', `Worker invocations per mission changed by ${invocations.diff_vs_incumbent}.`, { measurement_value: invocations.diff_vs_incumbent, measurement_unit: 'invocations', comparison_operator: '<=', threshold: 0, weight: 0.3, samples: seeds.length, minimum_samples: pol.minimum_samples }));
   const known_regressions: string[] = [];
   if (esc(candidate) > esc(incumbent)) known_regressions.push(`${esc(candidate) - esc(incumbent)} more defects reached an accepted result than under the incumbent`);
+  if (integration.diff_vs_incumbent! > 0) known_regressions.push(`${integration.diff_vs_incumbent} more integration failures per mission than under the incumbent`);
   return {
-    comparisons: [primary, escaped, invocations, time, rework],
+    comparisons: [primary, escaped, invocations, time, rework, integration],
     gates,
     primary,
     cost: invocations,

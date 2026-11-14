@@ -1,17 +1,17 @@
 {
-  "receipt_id": "rcpt_0mwgq3sbg94eecce4e1",
-  "experiment_id": "exp_0mwgq3s1m90bd5beae1",
+  "receipt_id": "rcpt_0mwgqny1n1c181070cd",
+  "experiment_id": "exp_0mwgqnxs318c63addd6",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).",
     "observation_ids": [
-      "obs_0mwgq3rlt7ibdd86b76",
-      "obs_0mwgq3rlu7jed9338c3",
-      "obs_0mwgq3rlu7lae77f061",
-      "obs_0mwgq3rlu7pf365353d",
-      "obs_0mwgq3rlu7r1b2ac83b",
-      "obs_0mwgq3rlu7s850ada39",
-      "obs_0mwgq3rlu7t7754a583"
+      "obs_0mwgqnxc9zq92ef1084",
+      "obs_0mwgqnxc9zrdaa65a65",
+      "obs_0mwgqnxc9zt265469ce",
+      "obs_0mwgqnxcazxc366dbb0",
+      "obs_0mwgqnxcazzb59513d8",
+      "obs_0mwgqnxca00337c1a91",
+      "obs_0mwgqnxca017a0f423d"
     ],
     "observed_failure_count": 7
   },
@@ -44,11 +44,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:12:30.010Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:28:10.564Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:8dc9442599ba0c85a80200990c85fcbf3291daa01a023a147d6b6709cb9e86bb"
+      "snapshot:6ee86cd619e4308968618ba6599390e67459fcb485e46df498a81d74feffa828"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -61,21 +61,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:12:30.065Z",
+      "at": "2026-11-14T18:28:10.631Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:12:30.364Z",
+      "at": "2026-11-14T18:28:10.907Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 299,
+    "wall_ms": 276,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -172,12 +172,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.144,
-      "incumbent": 0.133,
-      "baseline": 0.109,
-      "diff_vs_incumbent": 0.011,
+      "candidate": 0.129,
+      "incumbent": 0.106,
+      "baseline": 0.101,
+      "diff_vs_incumbent": 0.024,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.035,
+      "diff_vs_baseline": 0.029,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -364,7 +364,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.1125 against the incumbent (95% interval 0.05 to 0.1875) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:12:30.364Z",
+  "decided_at": "2026-11-14T18:28:10.907Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -382,14 +382,14 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "evaluation_snapshot_hash": "8dc9442599ba0c85a80200990c85fcbf3291daa01a023a147d6b6709cb9e86bb",
-    "receipt_id": "rcpt_0mwgq3sbg94eecce4e1",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "evaluation_snapshot_hash": "6ee86cd619e4308968618ba6599390e67459fcb485e46df498a81d74feffa828",
+    "receipt_id": "rcpt_0mwgqny1n1c181070cd",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T18:12:30.364Z",
-    "manifest_hash": "ae9951d5de8adf619ee98fcabb0d342c18787e6350d1927cc298567d84ca2648"
+    "created_at": "2026-11-14T18:28:10.907Z",
+    "manifest_hash": "8a8c878397265335d683ca141ce2ed14c23a7c73cf78d92f692b3c624954b549"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -397,14 +397,14 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "6885079965d563c54c2360a01b4c2613da5b1b3baef6e6eb4c7f5ab0f539d371",
-  "id": "rcpt_0mwgq3sbg94eecce4e1"
+  "receipt_hash": "9843d247457bc49759f04035a7f16141a4b8796a72ba83445f1e5fdf0d996166",
+  "id": "rcpt_0mwgqny1n1c181070cd"
 }

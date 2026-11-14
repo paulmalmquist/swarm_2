@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgq3rhv7f151db04c",
-  "experiment_id": "exp_0mwgq2f7cka08b8f80e",
+  "receipt_id": "rcpt_0mwgqmkjd7f204fc37f",
+  "experiment_id": "exp_0mwgql9daka879f8bc6",
   "level": "coordination",
   "problem": {
     "statement": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
@@ -30,11 +30,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/coordination",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:11:26.712Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:26:05.614Z",
     "workload_refs": [
       "mission-episodes:missions-A",
-      "snapshot:a71dd94684bff6b9a4c8b3b08659fbe85bf10d1c11e711d264d5f79ecc912d84"
+      "snapshot:f3c318cf39c3ccf81a844c215f0f56d95dbadfb2ff63ddb478cb86c03385edc9"
     ],
     "holdout_set": "missions-A",
     "executor": "mission-episodes",
@@ -47,14 +47,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T18:12:29.299Z",
+      "at": "2026-11-14T18:27:06.745Z",
       "cases": 8,
       "note": "one evaluation on missions-A"
     }
   ],
   "resource_use": {
     "experiment_units": 183,
-    "wall_ms": 62584,
+    "wall_ms": 61128,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -123,18 +123,18 @@
       "metric": "completion_ms",
       "unit": "milliseconds from start to a reviewable result",
       "higher_is_better": false,
-      "candidate": 3054,
-      "incumbent": 4195.125,
-      "baseline": 4195.125,
-      "diff_vs_incumbent": -1141.125,
+      "candidate": 2995,
+      "incumbent": 4092,
+      "baseline": 4092,
+      "diff_vs_incumbent": -1097,
       "ci95_vs_incumbent": [
-        -1580.75,
-        -575
+        -1535.125,
+        -580.25
       ],
-      "diff_vs_baseline": -1141.125,
+      "diff_vs_baseline": -1097,
       "ci95_vs_baseline": [
-        -1580.75,
-        -575
+        -1535.125,
+        -580.25
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
@@ -158,6 +158,26 @@
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 5 worse, 3 same, p=0.0625"
+    },
+    {
+      "metric": "integration_failures_per_mission",
+      "unit": "times the combined result failed at integration",
+      "higher_is_better": false,
+      "candidate": 0,
+      "incumbent": 0,
+      "baseline": 0,
+      "diff_vs_incumbent": 0,
+      "ci95_vs_incumbent": [
+        0,
+        0
+      ],
+      "diff_vs_baseline": 0,
+      "ci95_vs_baseline": [
+        0,
+        0
+      ],
+      "n": 8,
+      "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 0 worse, 8 same, p=1"
     }
   ],
   "gates": [
@@ -281,12 +301,13 @@
     "Each episode is a complete fixture mission: the runtime, worker processes, merges and tests are real, the work content is scripted.",
     "A defect is injected into one worker's first attempt in about 50% of episodes. That rate is an assumption of this testbed; the size of any effect depends on it.",
     "The oracle is the same protected acceptance suite the verification swarm uses, so this measures what happens when nobody runs it — not whether it is a complete specification.",
-    "8 episodes per arm: intervals are wide."
+    "8 episodes per arm: intervals are wide.",
+    "Where a policy has no interface agreement, the consuming workstream misreads the shared record in about 50% of episodes. That rate is also an assumption of this testbed. What the runtime measures is what each such mismatch costs and what the agreement step costs."
   ],
   "decision": "reject",
   "justification": "Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:12:29.299Z",
+  "decided_at": "2026-11-14T18:27:06.745Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -294,13 +315,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "eb246d6b68ade2ea7f1e8cac9bf68e937923ba72704480c721a796106667fe6c"
+  "receipt_hash": "d4591eef6b17579bf49cce6c38995b5beff2a212d98d91700407fa95790f2301"
 }

@@ -24,7 +24,8 @@
       "minimum_samples": 6,
       "primary_metric": "verified_success",
       "non_inferiority_margin": 0.0,
-      "defect_rate": 0.5
+      "defect_rate": 0.5,
+      "mismatch_rate_without_agreement": 0.5
     },
     "evolution": {
       "workload": "improvement-arena",

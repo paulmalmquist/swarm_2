@@ -19,4 +19,4 @@ Each policy gets the same budget on the same thirty unseen episodes. Every fix a
 
 Files in this folder: `expected-value-policy.receipt.json`, `expected-value-policy.receipt.md`, `release-manifests.json`, `ledger.json`, `campaign-tallies.json`.
 
-Reproduce with `npm run demo:d`. Run time 22131 ms.
+Reproduce with `npm run demo:d`. Run time 20694 ms.

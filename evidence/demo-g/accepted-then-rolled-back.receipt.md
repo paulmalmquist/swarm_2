@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgq2clzbjf4330bf8
+# Improvement receipt rcpt_0mwgql6wqbj5c9433ec
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: ACCEPT** — Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.
 
-Decided by release-gate at 2026-11-14T18:11:23.351Z. Level: execution. Experiment: `exp_0mwgq2cb1bf72b22823`.
+Decided by release-gate at 2026-11-14T18:26:02.426Z. Level: execution. Experiment: `exp_0mwgql6mtbf77382724`.
 
 ## Problem and supporting observations
 
@@ -35,9 +35,9 @@ Replaces the top-level comparison with a recursive one that distinguishes breaki
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T18:11:22.957Z, before the candidate was submitted
-- Policy hash: `19b51d6fce298df7`
-- Workload: review:holdout-B; snapshot:6949a489535a29b89d9b311a3067fbec1be77271d62c8369784ce58bcc002cbc
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T18:26:02.070Z, before the candidate was submitted
+- Policy hash: `a79f643c873bbd0d`
+- Workload: review:holdout-B; snapshot:fc69c80fffda04bac30b33b6c459268f57bf5c5df85512cd700783c4fa6fcbe2
 - Held-out set: holdout-B
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -48,7 +48,7 @@ Replaces the top-level comparison with a recursive one that distinguishes breaki
 | 1 | development | 40 | development check by the candidate author |
 | 2 | holdout | 80 | one evaluation on holdout-B |
 
-Resource use: 281 experiment units, 330 ms, 0 model calls, cost not measured.
+Resource use: 281 experiment units, 302 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -59,7 +59,7 @@ Resource use: 281 experiment units, 330 ms, 0 model calls, cost not measured.
 | escaped_defect_rate (lower is better) | 0 | 0.9535 | 0.9535 | -0.9535 | — | 80 |
 | false_alarm_rate (lower is better) | 0 | 0 | 0 | 0 | — | 80 |
 | steps_per_review (lower is better) | 3 | 2 | 2 | 1 | 1 to 1 | 80 |
-| wall_ms_per_review (lower is better) | 0.182 | 0.128 | 0.133 | 0.055 | — | 80 |
+| wall_ms_per_review (lower is better) | 0.2 | 0.104 | 0.13 | 0.096 | — | 80 |
 
 Method for the primary metric: paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 41 better, 0 worse, 39 same, p=0.
 
@@ -106,8 +106,8 @@ Release **r2** (canary; evidence basis: fixture; parent r1)
 | coordination | v1 | `a2731e7d2ba012c8` |
 | evolution | v1 | `d81a4b43a3303a68` |
 
-Policy hash `19b51d6fce298df7`; evaluation snapshot `6949a489535a29b8`; receipt rcpt_0mwgq2clzbjf4330bf8; manifest hash `16897eacd5976dbc`.
+Policy hash `a79f643c873bbd0d`; evaluation snapshot `fc69c80fffda04ba`; receipt rcpt_0mwgql6wqbj5c9433ec; manifest hash `e259d4d5a55ba8c2`.
 
 Rollback target: r1.
 
-Receipt hash: `246a40c5cca36b2a9a141bfda65726024ede7276bedf9abe75c7d6163766e673`
+Receipt hash: `1d069d6e7c7540e1257ab32a8889f99f224cfbac31c2581af088329ddc4f034f`

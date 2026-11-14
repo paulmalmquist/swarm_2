@@ -1,11 +1,11 @@
 [
   {
     "seq": 15,
-    "experiment_id": "exp_0mwgq2cb1bf72b22823",
+    "experiment_id": "exp_0mwgql6mtbf77382724",
     "kind": "canary_started",
-    "at": "2026-11-14T18:11:23.353Z",
+    "at": "2026-11-14T18:26:02.428Z",
     "payload": {
-      "canary_id": "can_0mwgq2cm1bl27f74141",
+      "canary_id": "can_0mwgql6wsbl4a6fb59a",
       "release_id": "r2",
       "prior_release_id": "r1",
       "scope": {
@@ -14,18 +14,18 @@
         "scenario": "shared-capability"
       }
     },
-    "hash": "cd39a3647e4485805b33baa8c7d6bb8e313e4cb423f73234a3f955151d748f6e"
+    "hash": "b1fa00a63ebc2e8ffe6470d717f4da6c9f99d5696cbf017f7eb32c5ed8e17e88"
   },
   {
     "seq": 16,
-    "experiment_id": "exp_0mwgq2cb1bf72b22823",
+    "experiment_id": "exp_0mwgql6mtbf77382724",
     "kind": "canary_observation",
-    "at": "2026-11-14T18:11:26.578Z",
+    "at": "2026-11-14T18:26:05.485Z",
     "payload": {
-      "canary_id": "can_0mwgq2cm1bl27f74141",
+      "canary_id": "can_0mwgql6wsbl4a6fb59a",
       "observations": [
         {
-          "at": "2026-11-14T18:11:26.502Z",
+          "at": "2026-11-14T18:26:05.430Z",
           "metric": "accuracy_drop_vs_approval",
           "value": 0,
           "threshold": 0.05,
@@ -33,7 +33,7 @@
           "injected": false
         },
         {
-          "at": "2026-11-14T18:11:26.502Z",
+          "at": "2026-11-14T18:26:05.430Z",
           "metric": "escaped_defect_rate_increase",
           "value": 0,
           "threshold": 0.02,
@@ -41,7 +41,7 @@
           "injected": false
         },
         {
-          "at": "2026-11-14T18:11:26.502Z",
+          "at": "2026-11-14T18:26:05.430Z",
           "metric": "canary_missions_with_acceptance_failures",
           "value": 0,
           "threshold": 0,
@@ -51,26 +51,26 @@
       ],
       "injected_regression": null
     },
-    "hash": "babf70fa52e32dc8a12e4c563be6348de4cb5c65fcdf290bc2460d6293767daf"
+    "hash": "464cbf274b1e7c94300d3ef5afa1e6ff9712e644c531a272139d5c8b799932ce"
   },
   {
     "seq": 17,
-    "experiment_id": "exp_0mwgq2cb1bf72b22823",
+    "experiment_id": "exp_0mwgql6mtbf77382724",
     "kind": "canary_observation",
-    "at": "2026-11-14T18:11:26.656Z",
+    "at": "2026-11-14T18:26:05.565Z",
     "payload": {
-      "canary_id": "can_0mwgq2cm1bl27f74141",
+      "canary_id": "can_0mwgql6wsbl4a6fb59a",
       "observations": [
         {
-          "at": "2026-11-14T18:11:26.580Z",
+          "at": "2026-11-14T18:26:05.487Z",
           "metric": "accuracy_drop_vs_approval",
-          "value": 0.1,
+          "value": 0.2167,
           "threshold": 0.05,
           "breached": true,
           "injected": true
         },
         {
-          "at": "2026-11-14T18:11:26.580Z",
+          "at": "2026-11-14T18:26:05.487Z",
           "metric": "escaped_defect_rate_increase",
           "value": 0,
           "threshold": 0.02,
@@ -78,7 +78,7 @@
           "injected": true
         },
         {
-          "at": "2026-11-14T18:11:26.580Z",
+          "at": "2026-11-14T18:26:05.487Z",
           "metric": "canary_missions_with_acceptance_failures",
           "value": 0,
           "threshold": 0,
@@ -91,24 +91,24 @@
         "weight": 6
       }
     },
-    "hash": "3b8756036b3d73064bcb92791fb2ef9ab0bd4728538dcc72b89626c18b2e4943"
+    "hash": "3baebd21b6c5b0dba3787e1affc9b2b53da3169d0f0496d7b18989e5fb498e1f"
   },
   {
     "seq": 18,
-    "experiment_id": "exp_0mwgq2cb1bf72b22823",
+    "experiment_id": "exp_0mwgql6mtbf77382724",
     "kind": "rollback",
-    "at": "2026-11-14T18:11:26.660Z",
+    "at": "2026-11-14T18:26:05.569Z",
     "payload": {
-      "canary_id": "can_0mwgq2cm1bl27f74141",
+      "canary_id": "can_0mwgql6wsbl4a6fb59a",
       "release_id": "r2",
       "restored": "r1",
-      "reason": "canary breach: accuracy_drop_vs_approval=0.1 (limit 0.05)",
+      "reason": "canary breach: accuracy_drop_vs_approval=0.2167 (limit 0.05)",
       "dependents": {
         "missions": 2,
         "artifacts": 12,
         "memories": 4
       }
     },
-    "hash": "8679b7286c13b6788a05f66fd5a789902b8c68129fb9bf2a2769421bc59d451b"
+    "hash": "09d2384f7898e6f2f2a123b215ba51098f836568fd10572a62263f70191146ea"
   }
 ]

@@ -32,7 +32,9 @@ function inspect(id: string, description: string, inspector: string, target: str
 /** First plan: activate discovery and planning. Delivery is planned only once the need is understood. */
 export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: CoordinationDef } }): PlanProposal {
   const shares = ctx.defs.coordination.budget_shares;
-  return {
+  // Without an explicit interface agreement there is no contract step: one fewer task before delivery starts.
+  const agreed = ctx.defs.coordination.decomposition.interface_agreement_before_parallel;
+  const plan: PlanProposal = {
     topology: 'hierarchical',
     anchor: 'mission',
     rationale: 'The objective comes from several requests whose shared need is not yet established, so discovery runs first and planning follows it.',
@@ -86,7 +88,7 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         role: 'planner',
         title: 'Propose the work graph',
         objective: 'Propose the organization and work graph: which swarms activate, how the work divides, where it integrates and how it is verified.',
-        depends_on: ['planning.contract'],
+        depends_on: [agreed ? 'planning.contract' : 'planning.criteria'],
         // The plan depends on the criteria and on the interface existing, not on the interface's content.
         input_keys: ['plan/acceptance-criteria'],
         outputs: [{ key: 'plan/work-graph', kind: 'plan', description: 'The proposed plan, as proposed' }],
@@ -97,6 +99,8 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
     interface_agreements: [],
     extra_dependencies: [],
   };
+  if (!agreed) plan.tasks = plan.tasks.filter((t) => t.ref !== 'planning.contract');
+  return plan;
 }
 
 /** Mission coordination's proposal for delivery, verification, knowledge capture and review. */
@@ -105,6 +109,7 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
   // Whether a separate swarm verifies the integrated result is a coordination-policy choice,
   // so it can be changed by a coordination-level candidate and tested.
   const independent = policy.reviewer_assignment.independent_verification;
+  const agreed = policy.decomposition.interface_agreement_before_parallel;
   const plan: PlanProposal = {
     topology: 'hierarchical',
     anchor: 'mission',
@@ -173,7 +178,7 @@ export function missionPlan(policy: CoordinationDef, criteria: AcceptanceCriteri
         title: 'Capture what this mission established',
         objective: 'Record reusable facts, decisions and a candidate procedure from this mission, each with provenance, scope and a way to invalidate it.',
         depends_on: ['delivery.integrate'],
-        input_keys: ['discovery/overlap-report', 'plan/acceptance-criteria', 'contract/health-record'],
+        input_keys: agreed ? ['discovery/overlap-report', 'plan/acceptance-criteria', 'contract/health-record'] : ['discovery/overlap-report', 'plan/acceptance-criteria'],
         outputs: [{ key: 'knowledge/mission-notes', kind: 'report', description: 'JSON knowledge notes' }],
         acceptance_criteria: [inspect('K-PROVENANCE', 'Every note states its kind, scope and source', 'knowledge', 'knowledge/mission-notes')],
         budget_class: 'completion',

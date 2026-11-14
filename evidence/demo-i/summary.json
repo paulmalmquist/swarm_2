@@ -25,7 +25,7 @@
     },
     {
       "claim": "During the canary the new policy decides, and the default has not changed",
-      "observed": "7 decisions under canary can_0mwgq48uv9h55cb7c91; active release still r1",
+      "observed": "7 decisions under canary can_0mwgqodnk1p2f04ae0d; active release still r1",
       "ok": true
     },
     {
@@ -71,5 +71,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 24066
+  "ms": 22719
 }

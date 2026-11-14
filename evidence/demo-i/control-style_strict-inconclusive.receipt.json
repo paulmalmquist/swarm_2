@@ -1,40 +1,40 @@
 {
-  "receipt_id": "rcpt_0mwgq3ryk8vf4cf6a78",
-  "experiment_id": "exp_0mwgq3rp28r5b458d8c",
+  "receipt_id": "rcpt_0mwgqnxpa136531bbf3",
+  "experiment_id": "exp_0mwgqnxg00z9b2d3bd0",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: style_nit (0 verified, 30 unverified reports).",
     "observation_ids": [
-      "obs_0mwgq3rlv7v4d2efb50",
-      "obs_0mwgq3rlv7w84383711",
-      "obs_0mwgq3rlv7x5b36b0a0",
-      "obs_0mwgq3rlv7y34c9b545",
-      "obs_0mwgq3rlv7zd96a3fc6",
-      "obs_0mwgq3rlv8031665435",
-      "obs_0mwgq3rlv81bf1735c4",
-      "obs_0mwgq3rlv823452ed7d",
-      "obs_0mwgq3rlw839c2e3909",
-      "obs_0mwgq3rlw840330e4a4",
-      "obs_0mwgq3rlw85ed5b6fa1",
-      "obs_0mwgq3rlw862163cc44",
-      "obs_0mwgq3rlw877adda68b",
-      "obs_0mwgq3rlw8875414f05",
-      "obs_0mwgq3rlw8929dea0a5",
-      "obs_0mwgq3rlw8a21ba975b",
-      "obs_0mwgq3rlw8b7ac78512",
-      "obs_0mwgq3rlw8c814e92ef",
-      "obs_0mwgq3rlw8d67dd097a",
-      "obs_0mwgq3rlw8e83aba095",
-      "obs_0mwgq3rlx8fefba7582",
-      "obs_0mwgq3rlx8g9f811280",
-      "obs_0mwgq3rlx8h2c522c1f",
-      "obs_0mwgq3rlx8ifc92a1c1",
-      "obs_0mwgq3rlx8j02186229",
-      "obs_0mwgq3rlx8k948f92c8",
-      "obs_0mwgq3rlx8lf26e6094",
-      "obs_0mwgq3rlx8m95503e88",
-      "obs_0mwgq3rlx8n272e29ff",
-      "obs_0mwgq3rlx8o1dac81a5"
+      "obs_0mwgqnxca0335077f89",
+      "obs_0mwgqnxcb04c783ea93",
+      "obs_0mwgqnxcb05ac96a2e7",
+      "obs_0mwgqnxcb06b17ee1c7",
+      "obs_0mwgqnxcb07cd5b4f12",
+      "obs_0mwgqnxcb08cc547096",
+      "obs_0mwgqnxcb099e9f0210",
+      "obs_0mwgqnxcb0a17ca3abb",
+      "obs_0mwgqnxcb0b7658ec5a",
+      "obs_0mwgqnxcb0c48f8d437",
+      "obs_0mwgqnxcb0dda047a09",
+      "obs_0mwgqnxcb0e928555a8",
+      "obs_0mwgqnxcb0f2e775953",
+      "obs_0mwgqnxcb0geefcbf0d",
+      "obs_0mwgqnxcb0h9a90864c",
+      "obs_0mwgqnxcb0i1feb4a66",
+      "obs_0mwgqnxcc0jff4ddb90",
+      "obs_0mwgqnxcc0k773f6f30",
+      "obs_0mwgqnxcc0lef861403",
+      "obs_0mwgqnxcc0m1bbbfa7f",
+      "obs_0mwgqnxcc0nbfdf2e01",
+      "obs_0mwgqnxcc0obb1cd6a2",
+      "obs_0mwgqnxcc0p06aecc9c",
+      "obs_0mwgqnxcc0q92571707",
+      "obs_0mwgqnxcc0r92d95f8d",
+      "obs_0mwgqnxcc0s0a4d85b3",
+      "obs_0mwgqnxcc0tce4b2cde",
+      "obs_0mwgqnxcc0ub4adec5a",
+      "obs_0mwgqnxcc0v469cc102",
+      "obs_0mwgqnxcc0wab25ac0f"
     ],
     "observed_failure_count": 30
   },
@@ -67,11 +67,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
-    "frozen_at": "2026-11-14T18:12:29.558Z",
+    "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
+    "frozen_at": "2026-11-14T18:28:10.128Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:8c0e079f3ff827207d21855dd66518d90e558def6ca79ce71b2c59417702beaa"
+      "snapshot:b445c17644dffbcb65d506d32e8f7f315c06e3c623c461b8ef50b7769d978eac"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -84,21 +84,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T18:12:29.614Z",
+      "at": "2026-11-14T18:28:10.178Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T18:12:29.900Z",
+      "at": "2026-11-14T18:28:10.462Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 286,
+    "wall_ms": 284,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -195,12 +195,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.143,
-      "incumbent": 0.138,
-      "baseline": 0.12,
-      "diff_vs_incumbent": 0.005,
+      "candidate": 0.145,
+      "incumbent": 0.102,
+      "baseline": 0.148,
+      "diff_vs_incumbent": 0.043,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.023,
+      "diff_vs_baseline": -0.003,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -387,7 +387,7 @@
   "decision": "inconclusive",
   "justification": "No demonstrated improvement: the 95% interval of the difference in accuracy (0 to 0) includes zero.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T18:12:29.900Z",
+  "decided_at": "2026-11-14T18:28:10.462Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -395,14 +395,14 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
-    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_before": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
+    "protected_digest_after": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "1af145c1bf4e71426cfc95dee1abc7ff8ff2f5d4f7497eb757fcede515252fb7",
-  "id": "rcpt_0mwgq3ryk8vf4cf6a78"
+  "receipt_hash": "d1b4299a50c1f9164d10cd00a81a3a124a02ac331e06f9a4de939c3683dd252f",
+  "id": "rcpt_0mwgqnxpa136531bbf3"
 }

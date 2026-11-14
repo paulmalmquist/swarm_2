@@ -68,7 +68,7 @@
     {
       "key": "discovery",
       "executor": "container",
-      "owner": "agt_0mwgq1k8j0if77bf53d",
+      "owner": "agt_0mwgqkgan0i26bb4f6a",
       "depth": 1,
       "status": "accepted",
       "attempts": 0,
@@ -83,7 +83,7 @@
     {
       "key": "planning",
       "executor": "container",
-      "owner": "agt_0mwgq1k8l0o6591ab81",
+      "owner": "agt_0mwgqkgap0o475f7f6b",
       "depth": 1,
       "status": "accepted",
       "attempts": 0,
@@ -98,7 +98,7 @@
     {
       "key": "discovery.analyze",
       "executor": "worker",
-      "owner": "agt_0mwgq1k8m0ue9f275d1",
+      "owner": "agt_0mwgqkgaq0u11b9e9d1",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -113,7 +113,7 @@
     {
       "key": "planning.contract",
       "executor": "worker",
-      "owner": "agt_0mwgq1k8n0y6fa20591",
+      "owner": "agt_0mwgqkgar0y8137436d",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -128,7 +128,7 @@
     {
       "key": "planning.criteria",
       "executor": "worker",
-      "owner": "agt_0mwgq1k8n0y6fa20591",
+      "owner": "agt_0mwgqkgar0y8137436d",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -143,7 +143,7 @@
     {
       "key": "planning.plan",
       "executor": "worker",
-      "owner": "agt_0mwgq1k8o15a2342956",
+      "owner": "agt_0mwgqkgat153b97b98f",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -158,7 +158,7 @@
     {
       "key": "delivery",
       "executor": "container",
-      "owner": "agt_0mwgq1kwa2n87a0d432",
+      "owner": "agt_0mwgqkgur2n4a192720",
       "depth": 1,
       "status": "accepted",
       "attempts": 0,
@@ -173,7 +173,7 @@
     {
       "key": "verification",
       "executor": "container",
-      "owner": "agt_0mwgq1kwc2t7d5142fb",
+      "owner": "agt_0mwgqkgus2t06a83884",
       "depth": 1,
       "status": "accepted",
       "attempts": 0,
@@ -188,7 +188,7 @@
     {
       "key": "reliability",
       "executor": "container",
-      "owner": "agt_0mwgq1kwd2zb5a9f8e4",
+      "owner": "agt_0mwgqkgut2z0a904f72",
       "depth": 1,
       "status": "accepted",
       "attempts": 0,
@@ -203,7 +203,7 @@
     {
       "key": "delivery.decompose",
       "executor": "worker",
-      "owner": "agt_0mwgq1kwe355ce25971",
+      "owner": "agt_0mwgqkguu35f2a15f7d",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -218,7 +218,7 @@
     {
       "key": "delivery.integrate",
       "executor": "runtime:integrate",
-      "owner": "agt_0mwgq1kwf398b9db88f",
+      "owner": "agt_0mwgqkguu39d7e84495",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -231,24 +231,9 @@
       }
     },
     {
-      "key": "verification.acceptance",
-      "executor": "runtime:verify",
-      "owner": "agt_0mwgq1kwg3dca93eb15",
-      "depth": 2,
-      "status": "accepted",
-      "attempts": 1,
-      "reservation": {
-        "model_calls": 7,
-        "worker_invocations": 7,
-        "tokens": 240000,
-        "cost_usd_est": 1.2,
-        "wall_ms": 108000
-      }
-    },
-    {
       "key": "reliability.knowledge",
       "executor": "worker",
-      "owner": "agt_0mwgq1kwg3hdc7f9644",
+      "owner": "agt_0mwgqkguv3hcfd7988f",
       "depth": 2,
       "status": "accepted",
       "attempts": 1,
@@ -261,9 +246,24 @@
       }
     },
     {
+      "key": "verification.acceptance",
+      "executor": "runtime:verify",
+      "owner": "agt_0mwgqkguv3da5778fed",
+      "depth": 2,
+      "status": "accepted",
+      "attempts": 1,
+      "reservation": {
+        "model_calls": 7,
+        "worker_invocations": 7,
+        "tokens": 240000,
+        "cost_usd_est": 1.2,
+        "wall_ms": 108000
+      }
+    },
+    {
       "key": "review.packet",
       "executor": "runtime:review_packet",
-      "owner": "agt_0mwgq1kwh3l787175ee",
+      "owner": "agt_0mwgqkguw3lec70052b",
       "depth": 1,
       "status": "accepted",
       "attempts": 1,
@@ -278,7 +278,7 @@
     {
       "key": "delivery.engine",
       "executor": "container",
-      "owner": "agt_0mwgq1l3i43b9c2ca67",
+      "owner": "agt_0mwgqkh0t43949533f8",
       "depth": 2,
       "status": "accepted",
       "attempts": 0,
@@ -293,7 +293,7 @@
     {
       "key": "delivery.report",
       "executor": "container",
-      "owner": "agt_0mwgq1l3j4991c8bbc2",
+      "owner": "agt_0mwgqkh0u495a5f241b",
       "depth": 2,
       "status": "accepted",
       "attempts": 0,
@@ -308,7 +308,7 @@
     {
       "key": "delivery.engine.implement",
       "executor": "worker",
-      "owner": "agt_0mwgq1l3k4fb69cd416",
+      "owner": "agt_0mwgqkh0v4fd77c95cb",
       "depth": 3,
       "status": "accepted",
       "attempts": 1,
@@ -323,7 +323,7 @@
     {
       "key": "delivery.report.implement",
       "executor": "worker",
-      "owner": "agt_0mwgq1l3l4jc9964887",
+      "owner": "agt_0mwgqkh0v4jb771ba59",
       "depth": 3,
       "status": "accepted",
       "attempts": 1,

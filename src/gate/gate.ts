@@ -572,7 +572,10 @@ export class Gate {
         justification = `Rejected: the simplification makes ${ev.primary.metric} worse (95% interval ${ci[0]} to ${ci[1]}).`;
       } else {
         decision = 'inconclusive';
-        justification = `No demonstrated improvement: non-inferiority within ${margin} was not shown (95% interval ${ci[0]} to ${ci[1]})${cheaper ? '' : ' and cost did not fall'}.`;
+        // Two different reasons, stated separately: quality may be unproven, or quality held and nothing was saved.
+        justification = ci[0] >= -margin
+          ? `No demonstrated improvement: ${ev.primary.metric} is no worse (95% interval ${ci[0]} to ${ci[1]}, margin ${margin}), but cost did not fall (${ev.cost ? `${ev.cost.metric} changed by ${ev.cost.diff_vs_incumbent}` : 'cost was not measured'}), so the simplification saves nothing.`
+          : `No demonstrated improvement: non-inferiority within ${margin} was not shown (95% interval ${ci[0]} to ${ci[1]})${cheaper ? '' : ' and cost did not fall'}.`;
       }
     } else if (ci[0] > 0) {
       decision = 'accept';
