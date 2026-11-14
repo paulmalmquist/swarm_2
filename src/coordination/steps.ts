@@ -161,7 +161,9 @@ export class Steps {
     if (task.contract.verification.method !== 'none') {
       const generation = task.generation;
       kernel.setStatus(task_id, 'verifying', VERIFIER_ID, { owner_id: VERIFIER_ID, owner_kind: 'runtime', action: `Verifying: ${task.title}`, since: store.clock.iso() });
-      await this.evaluateCriteria(task);
+      // Verdicts carried over from a reused result are already recorded for this generation.
+      const reused = kernel.attemptFor(task.id, task.attempt)?.provider === 'reuse';
+      if (!reused) await this.evaluateCriteria(task);
       task = store.tasks.must(task_id);
       if (task.status !== 'verifying' || task.generation !== generation) return; // invalidated or cancelled while checks ran
       const gaps = kernel.acceptanceGaps(task);

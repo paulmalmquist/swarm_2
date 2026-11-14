@@ -57,7 +57,7 @@ async function readJson(req: IncomingMessage): Promise<unknown> {
  * It binds to loopback, checks a per-process token on every mutation, and is not an
  * authenticated shared service: do not expose it through a proxy or tunnel.
  */
-export async function serve(opts: { home?: string; port: number; host?: string; run?: boolean }): Promise<void> {
+export async function serve(opts: { home?: string; port: number; host?: string; run?: boolean; quiet?: boolean }): Promise<{ port: number; token: string; close(): Promise<void> }> {
   const rt = openRuntime({ home: opts.home });
   const gate = new Gate(rt);
   gate.init();
@@ -67,10 +67,11 @@ export async function serve(opts: { home?: string; port: number; host?: string; 
   const token = randomBytes(18).toString('hex');
   const uiDir = join(REPO_ROOT, 'src', 'ui');
   const co = opts.run ? new Coordinator(rt, { log: (m) => process.stderr.write(`[coordinator] ${m}\n`) }) : null;
+  let loop: NodeJS.Timeout | null = null;
   if (co) {
     co.recover();
     let ticking = false;
-    setInterval(() => {
+    loop = setInterval(() => {
       if (ticking || co.stopRequested()) return;
       ticking = true;
       co.tick()
@@ -154,5 +155,16 @@ export async function serve(opts: { home?: string; port: number; host?: string; 
   await new Promise<void>((resolve) => server.listen(opts.port, opts.host ?? '127.0.0.1', resolve));
   const addr = server.address();
   const port = typeof addr === 'object' && addr ? addr.port : opts.port;
-  process.stdout.write(`swarm2 review interface: http://${opts.host ?? '127.0.0.1'}:${port}/  (state: ${rt.paths.home}${co ? '; coordinator running in this process' : '; read-only unless a coordinator is running'})\n`);
+  if (!opts.quiet) process.stdout.write(`swarm2 review interface: http://${opts.host ?? '127.0.0.1'}:${port}/  (state: ${rt.paths.home}${co ? '; coordinator running in this process' : '; read-only unless a coordinator is running'})\n`);
+  return {
+    port,
+    token,
+    close: async () => {
+      if (loop) clearInterval(loop);
+      co?.stop();
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+      gate.close();
+      rt.close();
+    },
+  };
 }

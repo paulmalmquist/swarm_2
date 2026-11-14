@@ -48,6 +48,8 @@ export function bootstrapPlan(ctx: { mission: Mission; defs: { coordination: Coo
         title: 'Analyze the requests for overlap and distinct needs',
         objective: 'Identify the shared underlying need behind the requests, keep each stakeholder\'s distinct need, separate symptoms from the underlying problem, and name what is unknown.',
         input_keys: ['intake/requests'],
+        // The same analysis of the same requests need not be repeated in another mission.
+        params: { reuse_capability: 'request-overlap-analysis' },
         outputs: [{ key: 'discovery/overlap-report', kind: 'report', description: 'JSON overlap report' }],
         acceptance_criteria: [
           inspect('D-OVERLAP', 'Names the shared capability and lists a distinct need for every request it consolidates', 'overlap_report', 'discovery/overlap-report'),

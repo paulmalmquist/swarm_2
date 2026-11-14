@@ -3,6 +3,7 @@ import type { Token } from '../kernel/kernel.ts';
 import type { Provider, WorkResult, WorkerHandle } from '../providers/provider.ts';
 import { type ReleaseDefs, type Runtime, type Scenario, loadDefs, loadScenario } from '../runtime.ts';
 import { SwarmError, globMatch, pidAlive, sleep, truncate } from '../lib/util.ts';
+import { scopeSignature } from '../kernel/intake.ts';
 import { materializePlan } from './plan.ts';
 import { Steps } from './steps.ts';
 import { recordOutcome } from './metrics.ts';
@@ -208,8 +209,45 @@ export class Coordinator {
     }
   }
 
+  /**
+   * Reuse a verified result from another mission instead of repeating the work. Allowed only when
+   * the capability, the objective and the content of every input are identical, the earlier result
+   * is accepted and current, it was produced under the same release, and it is still fresh.
+   */
+  private tryReuse(m: Mission, t: Task): boolean {
+    const { kernel, store, intake } = this.rt;
+    const defs = this.defs(m.release_id);
+    const capability = kernel.params(t.id).reuse_capability;
+    if (typeof capability !== 'string' || !defs.coordination.reuse.enabled) return false;
+    const hashes = kernel.inputKeys(t.id).map((k) => kernel.currentVersion(m.id, k)?.content_hash);
+    if (hashes.some((x) => !x)) return false;
+    const signature = scopeSignature({ capability, objective: t.contract.objective, input_hashes: hashes as string[] });
+    if (t.scope_signature !== signature) store.tasks.put({ ...store.tasks.must(t.id), scope_signature: signature });
+    const source = intake.reusable(signature, m.id, defs.coordination.reuse.max_age_ms);
+    if (!source || source.contract.release_id !== m.release_id) return false;
+    const lease = kernel.claim(t.id, t.owner_id, { provider: 'reuse', provider_mode: m.provider_mode, model_requested: null, uses_call_slot: false });
+    if (!lease) return false;
+    store.db.tx(() => {
+      const artifacts = store.versions.where('"produced_by_task_id" = ? AND "currency" = ?', source.id, 'current').flatMap((v) => {
+        const content = kernel.readArtifact(v);
+        return content === null ? [] : [{ key: v.key, kind: store.artifacts.must(v.artifact_id).kind, media_type: v.media_type, content }];
+      });
+      const prior = store.getMeta<{ remaining_uncertainty: string[] }>(`task:${source.id}:output:g${source.generation}`);
+      kernel.submitResult(t.id, lease.token, { status: 'completed', summary: `Reused the verified result of ${source.key} from mission ${source.mission_id}`, artifacts, evidence: [{ kind: 'reuse', statement: `Result reused from ${source.key} in mission ${source.mission_id}: same capability, objective and input content, accepted and current, same release.`, epistemic: 'observed_fact', origin: 'runtime', refs: [source.id] }], criteria_claims: [], remaining_uncertainty: prior?.remaining_uncertainty ?? [], questions: [], proposals: [] }, null, { source: kernel.sourceOf(m.id) });
+      // The earlier verdicts carry over as recorded verdicts, each pointing at its original.
+      for (const v of store.verifications.where('"task_id" = ? AND "generation" = ?', source.id, source.generation)) {
+        kernel.recordVerification({ task_id: t.id, criterion_id: v.criterion_id, method: v.method, verdict: v.verdict, verifier_id: 'runtime:reuse', evidence_ids: v.evidence_ids, details: { reused_from: v.id, source_task: source.id, source_mission: source.mission_id } });
+      }
+      store.emit({ type: 'result_reused_across_missions', mission_id: m.id, task_id: t.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: t.key, source_mission: source.mission_id, source_task: source.key, signature, artifacts: artifacts.map((a) => a.key) } });
+    });
+    this.spawnStep(t, () => this.steps.verifyInline(t.id));
+    this.log(`reused ${t.key} from mission ${source.mission_id}`);
+    return true;
+  }
+
   private async dispatchWorker(m: Mission, t: Task): Promise<boolean> {
     const { kernel, store, workspaces } = this.rt;
+    if (this.tryReuse(m, t)) return true;
     const provider = this.provider(m);
     const gate = provider.available();
     if (!gate.ok) {

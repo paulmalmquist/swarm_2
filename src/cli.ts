@@ -24,7 +24,7 @@ function positional(n: number): string | undefined {
   const out: string[] = [];
   for (let i = 1; i < argv.length; i++) {
     if (argv[i]!.startsWith('--')) {
-      if (!['live', 'md', 'once', 'json', 'force'].includes(argv[i]!.slice(2))) i++;
+      if (!['live', 'md', 'once', 'json', 'force', 'run'].includes(argv[i]!.slice(2))) i++;
       continue;
     }
     out.push(argv[i]!);
@@ -53,7 +53,7 @@ const HELP = `swarm2 — an organization of agent swarms beneath your chief of s
   cancel <mission_id> --reason "..."     cancel a mission and everything under it
   revise <mission_id> <artifact_key> <file> --reason "..."   apply an upstream change
   stop | resume                          kill switch for all coordinators on this home
-  serve [--port N]                       review interface and API
+  serve [--port N] [--run]               review interface and API (--run also runs the coordinator)
   gate <subcommand>                      release gate (see docs/operator-guide.md)
   evolve <subcommand>                    improvement experiments
 
@@ -64,7 +64,8 @@ async function main(): Promise<void> {
   if (cmd === 'help' || has('help')) return print(HELP);
   if (cmd === 'serve') {
     const { serve } = await import('./api/server.ts');
-    return serve({ home: flag('home'), port: Number(flag('port') ?? 4317) });
+    await serve({ home: flag('home'), port: Number(flag('port') ?? 4317), host: flag('host'), run: has('run') });
+    return;
   }
   if (cmd === 'gate' || cmd === 'evolve') {
     const { gateCli } = await import('./gate/cli.ts');
