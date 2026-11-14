@@ -207,7 +207,8 @@ export function evolution(rt: Runtime, gate: Gate): Envelope<Record<string, unkn
       // The organization's own improvement work: what the policy in force has to choose from, and what it did.
       portfolio: portfolio(rt, gate),
       exploration: gate.exploration(),
-      observations: Object.entries(rt.store.observations.where('1=1').reduce((a: Record<string, number>, o) => ((a[`${o.kind}:${o.failure_class}`] = (a[`${o.kind}:${o.failure_class}`] ?? 0) + 1), a), {})).map(([k, n]) => ({ signature: k, count: n })).sort((a, b) => b.count - a.count).slice(0, 12),
+      // An unverified report is shown as that, whatever kind it was filed under.
+      observations: Object.entries(rt.store.observations.where('1=1').reduce((a: Record<string, number>, o) => { const k = `${o.certainty === 'suspected' ? 'unverified report' : o.kind}:${o.failure_class}`; a[k] = (a[k] ?? 0) + 1; return a; }, {})).map(([k, n]) => ({ signature: k, count: n })).sort((a, b) => b.count - a.count).slice(0, 12),
     },
     experiments.some((e) => e.source === 'live') ? 'live' : 'fixture',
   );

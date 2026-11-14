@@ -87,5 +87,8 @@ a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
 - The account's five-hour usage limit was hit at 16:05 UTC on 2026-11-14 and cleared by 18:30 UTC.
   While it lasted, delegated agents and nested model workers returned HTTP 429; the build was done
   in one session and live runs were made afterwards.
+- The limit was hit again at about 19:25 UTC (reset stated as 21:50 UTC). It stopped an independent
+  audit of `docs/evidence-report.md` against `evidence/`. That audit is still owed: have a separate
+  agent check every figure in the report and the handoff against the bundle files, read-only.
 - `swarm_design` was not read: attaching it was declined by the session's permission check.
 - State directories under `var/` are not committed. `evidence/` is.

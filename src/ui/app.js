@@ -46,9 +46,14 @@ const ago = (iso) => {
   return s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`;
 };
 
+// Where the data of the view on screen came from. The header shows this, not a label for the
+// whole state directory: a screen of fixture experiments must not read as live work.
+let viewSource = null;
 async function api(path) {
   const r = await fetch(BASE + path, { cache: 'no-store' });
-  return r.json();
+  const body = await r.json();
+  if (['/planning', '/doing', '/reviewing', '/evolution'].includes(path)) viewSource = body.source ?? null;
+  return body;
 }
 async function command(name, data, key) {
   const r = await fetch(`${BASE}/commands`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-swarm2-token': TOKEN }, body: JSON.stringify({ command: name, data, actor: 'paul', key }) });
@@ -462,7 +467,7 @@ async function refresh(force = false) {
     return;
   }
   $('#chips').replaceChildren(...[
-    provenance(o),
+    provenance({ source: viewSource ?? o.source }),
     h('span', { class: 'chip' }, 'release ', h('b', {}, o.active_release)),
     h('span', { class: `chip ${o.isolation.mode === 'enforced' ? '' : 'warn'}` }, 'separation ', h('b', {}, o.isolation.mode)),
     h('span', { class: 'chip' }, 'model calls in flight ', h('b', {}, `${o.active_calls} of ${o.limits.max_concurrent_model_calls}`)),
@@ -488,6 +493,7 @@ async function refresh(force = false) {
     const nodes = await RENDER[view]();
     att.replaceChildren(...o.attention.filter((i) => i.kind === 'decision' && !inlineDecisions.has(i.id)).map((i) => decisionBox(i, () => refresh(true))));
     main.replaceChildren(...nodes.flat().filter(Boolean));
+    if (viewSource && $('#chips').firstChild) $('#chips').firstChild.replaceWith(provenance({ source: viewSource }));
   } catch (err) {
     main.replaceChildren(h('div', { class: 'banner' }, st('warn', 'This view could not be drawn'), h('p', { class: 'sec' }, String(err.message ?? err))));
   }
@@ -497,6 +503,7 @@ async function refresh(force = false) {
 for (const b of document.querySelectorAll('.rail button')) {
   b.addEventListener('click', () => {
     view = b.dataset.view;
+    viewSource = null;
     localStorageSet('view', view);
     refresh(true);
   });

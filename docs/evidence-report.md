@@ -278,10 +278,15 @@ Dropping the interface agreement was inconclusive.
 
 Outside the system: the account's usage limit was hit at 16:05 UTC and cleared by 18:30 UTC. For
 that period delegated agents and nested workers returned HTTP 429, so the investigation and
-implementation I had delegated came back empty and the build was done in one session.
+implementation I had delegated came back empty and the build was done in one session. The limit
+was hit again at about 19:25 UTC (reset stated as 21:50 UTC). That stopped an independent agent
+partway through auditing this report against the evidence files, so **this report has been
+checked against its sources by its author only**. The figures were read from the bundles when it
+was written; an independent check is still owed.
 
 ## 6. What remains unverified
 
+- **This report, independently.** See the end of section 5.
 - **Anything at scale.** Three live missions and two live authoring runs, one scenario each.
 - **Live coordination and improvement-policy experiments.** Levels 2 and 3 were evaluated on
   fixture episodes and a synthetic arena only.
