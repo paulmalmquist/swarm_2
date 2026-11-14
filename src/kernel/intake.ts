@@ -43,7 +43,21 @@ export function jaccard(a: string[], b: string[]): number {
  * own, prove two requests are the same work. Consolidation is a recorded decision.
  */
 export function similarity(a: IntakeRequest['signature'], b: IntakeRequest['signature']): number {
-  return 0.7 * jaccard(a.capability_tags, b.capability_tags) + 0.3 * jaccard(a.terms, b.terms);
+  return 0.7 * overlap(a.capability_tags, b.capability_tags) + 0.3 * jaccard(a.terms, b.terms);
+}
+
+/**
+ * Overlap coefficient: shared items over the smaller set. Two requests that describe different
+ * symptoms (stale data, a renamed column) of one capability area share few tags in total but
+ * most of the smaller set, which is what should nominate them.
+ */
+export function overlap(a: string[], b: string[]): number {
+  const A = new Set(a);
+  const B = new Set(b);
+  if (A.size === 0 || B.size === 0) return 0;
+  let inter = 0;
+  for (const x of A) if (B.has(x)) inter++;
+  return inter / Math.min(A.size, B.size);
 }
 
 export interface Cluster {
@@ -76,7 +90,7 @@ export class Intake {
   }
 
   /** Single-link clustering of unassigned requests above a similarity threshold. */
-  cluster(threshold = 0.34): Cluster[] {
+  cluster(threshold = 0.3): Cluster[] {
     return this.store.db.tx(() => {
       const reqs = this.store.requests.where('"mission_id" IS NULL').sort((a, b) => a.id.localeCompare(b.id));
       const parent = new Map(reqs.map((r) => [r.id, r.id]));

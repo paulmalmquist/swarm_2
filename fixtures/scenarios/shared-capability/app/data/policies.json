@@ -1,0 +1,11 @@
+{
+  "note": "SYNTHETIC",
+  "default": { "freshness_threshold_minutes": 1440 },
+  "datasets": {
+    "syn-engine_test_runs": { "freshness_threshold_minutes": 60, "declared_fields": { "run_id": "string", "engine_sn": "string", "thrust_kn": "number", "started_at": "timestamp" } },
+    "syn-bom_cost_rollup": { "freshness_threshold_minutes": 240, "declared_fields": { "part_no": "string", "unit_cost": "number", "supplier_id": "string" } },
+    "syn-ncr_events": { "freshness_threshold_minutes": 720, "declared_fields": { "ncr_id": "string", "part_no": "string", "opened_at": "timestamp", "disposition": "string" } },
+    "syn-ncr_dispositions": { "freshness_threshold_minutes": 720, "declared_fields": { "ncr_id": "string", "disposition": "string" } },
+    "syn-fde_site_metrics": { "declared_fields": { "site": "string", "metric": "string", "value": "number" } }
+  }
+}

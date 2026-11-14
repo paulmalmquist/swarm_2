@@ -1,0 +1,59 @@
+{
+  "level": "execution",
+  "version": 1,
+  "summary": "Initial execution definitions: role instructions, model routing, retry limits, context selection and the first skills.",
+  "routing": {
+    "default": { "model": "sonnet", "effort": null },
+    "by_archetype": {
+      "discovery": { "model": "haiku", "effort": null },
+      "planning": { "model": "sonnet", "effort": null },
+      "delivery": { "model": "sonnet", "effort": null },
+      "verification": { "model": "sonnet", "effort": null },
+      "evolution": { "model": "opus", "effort": null },
+      "reliability": { "model": "haiku", "effort": null }
+    },
+    "by_role": {}
+  },
+  "retry": { "max_retries_per_task": 2, "max_repair_attempts": 2 },
+  "context": { "max_memories": 6, "include_failed_approaches": true, "max_input_chars": 24000 },
+  "agents": {
+    "discovery": {
+      "instructions": "You gather evidence and investigate requests. Separate what was observed from what you infer. Separate symptoms from the underlying problem. Name what is still unknown. When several requests point at one need, say what they share and keep each stakeholder's distinct need as its own line."
+    },
+    "planning": {
+      "instructions": "You define outcomes, compare approaches, set interfaces and produce executable plans. Every outcome needs a measurable acceptance criterion and a way to verify it. Where two workstreams meet, define the interface as a versioned artifact both sides pin. Propose the smallest organization that fits the work."
+    },
+    "delivery": {
+      "instructions": "You implement changes and produce artifacts inside your write scope. Build against the exact input versions you were given. Write tests for what you build. Report what you ran and what remains uncertain. Do not touch files outside your scope."
+    },
+    "verification": {
+      "instructions": "You reproduce claims, inspect artifacts and test acceptance criteria. A confident statement is not evidence. Prefer an executable check to a judgment. Challenge conclusions the evidence does not support and say exactly which criterion failed and why."
+    },
+    "evolution": {
+      "instructions": "You analyze outcomes, state falsifiable improvement hypotheses, build candidates in an isolated workspace and run development checks. You do not approve your own candidates and you cannot see held-out cases. Report a failed experiment as plainly as a successful one."
+    },
+    "reliability": {
+      "instructions": "You recover stalled work, keep useful memory, identify recurring failures and preserve provenance. Every memory you record needs its source, its scope and a way to invalidate it. Record a failed approach with enough context to avoid repeating it."
+    }
+  },
+  "skills": {
+    "change-review": {
+      "id": "change-review",
+      "version": 1,
+      "title": "Review a proposed change to a shared data contract or the code around it",
+      "prerequisites": ["The contract before and after the change is available", "The list of changed files is available"],
+      "supported_situations": ["A change to a shared dataset contract", "A change to code that produces or consumes a shared record"],
+      "procedure": [
+        "Confirm the change adds or updates tests",
+        "Check naming and documentation basics",
+        "Request changes if any check reports a blocking finding; otherwise approve"
+      ],
+      "validators": ["tests_present.mjs", "style_basic.mjs"],
+      "required_steps": ["tests_present"],
+      "expected_outputs": ["verdict: approve or request_changes", "findings naming the affected field"],
+      "verification": ["The verdict matches the labeled outcome on held-out cases", "A blocking finding names the affected field"],
+      "known_failure_cases": ["Does not compare the contract before and after, so breaking interface changes can be approved"],
+      "status": "default"
+    }
+  }
+}

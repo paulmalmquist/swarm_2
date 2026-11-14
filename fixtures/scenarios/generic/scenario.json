@@ -1,0 +1,8 @@
+{
+  "name": "generic",
+  "description": "A minimal scenario: one agent, one task, one inspected result. Used when a mission names no scenario and by the execution-pattern tests.",
+  "app_seed": null,
+  "acceptance_dir": null,
+  "materialize": {},
+  "synthetic": true
+}

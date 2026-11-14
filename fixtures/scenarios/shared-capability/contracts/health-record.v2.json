@@ -1,0 +1,99 @@
+{
+  "$id": "syn:contract/health-record",
+  "title": "HealthRecord",
+  "version": 2,
+  "description": "SYNTHETIC. One record per dataset: freshness against its policy threshold and schema conformance against its declared fields. Version 2 adds a required severity so the weekly review can rank what needs attention.",
+  "type": "object",
+  "required": [
+    "dataset_id",
+    "owner_team",
+    "checked_at",
+    "freshness",
+    "schema",
+    "severity"
+  ],
+  "properties": {
+    "dataset_id": {
+      "type": "string"
+    },
+    "owner_team": {
+      "type": "string"
+    },
+    "checked_at": {
+      "type": "string"
+    },
+    "freshness": {
+      "type": "object",
+      "required": [
+        "status",
+        "staleness_minutes",
+        "threshold_minutes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "fresh",
+            "stale",
+            "unknown"
+          ]
+        },
+        "staleness_minutes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "x-unit": "minutes"
+        },
+        "threshold_minutes": {
+          "type": "number",
+          "x-unit": "minutes"
+        }
+      }
+    },
+    "schema": {
+      "type": "object",
+      "required": [
+        "status",
+        "drift"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "match",
+            "drift",
+            "unknown"
+          ]
+        },
+        "drift": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "field",
+              "change"
+            ],
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "change": {
+                "enum": [
+                  "missing",
+                  "unexpected",
+                  "type_changed"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "watch",
+        "critical"
+      ]
+    }
+  }
+}

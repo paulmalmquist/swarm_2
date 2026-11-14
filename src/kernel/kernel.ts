@@ -80,7 +80,10 @@ export interface NewTask {
   owner_id: string;
   acceptance_criteria: AcceptanceCriterion[];
   depends_on: string[];
+  /** Tasks whose submitted result this task verifies (it becomes ready when they are submitted). */
+  verifies?: string[];
   input_keys: string[];
+  params?: Record<string, unknown>;
   required_outputs: { key: string; kind: ArtifactKind; description: string }[];
   verification: { method: 'executable' | 'independent_review' | 'both' | 'none'; independent: boolean };
   authority: AuthorityEnvelope;
@@ -339,7 +342,12 @@ export class Kernel {
       };
       this.store.tasks.put(task);
       this.store.setMeta(`task:${id}:input_keys`, n.input_keys);
+      this.store.setMeta(`task:${id}:params`, n.params ?? {});
       for (const dep of n.depends_on) this.addDependency(id, dep, 'prerequisite');
+      for (const target of n.verifies ?? []) {
+        assert(this.store.tasks.get(target), 'unknown_dependency', `Task ${n.key} verifies unknown task ${target}`);
+        this.addDependency(id, target, 'verifies');
+      }
       this.store.emit({ type: 'task_created', mission_id: n.mission_id, task_id: id, actor_id: actor, actor_kind: 'runtime', payload: { key: n.key, executor: n.executor, owner_id: n.owner_id, depth, depends_on: n.depends_on, reservation: n.reservation, archetype: n.assignee.archetype }, release_id: mission.release_id });
       return task;
     });
@@ -357,7 +365,7 @@ export class Kernel {
   }
 
   /** Add a prerequisite edge. Rejects anything that would close a cycle. */
-  addDependency(task_id: string, depends_on: string, kind: 'prerequisite' | 'integration'): void {
+  addDependency(task_id: string, depends_on: string, kind: 'prerequisite' | 'verifies'): void {
     assert(task_id !== depends_on, 'dependency_cycle', 'A task cannot depend on itself', { task_id });
     assert(!this.reaches(depends_on, task_id), 'dependency_cycle', `Adding ${task_id} → ${depends_on} would create a cycle`, { task_id, depends_on });
     this.store.db.run('INSERT OR IGNORE INTO task_deps (task_id, depends_on, kind) VALUES (?, ?, ?)', task_id, depends_on, kind);
@@ -376,12 +384,26 @@ export class Kernel {
     return false;
   }
 
+  /** Prerequisites: tasks that must be accepted before this one may start. */
   dependenciesOf(task_id: string): string[] {
-    return this.store.db.all<{ depends_on: string }>('SELECT depends_on FROM task_deps WHERE task_id = ?', task_id).map((r) => r.depends_on);
+    return this.store.db.all<{ depends_on: string }>(`SELECT depends_on FROM task_deps WHERE task_id = ? AND kind = 'prerequisite'`, task_id).map((r) => r.depends_on);
   }
 
   dependentsOf(task_id: string): string[] {
-    return this.store.db.all<{ task_id: string }>('SELECT task_id FROM task_deps WHERE depends_on = ?', task_id).map((r) => r.task_id);
+    return this.store.db.all<{ task_id: string }>(`SELECT task_id FROM task_deps WHERE depends_on = ? AND kind = 'prerequisite'`, task_id).map((r) => r.task_id);
+  }
+
+  /** Tasks whose submitted result `task_id` verifies. */
+  verificationTargets(task_id: string): string[] {
+    return this.store.db.all<{ depends_on: string }>(`SELECT depends_on FROM task_deps WHERE task_id = ? AND kind = 'verifies'`, task_id).map((r) => r.depends_on);
+  }
+
+  verifiersOf(task_id: string): string[] {
+    return this.store.db.all<{ task_id: string }>(`SELECT task_id FROM task_deps WHERE depends_on = ? AND kind = 'verifies'`, task_id).map((r) => r.task_id);
+  }
+
+  params(task_id: string): Record<string, unknown> {
+    return this.store.getMeta<Record<string, unknown>>(`task:${task_id}:params`) ?? {};
   }
 
   inputKeys(task_id: string): string[] {
@@ -419,7 +441,10 @@ export class Kernel {
         const deps = this.dependenciesOf(t.id).map((d) => byId.get(d) ?? this.store.tasks.must(d));
         const depsOk = deps.every((d) => d.status === 'accepted' && d.currency === 'current');
         const inputsOk = this.inputKeys(t.id).every((k) => this.currentVersion(mission_id, k) !== undefined);
-        if (!depsOk || !inputsOk) continue;
+        // A verifier starts when the work it verifies has been submitted.
+        const targets = this.verificationTargets(t.id).map((d) => byId.get(d) ?? this.store.tasks.must(d));
+        const targetsOk = targets.every((d) => ['submitted', 'verifying'].includes(d.status));
+        if (!depsOk || !inputsOk || !targetsOk) continue;
         t.status = t.executor === 'container' ? 'active' : 'ready';
         this.touch(t, t.executor === 'container' ? null : this.nextAction(t.owner_id, 'agent', `Start: ${t.title}`));
         this.store.emit({ type: 'task_ready', mission_id, task_id: t.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: t.key } });
@@ -573,6 +598,19 @@ export class Kernel {
     }
   }
 
+  /** A settled team is reopened when one of its members has work to do again. */
+  private reopenAncestors(task: Task): void {
+    let parent = task.parent_task_id ? this.store.tasks.get(task.parent_task_id) : undefined;
+    while (parent) {
+      if (parent.status === 'accepted') {
+        parent.status = 'active';
+        this.touch(parent, null);
+        this.store.emit({ type: 'task_status_changed', mission_id: parent.mission_id, task_id: parent.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: parent.key, from: 'accepted', to: 'active', reopened_by: task.key } });
+      }
+      parent = parent.parent_task_id ? this.store.tasks.get(parent.parent_task_id) : undefined;
+    }
+  }
+
   private currentToken(task: Task): Token {
     return { attempt: task.attempt, generation: task.generation };
   }
@@ -715,6 +753,15 @@ export class Kernel {
           task.lease_owner = null;
           task.lease_expires_at = null;
           this.touch(task, this.nextAction('verification', 'runtime', `Verify: ${task.title}`));
+          for (const vid of this.verifiersOf(task.id)) {
+            const v = this.store.tasks.must(vid);
+            if (['accepted', 'submitted', 'verifying'].includes(v.status)) {
+              v.status = 'planned';
+              v.generation += 1;
+              this.touch(v, this.nextAction(v.owner_id, 'agent', `Verify again: ${task.title}`));
+              this.reopenAncestors(v);
+            }
+          }
         }
         this.store.emit({ type: 'result_submitted', mission_id: task.mission_id, task_id: task.id, actor_id: agent, actor_kind: 'agent', payload: { key: task.key, token: tokenString(token), status: output.status, artifacts: output.artifacts.map((a) => a.key), version_ids, uncertainty: output.remaining_uncertainty.length, source: extra.source }, release_id: task.contract.release_id });
         return { accepted: true, reason: null, task, impacts, version_ids };
@@ -768,6 +815,25 @@ export class Kernel {
       this.touch(task, this.nextAction(task.owner_id, 'agent', `Retry (${task.retries}/${this.limits.max_retries_per_task}): ${task.title}`));
       this.store.emit({ type: 'task_requeued', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, code, retries: task.retries } });
     }
+  }
+
+  /**
+   * Hand a leased or submitted task back to `planned` without counting a retry — used when a
+   * prerequisite was reopened and this work has to wait for it again.
+   */
+  defer(task_id: string, actor: string, reason: string): Task {
+    return this.store.db.tx(() => {
+      const task = this.store.tasks.must(task_id);
+      if (TERMINAL.includes(task.status) && task.status !== 'accepted') return task;
+      if (task.status === 'leased') this.endAttempt(task, task.attempt, 'superseded', null, { error: { code: 'deferred', message: reason } });
+      task.status = 'planned';
+      task.generation += 1;
+      task.lease_owner = null;
+      task.lease_expires_at = null;
+      this.touch(task, this.nextAction(task.owner_id, 'agent', `Waiting: ${truncate(reason, 100)}`));
+      this.store.emit({ type: 'task_deferred', mission_id: task.mission_id, task_id, actor_id: actor, actor_kind: 'runtime', payload: { key: task.key, reason, generation: task.generation } });
+      return task;
+    });
   }
 
   block(task: Task, reason: string, next: NextAction): Task {
@@ -1058,6 +1124,7 @@ export class Kernel {
       const task = this.store.tasks.must(task_id);
       assert(['submitted', 'verifying', 'accepted'].includes(task.status), 'bad_transition', `Cannot reject a task that is ${task.status}`, { status: task.status });
       task.repairs += 1;
+      this.store.setMeta(`task:${task.id}:rework`, { reason: truncate(reason, 1200), failure_class, repairs: task.repairs, at: this.clock.iso() });
       this.observe({ mission_id: task.mission_id, task_id, kind: 'rework', failure_class, certainty: 'verified', details: { reason: truncate(reason, 400), repairs: task.repairs }, component: 'execution', release_id: task.contract.release_id, source: this.sourceOf(task.mission_id) });
       if (task.repairs > this.limits.max_repair_attempts) {
         task.status = 'failed';
@@ -1066,7 +1133,10 @@ export class Kernel {
         this.store.emit({ type: 'task_failed', mission_id: task.mission_id, task_id, actor_id: actor, actor_kind: 'runtime', payload: { key: task.key, code: 'repair_limit', reason } });
       } else {
         // Reopening settled work starts a new generation; its closed account is replaced when it is next leased.
-        if (task.status === 'accepted') task.generation += 1;
+        if (task.status === 'accepted') {
+          task.generation += 1;
+          this.reopenAncestors(task);
+        }
         task.status = 'ready';
         this.touch(task, this.nextAction(task.owner_id, 'agent', `Rework: ${truncate(reason, 100)}`));
         this.store.emit({ type: 'task_rework', mission_id: task.mission_id, task_id, actor_id: actor, actor_kind: 'runtime', payload: { key: task.key, reason: truncate(reason, 400), repairs: task.repairs } });

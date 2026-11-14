@@ -1,0 +1,20 @@
+{
+  "level": "coordination",
+  "version": 1,
+  "summary": "Initial coordination policy: six swarm archetypes, interface agreement before parallel work, independent verification, serialized integration.",
+  "archetypes": {
+    "discovery": { "responsibility": "Gather evidence, investigate requests, identify unknowns, and distinguish symptoms from underlying problems.", "activate_when": "The objective comes from requests or conversations whose underlying need is not yet established.", "default_roles": ["analyst"] },
+    "planning": { "responsibility": "Define outcomes, compare approaches, establish interfaces, and create executable plans.", "activate_when": "More than one task or owner is needed, or an interface must be agreed.", "default_roles": ["architect", "planner"] },
+    "delivery": { "responsibility": "Implement changes, produce artifacts, and resolve integration issues.", "activate_when": "Something has to be built or changed.", "default_roles": ["lead", "implementer", "integrator"] },
+    "verification": { "responsibility": "Reproduce claims, inspect artifacts, test acceptance criteria, and challenge unsupported conclusions.", "activate_when": "A result has mandatory acceptance criteria.", "default_roles": ["verifier"] },
+    "evolution": { "responsibility": "Analyze outcomes, develop improvement hypotheses, build candidates, and run experiments.", "activate_when": "Outcomes show a recurring problem and exploration budget is available.", "default_roles": ["analyst", "candidate-author"] },
+    "reliability": { "responsibility": "Recover stalled work, maintain useful memory, identify recurring failures, and preserve provenance.", "activate_when": "Always, at low cost: recovery is continuous and knowledge capture runs at mission end.", "default_roles": ["librarian"] }
+  },
+  "decomposition": { "interface_agreement_before_parallel": true, "max_parallel_workstreams": 4, "single_agent_below_tasks": 2 },
+  "handoff_requirements": ["artifact_version", "acceptance_evidence", "remaining_uncertainty", "next_owner"],
+  "reviewer_assignment": { "independent_verification": true },
+  "integration": { "order": "declared", "verify_each_merge": true },
+  "escalation": { "max_decision_rounds": 2 },
+  "reuse": { "enabled": true, "max_age_ms": 86400000 },
+  "budget_shares": { "discovery": 0.12, "planning": 0.2, "delivery": 0.6, "verification": 0.8, "reliability": 0.4, "review": 0.3 }
+}

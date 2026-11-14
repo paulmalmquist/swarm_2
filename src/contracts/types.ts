@@ -826,6 +826,11 @@ export interface WorkOutput {
 /** What an agent proposes; the runtime validates it before anything is created. */
 export interface PlanProposal {
   topology: Topology;
+  /**
+   * Where the plan attaches. Only mission coordination (the planning swarm) may anchor at the
+   * mission; any other lead may only decompose inside its own swarm.
+   */
+  anchor: 'mission' | 'own_swarm';
   rationale: string;
   swarms: {
     ref: string;
@@ -836,6 +841,8 @@ export interface PlanProposal {
     stopping_condition: string;
     budget_share: number;
     temporary: boolean;
+    /** Tasks or teams that must be accepted before this team starts. */
+    depends_on: string[];
   }[];
   tasks: {
     ref: string;
@@ -845,8 +852,12 @@ export interface PlanProposal {
     executor: TaskExecutor;
     role: string;
     depends_on: string[];
+    /** Tasks whose submitted result this task independently verifies. */
+    verifies: string[];
     input_keys: string[];
     outputs: { key: string; kind: ArtifactKind; description: string }[];
+    /** Executor-specific parameters (merge order, acceptance suite, failure attribution …). */
+    params: Record<string, unknown>;
     acceptance_criteria: AcceptanceCriterion[];
     verification: { method: 'executable' | 'independent_review' | 'both' | 'none'; independent: boolean };
     write_scope: string[];
@@ -857,6 +868,8 @@ export interface PlanProposal {
   }[];
   /** Interfaces two or more workstreams must agree on before parallel implementation. */
   interface_agreements: { artifact_key: string; between: string[] }[];
+  /** Extra prerequisites for tasks that already exist inside the proposer's own swarm. */
+  extra_dependencies: { task_key: string; depends_on: string[] }[];
 }
 
 // ───────────────────────────── review packet ─────────────────────────────
