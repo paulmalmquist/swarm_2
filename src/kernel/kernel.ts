@@ -647,6 +647,8 @@ export class Kernel {
     const small = amounts({ worker_invocations: 2, model_calls: 2, tokens: Math.floor(want.tokens / 4), cost_usd_est: want.cost_usd_est / 4, wall_ms: want.wall_ms });
     try {
       task.budget_account_id = this.budget.reserve(this.classAccount(task.mission_id, 'recovery'), `redo:${task.key}:g${task.generation}`, 'task', small).id;
+      // Stored at once: if this claim goes no further, the reservation must not be left without an owner.
+      this.store.tasks.put(task);
       this.store.emit({ type: 'recovery_reserve_used', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, amount: small } });
       return true;
     } catch (err) {
@@ -655,23 +657,18 @@ export class Kernel {
     }
   }
 
+  /**
+   * A retry the task's own account cannot pay for draws on the recovery reserve. The allowance is
+   * moved, not spent: the reserve narrows, the task and the teams above it widen by the same
+   * amount, and nothing counts as consumed until an attempt reports what it used. Booking the
+   * move as consumption would make a mission's spend include allowance nobody used.
+   */
   private topUpFromRecovery(task: Task): boolean {
-    try {
-      const recovery = this.classAccount(task.mission_id, 'recovery');
-      const extra = amounts({ worker_invocations: 1, model_calls: 1, tokens: Math.floor(task.contract.resources.reservation.tokens / 2), cost_usd_est: task.contract.resources.reservation.cost_usd_est / 2, wall_ms: task.contract.resources.reservation.wall_ms });
-      const acct = this.budget.reserve(recovery, `recovery:${task.key}:a${task.attempt + 1}`, 'recovery', extra);
-      // The top-up is folded into the task's own limit so the tree invariant still holds.
-      const own = this.store.accounts.must(task.budget_account_id);
-      this.budget.consume(acct.id, extra, `transfer to task:${task.key}`);
-      this.budget.close(acct.id);
-      own.limit = { model_calls: own.limit.model_calls + extra.model_calls, worker_invocations: own.limit.worker_invocations + extra.worker_invocations, tokens: own.limit.tokens + extra.tokens, cost_usd_est: own.limit.cost_usd_est + extra.cost_usd_est, wall_ms: own.limit.wall_ms + extra.wall_ms };
-      this.store.accounts.put(own);
-      this.store.emit({ type: 'recovery_reserve_used', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, amount: extra } });
-      return true;
-    } catch (err) {
-      if (err instanceof SwarmError && (err.code === 'budget_exceeded' || err.code === 'budget_closed')) return false;
-      throw err;
-    }
+    const want = task.contract.resources.reservation;
+    const extra = amounts({ worker_invocations: 1, model_calls: 1, tokens: Math.floor(want.tokens / 2), cost_usd_est: want.cost_usd_est / 2, wall_ms: want.wall_ms });
+    if (!this.budget.transfer(this.classAccount(task.mission_id, 'recovery'), task.budget_account_id, extra, `recovery:${task.key}:a${task.attempt + 1}`)) return false;
+    this.store.emit({ type: 'recovery_reserve_used', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, amount: extra } });
+    return true;
   }
 
   /** A settled team is reopened when one of its members has work to do again. */
@@ -718,6 +715,17 @@ export class Kernel {
       }
       return true;
     });
+  }
+
+  /**
+   * Model attempts that ended without a complete usage report: a worker stopped at its deadline,
+   * fenced or cancelled never says what it used. While this is above zero, a mission's token and
+   * cost totals are lower bounds. An attempt refused for lack of capacity made no call and is not counted.
+   */
+  unreportedUsage(mission_id: string): number {
+    return this.store.attempts
+      .where('"mission_id" = ?', mission_id)
+      .filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime' && a.ended_at !== null && a.status !== 'rate_limited' && (!a.usage || a.usage.completeness !== 'complete')).length;
   }
 
   private usageAmounts(usage: UsageRecord | null): ResourceAmounts {

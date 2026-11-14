@@ -102,6 +102,42 @@ export class Budget {
     });
   }
 
+  /**
+   * Move unspent allowance from one account to another. The allowance is moved, not spent: every
+   * account between the giver and the nearest common ancestor narrows by the amount, and every
+   * account between the receiver and that ancestor widens by it, so no account ever holds more
+   * than its parent gave it and nothing is recorded as consumed. Returns false, changing nothing,
+   * when the giver does not have that much available or an account on the way is closed.
+   */
+  transfer(from_id: string, to_id: string, amt: ResourceAmounts, ref: string): boolean {
+    return this.store.db.tx(() => {
+      const chain = (id: string): BudgetAccount[] => {
+        const out: BudgetAccount[] = [];
+        for (let a: BudgetAccount | undefined = this.store.accounts.must(id); a; a = a.parent_id ? this.store.accounts.must(a.parent_id) : undefined) out.push(a);
+        return out;
+      };
+      const giving = chain(from_id);
+      const receiving = chain(to_id);
+      const common = receiving.find((a) => giving.some((g) => g.id === a.id));
+      if (!common) return false;
+      const narrow = giving.slice(0, giving.findIndex((a) => a.id === common.id));
+      const widen = receiving.slice(0, receiving.findIndex((a) => a.id === common.id));
+      if ([...narrow, ...widen].some((a) => a.status !== 'open')) return false;
+      if (!fits(amt, this.available(from_id))) return false;
+      for (const a of narrow) {
+        a.limit = subAmounts(a.limit, amt);
+        this.store.accounts.put(a);
+        this.ledger(a.id, 'transfer_out', amt, ref);
+      }
+      for (const a of widen) {
+        a.limit = addAmounts(a.limit, amt);
+        this.store.accounts.put(a);
+        this.ledger(a.id, 'transfer_in', amt, ref);
+      }
+      return true;
+    });
+  }
+
   close(id: string): ResourceAmounts {
     return this.store.db.tx(() => {
       const acct = this.store.accounts.must(id);
@@ -138,18 +174,28 @@ export class Budget {
     });
   }
 
-  /** Rebuild consumption from the ledger and compare with stored aggregates across the whole tree. */
+  /** Rebuild consumption and limits from the ledger and compare with stored aggregates across the whole tree. */
   reconcile(root_id: string): { ok: boolean; discrepancies: string[]; accounts: number } {
     const discrepancies: string[] = [];
     let accounts = 0;
     const visit = (id: string): void => {
       accounts++;
       const acct = this.store.accounts.must(id);
-      const rows = this.store.db.all<{ amounts: string }>(`SELECT amounts FROM budget_ledger WHERE account_id = ? AND kind = 'consume'`, id);
+      const rows = this.store.db.all<{ kind: string; amounts: string }>(`SELECT kind, amounts FROM budget_ledger WHERE account_id = ? ORDER BY seq`, id);
       let fromLedger = amounts();
-      for (const r of rows) fromLedger = addAmounts(fromLedger, JSON.parse(r.amounts) as ResourceAmounts);
-      if (JSON.stringify(fromLedger) !== JSON.stringify(acct.consumed)) {
+      let limit: ResourceAmounts | null = null;
+      for (const r of rows) {
+        const a = JSON.parse(r.amounts) as ResourceAmounts;
+        if (r.kind === 'consume') fromLedger = addAmounts(fromLedger, a);
+        else if (r.kind === 'reserve' && !limit) limit = a;
+        else if (r.kind === 'transfer_in' && limit) limit = addAmounts(limit, a);
+        else if (r.kind === 'transfer_out' && limit) limit = subAmounts(limit, a);
+      }
+      if (!sameAmounts(fromLedger, acct.consumed)) {
         discrepancies.push(`${acct.owner_ref}: stored consumption differs from ledger`);
+      }
+      if (!limit || !sameAmounts(limit, acct.limit)) {
+        discrepancies.push(`${acct.owner_ref}: stored limit differs from ledger`);
       }
       const short = firstShortfall(amounts(), this.available(id));
       if (short) discrepancies.push(`${acct.owner_ref}: over-committed (${short})`);
@@ -162,6 +208,12 @@ export class Budget {
   private ledger(account_id: string, kind: string, amt: ResourceAmounts, ref: string): void {
     this.store.db.run('INSERT INTO budget_ledger (account_id, kind, amounts, ref, ts) VALUES (?, ?, ?, ?, ?)', account_id, kind, JSON.stringify(amt), ref, this.store.clock.iso());
   }
+}
+
+/** Equal to within floating-point noise: cost estimates are sums of fractions. */
+function sameAmounts(a: ResourceAmounts, b: ResourceAmounts): boolean {
+  const near = (x: number, y: number): boolean => Math.abs(x - y) <= 1e-9 * Math.max(1, Math.abs(x), Math.abs(y));
+  return near(a.model_calls, b.model_calls) && near(a.worker_invocations, b.worker_invocations) && near(a.tokens, b.tokens) && near(a.cost_usd_est, b.cost_usd_est) && near(a.wall_ms, b.wall_ms);
 }
 
 function maxAmounts(a: ResourceAmounts, b: ResourceAmounts): ResourceAmounts {

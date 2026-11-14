@@ -141,7 +141,8 @@ export class Steps {
   async verifyInline(task_id: string): Promise<void> {
     const { kernel, store } = this.rt;
     let task = store.tasks.must(task_id);
-    if (task.status !== 'submitted') return;
+    // `verifying` with no check in flight means an earlier check did not finish: it is run again.
+    if (task.status !== 'submitted' && task.status !== 'verifying') return;
     const m = store.missions.must(task.mission_id);
     const stored = this.storedOutput(task);
 
@@ -524,6 +525,7 @@ export class Steps {
       for (const t of tasks) for (const u of this.storedOutput(t)?.remaining_uncertainty ?? []) concerns.add(`Stated by the worker on ${t.key}: ${u}`);
       const spent = kernel.budget.spent(m.budget_account_id);
       const usages = store.attempts.where('"mission_id" = ?', m.id).map((a) => a.usage).filter((u): u is NonNullable<typeof u> => Boolean(u));
+      const unreported = kernel.unreportedUsage(m.id);
       const passed = acceptance.filter((a) => a.verdict === 'pass').length;
       const mandatoryOpen = acceptance.filter((a) => a.mandatory && a.verdict !== 'pass').length;
       const decision = comms.openDecision({
@@ -562,7 +564,7 @@ export class Steps {
         decisions: store.decisions.where('"mission_id" = ?', m.id).filter((d) => d.id !== decision.id).map((d) => ({ id: d.id, question: d.question, chosen: d.chosen, owner_id: d.owner_id, status: d.status })),
         remaining_concerns: [...concerns],
         decision_requested: { decision_id: decision.id, question: decision.question, options: decision.options.map((o) => o.id), consequence: 'Approval marks the merge request draft approved. The merge itself stays with the existing protected path.', reversible: true },
-        resource_use: { ...spent, cost_basis: usages.some((u) => u.cost_basis === 'list_price_estimate') ? 'list_price_estimate' : 'none', usage_completeness: usages.every((u) => u.completeness === 'complete') ? 'complete' : 'partial' },
+        resource_use: { ...spent, cost_basis: usages.some((u) => u.cost_basis === 'list_price_estimate') ? 'list_price_estimate' : 'none', usage_completeness: usages.every((u) => u.completeness === 'complete') && unreported === 0 ? 'complete' : 'partial', unreported_attempts: unreported },
         release_id: m.release_id,
         provider_mode: m.provider_mode,
         data_class: m.data_class,
@@ -614,7 +616,7 @@ export function renderPacket(p: ReviewPacket): string {
   if (p.remaining_concerns.length) for (const c of p.remaining_concerns) lines.push(`- ${c}`);
   else lines.push('None recorded.');
   lines.push('', '## Decision requested', '', p.decision_requested.question, '', `Options: ${p.decision_requested.options.join(', ')}.`, p.decision_requested.consequence, '');
-  lines.push('## Resource use', '', `- Worker invocations: ${p.resource_use.worker_invocations}`, `- Model calls: ${p.resource_use.model_calls}`, `- Tokens: ${p.resource_use.tokens}`, `- Cost: ${p.resource_use.cost_basis === 'none' ? 'not measured' : `${p.resource_use.cost_usd_est} USD (${p.resource_use.cost_basis}, not billing)`}`, `- Worker wall time: ${p.resource_use.wall_ms} ms`, '');
+  lines.push('## Resource use', '', `- Worker invocations: ${p.resource_use.worker_invocations}`, `- Model calls: ${p.resource_use.model_calls}`, `- Tokens: ${p.resource_use.tokens}`, `- Cost: ${p.resource_use.cost_basis === 'none' ? 'not measured' : `${p.resource_use.cost_usd_est} USD (${p.resource_use.cost_basis}, not billing)`}`, `- Worker wall time: ${p.resource_use.wall_ms} ms`, ...(p.resource_use.unreported_attempts ? [`- ${p.resource_use.unreported_attempts} model attempt(s) ended without reporting what they used. Tokens and cost above are lower bounds.`] : []), '');
   return lines.join('\n');
 }
 

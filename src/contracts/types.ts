@@ -894,7 +894,8 @@ export interface ReviewPacket {
   decisions: { id: string; question: string; chosen: string | null; owner_id: string; status: string }[];
   remaining_concerns: string[];
   decision_requested: { decision_id: string | null; question: string; options: string[]; consequence: string; reversible: boolean };
-  resource_use: ResourceAmounts & { cost_basis: string; usage_completeness: string };
+  /** `unreported_attempts`: model attempts that ended without saying what they used; above zero, tokens and cost are lower bounds. */
+  resource_use: ResourceAmounts & { cost_basis: string; usage_completeness: string; unreported_attempts?: number };
   release_id: string;
   provider_mode: ProviderMode;
   data_class: DataClass;

@@ -83,6 +83,8 @@ async function main(): Promise<void> {
         tokens_in_including_cache: sum((a) => (a.usage?.input_units ?? 0) + (a.usage?.cache_read_units ?? 0) + (a.usage?.cache_write_units ?? 0)),
         cost_usd_list_price_estimate: Number(sum((a) => a.usage?.reported_cost).toFixed(4)),
         cost_note: 'A client-side estimate at list prices. It is not billing.',
+        // Attempts that ended without saying what they used: with any, tokens and cost are lower bounds.
+        attempts_without_reported_usage: rt.kernel.unreportedUsage(id),
         worker_wall_ms: sum((a) => a.usage?.wall_ms),
       },
       attempts: attempts.filter((a) => a.provider !== 'runtime').map((a) => ({ task: keyOf(a.task_id), attempt: a.attempt_no, provider: a.provider, model_requested: a.model_requested, model_actual: a.model_actual, status: a.status, wall_ms: a.usage?.wall_ms ?? null, output_tokens: a.usage?.output_units ?? null, cost_usd_list_price_estimate: a.usage?.reported_cost ?? null, error: a.error?.code ?? null })),
@@ -128,7 +130,7 @@ async function main(): Promise<void> {
       '',
       `- Mission status: **${mission.status}**${summary.reached_review ? ' — a review packet is waiting for a decision' : ''}; coordinator ${state}; ${Math.round(elapsed_ms / 1000)} s elapsed.`,
       `- Model attempts: ${model.length} (${summary.execution.models_served.join(', ')}); scripted attempts: ${scripted.length}; runtime steps: ${summary.execution.runtime_steps}.`,
-      `- Output tokens: ${summary.execution.tokens_out}; list-price cost estimate: ${summary.execution.cost_usd_list_price_estimate} USD (not billing).`,
+      `- Output tokens: ${summary.execution.tokens_out}; list-price cost estimate: ${summary.execution.cost_usd_list_price_estimate} USD (not billing).${summary.execution.attempts_without_reported_usage ? ` Both are lower bounds: ${summary.execution.attempts_without_reported_usage} model attempt(s) ended without reporting what they used.` : ''}`,
       `- Rework: ${summary.rework.length}; integration failures: ${summary.integration_failures}; acceptance failures: ${summary.acceptance_failures}; tasks that failed without a verifiable result: ${summary.execution_failures.length}; tool uses refused by the worker harness: ${summary.harness_denials.reduce((a, d) => a + Number(d.count), 0)}.`,
       `- Decisions waiting for a person: ${summary.waiting_for_a_person}.`,
       '',

@@ -85,7 +85,11 @@ export function interpretResult(ev: ClaudeResultEvent | null, meta: { model_requ
   const base = { self_submitted: false, model_requested: meta.model_requested };
   if (!ev) {
     const status = meta.timed_out ? 'timeout' : meta.signal ? 'killed' : 'failed';
-    return { ...base, status, output: null, usage: null, model_actual: null, session_id: null, error: { code: status === 'failed' ? 'no_result' : status, message: `worker ended without a result (exit ${meta.exit_code}, signal ${meta.signal})` } };
+    // The client was started and never said what it used. Record what the runtime measured itself
+    // (one invocation, the elapsed time) and mark the rest unknown: tokens and cost are left null,
+    // not zero, so a total that includes this attempt cannot be read as complete.
+    const usage: UsageRecord = { source: 'claude-cli', meter_kind: 'runtime_measured', call_count: 1, input_units: null, output_units: null, cache_read_units: null, cache_write_units: null, wall_ms: meta.wall_ms, reported_cost: null, currency: null, cost_basis: 'none', completeness: 'unknown', observed_at: new Date().toISOString() };
+    return { ...base, status, output: null, usage, model_actual: null, session_id: null, error: { code: status === 'failed' ? 'no_result' : status, message: `worker ended without a result (exit ${meta.exit_code}, signal ${meta.signal})` } };
   }
   const models = Object.entries(ev.modelUsage ?? {}).sort((a, b) => (b[1].outputTokens ?? 0) - (a[1].outputTokens ?? 0));
   const model_actual = models[0]?.[0] ?? null;

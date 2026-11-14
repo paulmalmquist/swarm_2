@@ -1,4 +1,4 @@
-import type { Mission, Task, UsageRecord, WorkOutput } from '../contracts/types.ts';
+import type { LimitsProfile, Mission, ProviderMode, Task, UsageRecord, WorkOutput } from '../contracts/types.ts';
 import type { Token } from '../kernel/kernel.ts';
 import type { Provider, WorkResult, WorkerHandle } from '../providers/provider.ts';
 import { type ReleaseDefs, type Runtime, type Scenario, loadDefs, loadScenario } from '../runtime.ts';
@@ -22,6 +22,15 @@ interface Running {
   handle: WorkerHandle;
   task_id: string;
   token: Token;
+}
+
+/**
+ * How long one attempt may run before it is stopped. A share of a mission's time budget is not a
+ * sensible deadline for one model call (a small slice timed real workers out), so a live attempt
+ * always gets at least the configured floor. The mission's wall-clock ceiling still bounds the total.
+ */
+export function attemptDeadlineMs(mode: ProviderMode, limits: Pick<LimitsProfile, 'live_attempt_floor_ms'>, reserved_wall_ms: number): number {
+  return mode === 'live' ? Math.max(limits.live_attempt_floor_ms, reserved_wall_ms) : Math.max(5_000, reserved_wall_ms);
 }
 
 /**
@@ -165,7 +174,9 @@ export class Coordinator {
 
       this.unblockCapacity(m);
 
-      for (const t of store.tasks.where(`"mission_id" = ? AND "status" = 'submitted'`, m.id)) {
+      // A result marked as being verified with no check in flight was left there by a check that
+      // threw or by a coordinator that stopped mid-check. It is checked again, not left waiting.
+      for (const t of store.tasks.where(`"mission_id" = ? AND "status" IN ('submitted', 'verifying')`, m.id)) {
         if (this.busy.has(t.id) || kernel.verifiersOf(t.id).length > 0) continue;
         this.spawnStep(t, () => this.steps.verifyInline(t.id));
         progressed = true;
@@ -321,9 +332,7 @@ export class Coordinator {
         instructions: [defs.execution.agents[arch]?.instructions ?? '', context.text].filter(Boolean).join('\n\n'),
         model: route.model,
         effort: route.effort,
-        // A share of a time budget is not a sensible deadline for one model call: a small slice
-        // timed real workers out. The mission's wall-clock ceiling still bounds the total.
-        timeout_ms: provider.mode === 'live' ? Math.max(this.rt.limits.live_attempt_floor_ms, task.contract.resources.reservation.wall_ms) : Math.max(5_000, task.contract.resources.reservation.wall_ms),
+        timeout_ms: attemptDeadlineMs(provider.mode, this.rt.limits, task.contract.resources.reservation.wall_ms),
         max_budget_usd: provider.mode === 'live' ? task.contract.resources.reservation.cost_usd_est : null,
         faults,
         db_path: this.rt.paths.db,
@@ -404,7 +413,7 @@ export class Coordinator {
         const cur = this.rt.store.tasks.get(t.id);
         if (cur && cur.status === 'leased') {
           this.rt.kernel.failAttempt(t.id, { attempt: cur.attempt, generation: cur.generation }, 'failed', { code: err instanceof SwarmError ? err.code : 'step_error', message: err instanceof Error ? err.message : String(err) }, null, { countsAsRetry: true });
-        } else if (cur && cur.status === 'submitted') {
+        } else if (cur && (cur.status === 'submitted' || cur.status === 'verifying')) {
           // A check that keeps failing on the same result must not be retried forever. After three
           // tries the result goes back to its author with the reason, inside the repair limit.
           const key = `task:${t.id}:step_errors:g${cur.generation}a${cur.attempt}`;

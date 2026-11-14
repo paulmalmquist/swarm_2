@@ -67,7 +67,8 @@ export interface ProgressSnapshot {
   next_actions: (NextAction & { task_key: string; task_title: string; status: string })[];
   blockers: { task_key: string; reason: string | null; owner_id: string | null }[];
   /** How the work was actually executed: by a model, by a labeled script, or by the runtime itself. */
-  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number };
+  /** `unreported_usage_attempts`: model attempts that ended without saying what they used; above zero, `spent` tokens and cost are lower bounds. */
+  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number; unreported_usage_attempts: number };
   spent: ResourceAmounts;
   budget: ResourceAmounts;
   open_decisions: number;
@@ -219,7 +220,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         tasks: { total: tasks.length, by_status },
         next_actions: tasks.filter((t) => t.next_action).map((t) => ({ ...t.next_action!, task_key: t.key, task_title: t.title, status: t.status })),
         blockers: tasks.filter((t) => t.status === 'blocked' || t.status === 'failed').map((t) => ({ task_key: t.key, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null })),
-        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length }))(store.attempts.where('"mission_id" = ?', m.id)),
+        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length, unreported_usage_attempts: kernel.unreportedUsage(m.id) }))(store.attempts.where('"mission_id" = ?', m.id)),
         spent: kernel.budget.spent(m.budget_account_id),
         budget: store.accounts.must(m.budget_account_id).limit,
         open_decisions: store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).length,

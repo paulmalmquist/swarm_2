@@ -120,6 +120,7 @@ export function doing(rt: Runtime): Envelope<Record<string, unknown>> {
         blockers: tasks.filter((t) => ['blocked', 'failed'].includes(t.status)).map((t) => ({ key: t.key, title: t.title, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null, owner_label: ownerLabel(rt, t.next_action?.owner_id), owner_kind: t.next_action?.owner_kind ?? null })),
         next_action: next ? { task_key: next.key, task_id: next.id, ...next.next_action, owner_label: ownerLabel(rt, next.next_action!.owner_id) } : null,
         spent: rt.kernel.budget.spent(acct.id),
+        unreported_usage_attempts: rt.kernel.unreportedUsage(m.id),
         budget: acct.limit,
         artifacts: rt.store.versions.where('"mission_id" = ? AND "currency" = ?', m.id, 'current').filter((v) => !v.key.startsWith('evidence/')).map((v) => ({ id: v.id, key: v.key, version_no: v.version_no, kind: rt.store.artifacts.must(v.artifact_id).kind, produced_by: v.produced_by_task_id ? (rt.store.tasks.get(v.produced_by_task_id)?.key ?? null) : null })),
       };
