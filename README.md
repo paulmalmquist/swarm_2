@@ -29,7 +29,7 @@ It never sends, merges, deploys or commits anyone to anything. It prepares, veri
 Node 22.18 or later. Nothing to install or build; there are no runtime dependencies.
 
 ```
-npm test                 # 48 tests: coordination, recovery, isolation, rollback, limits, escalation
+npm test                 # 49 tests: coordination, recovery, isolation, rollback, limits, escalation
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
 ```

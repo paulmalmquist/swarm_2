@@ -909,7 +909,8 @@ export class Kernel {
       task.status = 'failed';
       this.touch(task, this.nextAction(task.contract.escalation.path[0] ?? 'chief_of_staff', 'agent', `Decide what to do about failed task: ${task.title}`));
       this.budget.close(task.budget_account_id);
-      this.observe({ mission_id: task.mission_id, task_id: task.id, kind: 'acceptance_failure', failure_class: code, certainty: 'verified', details: { message: truncate(message, 300), retries: task.retries }, component: 'execution', release_id: task.contract.release_id, source: this.sourceOf(task.mission_id) });
+      // Not an acceptance failure: nothing was produced that a criterion could be checked against.
+      this.observe({ mission_id: task.mission_id, task_id: task.id, kind: 'execution_failure', failure_class: code, certainty: 'verified', details: { message: truncate(message, 300), retries: task.retries }, component: 'execution', release_id: task.contract.release_id, source: this.sourceOf(task.mission_id) });
       this.store.emit({ type: 'task_failed', mission_id: task.mission_id, task_id: task.id, actor_id: 'runtime', actor_kind: 'runtime', payload: { key: task.key, code, retries: task.retries } });
     } else {
       task.status = 'ready';

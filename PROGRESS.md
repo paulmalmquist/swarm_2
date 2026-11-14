@@ -24,7 +24,7 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 48 tests, about two minutes
+npm test                           # 49 tests, about two minutes
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration
 SWARM2_LIVE=1 npm run demo:live    # cross-swarm mission on real model workers (uses the account)

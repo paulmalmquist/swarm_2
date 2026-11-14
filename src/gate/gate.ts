@@ -732,7 +732,7 @@ export class Gate {
       observations.push({ at, metric: 'decisions_made_under_canary', value: steps.length, threshold: 1, breached: false, injected: false });
       observations.push({ at, metric: 'policy_actions_refused', value: refused, threshold: limit, breached: refused > limit, injected: false });
     }
-    const failures = c.missions.filter((id) => this.rt.store.observations.where('"mission_id" = ?', id).some((o) => o.kind === 'acceptance_failure' || o.kind === 'escaped_defect')).length;
+    const failures = c.missions.filter((id) => this.rt.store.observations.where('"mission_id" = ?', id).some((o) => o.kind === 'acceptance_failure' || o.kind === 'execution_failure' || o.kind === 'escaped_defect')).length;
     observations.push({ at, metric: 'canary_missions_with_acceptance_failures', value: c.missions.length ? failures : null, threshold: pol.canary.rollback_if.acceptance_failures_gt, breached: failures > pol.canary.rollback_if.acceptance_failures_gt, injected: false });
     c = { ...c, observations: [...c.observations, ...observations] };
     this.canaries.put(c);

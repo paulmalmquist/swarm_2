@@ -623,6 +623,8 @@ export interface Observation {
   task_id: string | null;
   kind:
     | 'acceptance_failure'
+    /** Work that failed for good without producing a result that could be verified (timeouts, crashes, unusable output). */
+    | 'execution_failure'
     | 'escaped_defect'
     | 'integration_failure'
     | 'rework'
