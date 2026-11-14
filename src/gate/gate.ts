@@ -34,6 +34,12 @@ export interface PromotionPolicy {
   decision_rule: Record<string, string>;
 }
 
+export interface Authorship {
+  kind: 'model' | 'scripted';
+  model: string | null;
+  session_id: string | null;
+}
+
 export interface Experiment {
   id: string;
   level: ComponentLevel;
@@ -57,6 +63,11 @@ export interface Experiment {
   release_id: string | null;
   canary_id: string | null;
   source: Exclude<SourceLabel, 'unavailable'>;
+  /**
+   * Who wrote the candidate. Kept apart from `source`, which says what the EVALUATION rests on:
+   * a candidate written by a model and judged on synthetic cases is still fixture evidence.
+   */
+  authorship: Authorship | null;
   created_at: string;
   updated_at: string;
 }
@@ -224,7 +235,7 @@ export class Gate {
    * being changed, the expected benefit and regressions — and the protocol, frozen now, before any
    * candidate exists. The held-out set is assigned here and cannot be chosen by the author.
    */
-  openExperiment(input: { level: ComponentLevel; title: string; problem: Experiment['problem']; hypothesis: string; expected_benefit: string; possible_regressions: string[]; declared_simplification?: boolean; revises_experiment?: string | null; budget_units?: number; source?: Experiment['source'] }): Experiment {
+  openExperiment(input: { level: ComponentLevel; title: string; problem: Experiment['problem']; hypothesis: string; expected_benefit: string; possible_regressions: string[]; declared_simplification?: boolean; revises_experiment?: string | null; budget_units?: number; source?: Experiment['source']; authorship?: Authorship | null }): Experiment {
     const { registry } = this.rt;
     const pol = this.policy();
     const incumbent = registry.manifest(registry.active());
@@ -269,11 +280,12 @@ export class Gate {
       release_id: null,
       canary_id: null,
       source: input.source ?? 'fixture',
+      authorship: input.authorship ?? null,
       created_at: now,
       updated_at: now,
     };
     this.experiments.put(exp);
-    this.append(id, 'experiment_opened', { level: exp.level, title: exp.title, hypothesis: exp.hypothesis, lineage_id, revises: exp.revises, parent: exp.parent });
+    this.append(id, 'experiment_opened', { level: exp.level, title: exp.title, hypothesis: exp.hypothesis, lineage_id, revises: exp.revises, parent: exp.parent, authorship: exp.authorship });
     this.append(id, 'protocol_frozen', { ...exp.protocol, budget_units: exp.budget_units, note: 'frozen before any candidate was submitted' });
     if (revised && revised.protocol?.holdout_set) {
       // Its results were revealed to the author, so for this lineage that set is now development data.
@@ -621,6 +633,7 @@ export class Gate {
       level: exp.level,
       problem: exp.problem,
       hypothesis: exp.hypothesis,
+      authorship: exp.authorship ?? null,
       expected_benefit: exp.expected_benefit,
       possible_regressions: exp.possible_regressions,
       parent: exp.parent,

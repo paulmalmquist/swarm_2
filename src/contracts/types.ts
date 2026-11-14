@@ -730,6 +730,8 @@ export interface ImprovementReceipt {
   level: ComponentLevel;
   problem: { statement: string; observation_ids: string[]; observed_failure_count: number };
   hypothesis: string;
+  /** Who wrote the candidate, when recorded. This is not the evidence basis: see `evidence_basis`. */
+  authorship?: { kind: 'model' | 'scripted'; model: string | null; session_id: string | null } | null;
   expected_benefit: string;
   possible_regressions: string[];
   parent: { component: ComponentLevel; version: number; content_hash: Sha256 };

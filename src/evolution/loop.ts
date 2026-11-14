@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { REPO_ROOT } from '../config.ts';
 import type { ImprovementReceipt } from '../contracts/types.ts';
-import { type Experiment, Gate } from '../gate/gate.ts';
+import { type Authorship, type Experiment, Gate } from '../gate/gate.ts';
 import type { Runtime } from '../runtime.ts';
 import { devCases } from '../../fixtures/evolution/review-cases.ts';
 import { type BuiltCandidate, type CandidateSpec, buildCandidate } from './candidates.ts';
@@ -40,14 +40,14 @@ export async function observeReviewWork(rt: Runtime, gate: Gate, opts: { seed?: 
  * the candidate in an isolated workspace, run development checks, hand the bundle to the gate,
  * and receive its decision. The author never sees held-out cases or their labels.
  */
-export async function runExperiment(rt: Runtime, gate: Gate, candidate: string, opts: { revises_experiment?: string | null; observation_ids?: string[]; force_execute_despite_screening?: boolean; spec_dir?: string } = {}): Promise<{ experiment: Experiment; receipt: ImprovementReceipt; built: BuiltCandidate; dev: { accuracy: number; cases: number } | null }> {
+export async function runExperiment(rt: Runtime, gate: Gate, candidate: string, opts: { revises_experiment?: string | null; observation_ids?: string[]; force_execute_despite_screening?: boolean; spec_dir?: string; authorship?: Authorship | null } = {}): Promise<{ experiment: Experiment; receipt: ImprovementReceipt; built: BuiltCandidate; dev: { accuracy: number; cases: number } | null }> {
   const specDir = opts.spec_dir ?? join(CANDIDATE_LIBRARY, candidate);
   const spec = JSON.parse((await import('node:fs')).readFileSync(join(specDir, 'candidate.json'), 'utf8')) as CandidateSpec;
   const related = (opts.observation_ids ?? rt.store.observations.where(`"component" = 'execution:change-review'`).map((o) => o.id)).filter((id) => {
     const o = rt.store.observations.get(id);
     return o && (spec.failure_classes.length === 0 || spec.failure_classes.includes(o.failure_class));
   });
-  const exp = gate.openExperiment({ level: spec.level, title: spec.title, problem: { statement: spec.problem, observation_ids: related, observed_failure_count: related.length }, hypothesis: spec.hypothesis, expected_benefit: spec.expected_benefit, possible_regressions: spec.possible_regressions, declared_simplification: spec.declared_simplification, revises_experiment: opts.revises_experiment ?? null });
+  const exp = gate.openExperiment({ level: spec.level, title: spec.title, problem: { statement: spec.problem, observation_ids: related, observed_failure_count: related.length }, hypothesis: spec.hypothesis, expected_benefit: spec.expected_benefit, possible_regressions: spec.possible_regressions, declared_simplification: spec.declared_simplification, revises_experiment: opts.revises_experiment ?? null, authorship: opts.authorship ?? null });
   rt.store.emit({ type: 'hypothesis_stated', actor_id: 'evolution-swarm', actor_kind: 'agent', payload: { experiment_id: exp.id, candidate, hypothesis: spec.hypothesis, observations: related.length } });
 
   const active = rt.registry.manifest(rt.registry.active());

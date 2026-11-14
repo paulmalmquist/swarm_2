@@ -244,7 +244,7 @@ async function main(): Promise<void> {
         skill_patch: { skill_id: 'change-review', validators_add: files, validators_remove: [], procedure: [...skill.procedure.slice(0, -1), author.report.procedure_step, ...skill.procedure.slice(-1)], known_failure_cases: author.report.known_failure_cases },
       };
       writeFileSync(join(specDir, 'candidate.json'), JSON.stringify(spec, null, 2) + '\n');
-      const r = await runExperiment(rt, gate, spec.candidate_id, { spec_dir: specDir, revises_experiment: previous?.experiment_id ?? null });
+      const r = await runExperiment(rt, gate, spec.candidate_id, { spec_dir: specDir, revises_experiment: previous?.experiment_id ?? null, authorship: { kind: 'model', model: author.models_served[0] ?? model, session_id: author.session_id } });
       const rec = r.receipt;
       lastReceipt = rec;
       const acc = rec.comparisons.find((c) => c.metric === 'accuracy');

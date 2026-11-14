@@ -199,7 +199,7 @@ export function evolution(rt: Runtime, gate: Gate): Envelope<Record<string, unkn
         ledger: gate.verifyLedger(),
       },
       releases: releases.map((m) => ({ ...m, missions_pinned: rt.store.missions.count('"release_id" = ?', m.release_id) })),
-      experiments: experiments.map((e) => ({ id: e.id, title: e.title, level: e.level, stage: e.stage, decision: e.decision, lineage_id: e.lineage_id, revises: e.revises, holdout_set: e.protocol?.holdout_set ?? null, frozen_at: e.protocol?.frozen_at ?? null, receipt_id: e.receipt_id, release_id: e.release_id, canary_id: e.canary_id, hypothesis: e.hypothesis, candidate: e.candidate ? { candidate_id: e.candidate.candidate_id, hash: e.candidate.candidate_hash, files: e.candidate.files.map((f) => f.path) } : null, source: e.source })),
+      experiments: experiments.map((e) => ({ id: e.id, title: e.title, level: e.level, stage: e.stage, decision: e.decision, lineage_id: e.lineage_id, revises: e.revises, holdout_set: e.protocol?.holdout_set ?? null, frozen_at: e.protocol?.frozen_at ?? null, receipt_id: e.receipt_id, release_id: e.release_id, canary_id: e.canary_id, hypothesis: e.hypothesis, authorship: e.authorship ?? null, candidate: e.candidate ? { candidate_id: e.candidate.candidate_id, hash: e.candidate.candidate_hash, files: e.candidate.files.map((f) => f.path) } : null, source: e.source })),
       receipts: receipts.map(receiptCard),
       canaries: gate.canaries.where('1=1').sort((a, b) => a.started_at.localeCompare(b.started_at)),
       rollbacks: gate.ledger().filter((l) => l.kind === 'rollback').map((l) => ({ at: l.at, ...l.payload })),

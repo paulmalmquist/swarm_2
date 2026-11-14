@@ -14,6 +14,7 @@ export function renderReceipt(r: ImprovementReceipt): string {
   const lines: string[] = [];
   lines.push(`# Improvement receipt ${r.receipt_id}`, '', `> ${BASIS[r.evidence_basis] ?? r.evidence_basis}`, '');
   lines.push(`**Decision: ${r.decision.toUpperCase()}** — ${r.justification}`, '');
+  if (r.authorship) lines.push(`Candidate written by: ${r.authorship.kind === 'model' ? `a model (${r.authorship.model ?? 'not recorded'})` : 'a script'}. The evidence basis below describes how it was judged, not who wrote it.`, '');
   lines.push(`Decided by ${r.decided_by} at ${r.decided_at}. Level: ${r.level}. Experiment: \`${r.experiment_id}\`.`, '');
   lines.push('## Problem and supporting observations', '', r.problem.statement, '', `Verified failure observations cited: ${r.problem.observed_failure_count}${r.problem.observation_ids.length ? ` (for example \`${r.problem.observation_ids.slice(0, 3).join('`, `')}\`)` : ''}.`, '');
   lines.push('## Hypothesis', '', r.hypothesis, '', `Expected benefit: ${r.expected_benefit}`, '', 'Possible regressions stated in advance:', ...r.possible_regressions.map((p) => `- ${p}`), '');
