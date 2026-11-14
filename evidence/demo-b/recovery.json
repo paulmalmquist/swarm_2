@@ -1,0 +1,236 @@
+{
+  "attempts": [
+    {
+      "task": "discovery.analyze",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8121,
+      "error": null
+    },
+    {
+      "task": "planning.criteria",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8128,
+      "error": null
+    },
+    {
+      "task": "planning.contract",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8135,
+      "error": null
+    },
+    {
+      "task": "planning.plan",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8142,
+      "error": null
+    },
+    {
+      "task": "delivery.decompose",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8149,
+      "error": null
+    },
+    {
+      "task": "delivery.engine.implement",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "killed",
+      "pid": 8177,
+      "error": {
+        "code": "worker_killed",
+        "message": "fixture worker terminated by SIGKILL"
+      }
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "expired",
+      "pid": 8196,
+      "error": {
+        "code": "lease_expired",
+        "message": "No heartbeat before the lease expired"
+      }
+    },
+    {
+      "task": "delivery.engine.implement",
+      "attempt_no": 2,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8216,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt_no": 2,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8255,
+      "error": null
+    },
+    {
+      "task": "delivery.integrate",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    },
+    {
+      "task": "verification.acceptance",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "expired",
+      "pid": 8372,
+      "error": {
+        "code": "coordinator_restart",
+        "message": "Attempt was in flight when the coordinator stopped"
+      }
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt_no": 2,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": 8395,
+      "error": null
+    },
+    {
+      "task": "review.packet",
+      "attempt_no": 1,
+      "generation": 1,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    },
+    {
+      "task": "delivery.engine.implement",
+      "attempt_no": 3,
+      "generation": 2,
+      "status": "succeeded",
+      "pid": 8427,
+      "error": null
+    },
+    {
+      "task": "delivery.report.implement",
+      "attempt_no": 3,
+      "generation": 2,
+      "status": "succeeded",
+      "pid": 8447,
+      "error": null
+    },
+    {
+      "task": "delivery.integrate",
+      "attempt_no": 2,
+      "generation": 4,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    },
+    {
+      "task": "verification.acceptance",
+      "attempt_no": 2,
+      "generation": 2,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    },
+    {
+      "task": "reliability.knowledge",
+      "attempt_no": 3,
+      "generation": 4,
+      "status": "succeeded",
+      "pid": 8583,
+      "error": null
+    },
+    {
+      "task": "review.packet",
+      "attempt_no": 2,
+      "generation": 2,
+      "status": "succeeded",
+      "pid": null,
+      "error": null
+    }
+  ],
+  "impacts": [
+    {
+      "task_id": "tsk_0mwgoo5yk3y225c4b23",
+      "key": "delivery.engine.implement",
+      "action": "rerun_required",
+      "reason": "input contract/health-record changed to v2",
+      "pids": []
+    },
+    {
+      "task_id": "tsk_0mwgoo5rc2s11f3219a",
+      "key": "delivery.integrate",
+      "action": "downstream_blocked",
+      "reason": "input code/engine needs revalidation",
+      "pids": []
+    },
+    {
+      "task_id": "tsk_0mwgoo5re30c47faba4",
+      "key": "reliability.knowledge",
+      "action": "rerun_required",
+      "reason": "input contract/health-record changed to v2",
+      "pids": []
+    },
+    {
+      "task_id": "tsk_0mwgoo5re347cd34198",
+      "key": "review.packet",
+      "action": "downstream_blocked",
+      "reason": "prerequisite reliability reopened",
+      "pids": []
+    },
+    {
+      "task_id": "tsk_0mwgoo5yl42b2aeebe6",
+      "key": "delivery.report.implement",
+      "action": "rerun_required",
+      "reason": "input contract/health-record changed to v2",
+      "pids": []
+    }
+  ],
+  "coordinator_logs": {
+    "first": [
+      "[coordinator] bootstrapped mission msn_0mwgoo4ys864193b963 with a hierarchical plan",
+      "[coordinator] dispatched discovery.analyze (fixture, token g1a1)",
+      "[coordinator] dispatched planning.criteria (fixture, token g1a1)",
+      "[coordinator] dispatched planning.contract (fixture, token g1a1)",
+      "[coordinator] dispatched planning.plan (fixture, token g1a1)",
+      "[coordinator] dispatched delivery.decompose (fixture, token g1a1)",
+      "[coordinator] dispatched delivery.engine.implement (fixture, token g1a1, INJECTED FAULT slow:8000)",
+      "[coordinator] dispatched delivery.report.implement (fixture, token g1a1, INJECTED FAULT stall_then_submit:3500)",
+      "[coordinator] dispatched delivery.engine.implement (fixture, token g1a2)",
+      "[coordinator] lease expired on delivery.report.implement (attempt 1)",
+      "[coordinator] dispatched delivery.report.implement (fixture, token g1a2)",
+      "[coordinator] dispatched reliability.knowledge (fixture, token g1a1, INJECTED FAULT slow:8000)"
+    ],
+    "second": [
+      "[coordinator] recovery: 1 in-flight attempt(s) fenced, 0 call slot(s) freed",
+      "[coordinator] dispatched reliability.knowledge (fixture, token g1a2)"
+    ],
+    "third": [
+      "[coordinator] recovery: 0 in-flight attempt(s) fenced, 0 call slot(s) freed",
+      "[coordinator] dispatched delivery.engine.implement (fixture, token g2a3)",
+      "[coordinator] dispatched delivery.report.implement (fixture, token g2a3)",
+      "[coordinator] dispatched reliability.knowledge (fixture, token g4a3)"
+    ]
+  }
+}

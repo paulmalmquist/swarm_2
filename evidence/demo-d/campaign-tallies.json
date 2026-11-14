@@ -1,0 +1,43 @@
+{
+  "incumbent": {
+    "accepted": 57,
+    "rejected": 29,
+    "inconclusive": 32,
+    "pruned_before_submission": 17,
+    "ended": {
+      "budget": 11,
+      "stop": 19
+    }
+  },
+  "candidate": {
+    "accepted": 61,
+    "rejected": 7,
+    "inconclusive": 23,
+    "pruned_before_submission": 6,
+    "ended": {
+      "stop": 30
+    }
+  },
+  "sensitivity": {
+    "incumbent": {
+      "accepted": 63,
+      "rejected": 10,
+      "inconclusive": 33,
+      "pruned_before_submission": 27,
+      "ended": {
+        "budget": 12,
+        "stop": 18
+      }
+    },
+    "candidate": {
+      "accepted": 61,
+      "rejected": 7,
+      "inconclusive": 23,
+      "pruned_before_submission": 6,
+      "ended": {
+        "stop": 30
+      }
+    }
+  },
+  "note": "Per-episode records stay in the protected store; these are aggregates."
+}

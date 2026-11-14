@@ -1,0 +1,776 @@
+{
+  "mission": {
+    "id": "msn_0mwgoo2o507f4189557",
+    "title": "Shared dataset-health capability",
+    "status": "review_ready",
+    "release_id": "r1",
+    "provider_mode": "fixture"
+  },
+  "tasks": [
+    {
+      "key": "delivery",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39s2lcc12696f",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "delivery.decompose",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39x3313deaaec",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo3fx3x117150b7",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:nonempty on plan/delivery-decomposition: all required outputs are present and non-empty"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "plan/delivery-decomposition",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "550cb0e935eee122b5cdbafa915e482f8f4e50ec2d7d29033bee2772b25daf1e"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "L-DECOMP",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo3fx3x117150b7"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "delivery.engine",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3fy4197d5dbc0",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "delivery.engine.implement",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3g04d27126a3e",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo3v25136bfe5c9",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "node --test test/engine/**/*.test.ts: 4 passed, 0 failed, exit 0"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "code/engine",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "c3b706f7a2f4b9d5f2cbcb94f9c2dae3b621484bc61e96e5ebd5fe2123c1b038"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "U-ENGINE",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo3v25136bfe5c9"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "delivery.integrate",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39y3727784d95",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "runtime",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo44o5p72b00adc",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "after merging delivery.engine.implement: node --test test/engine/**/*.test.ts: 4 passed, 0 failed, exit 0"
+        },
+        {
+          "id": "evd_0mwgoo4a45wb99b7042",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "after merging delivery.report.implement: node --test test/report/**/*.test.ts: 3 passed, 0 failed, exit 0"
+        },
+        {
+          "id": "evd_0mwgoo4fj6180a430ce",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "combined result: node --test test/**/*.test.ts: 10 passed, 0 failed, exit 0"
+        },
+        {
+          "id": "evd_0mwgoo4fw65d4a76472",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "Combined result passes 10 tests"
+        },
+        {
+          "id": "evd_0mwgoo4la6e87a88c9b",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "protected acceptance suite: 5 passed, 0 failed, exit 0"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "code/integrated",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "7a469b7416d29ecd1bd16a1b4972545ff1c152624da0d306363c25aeaeb8c007"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "AC-FRESH-PROPULSION",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo4la6e87a88c9b"
+          ]
+        },
+        {
+          "criterion_id": "AC-SCHEMA-SUPPLY",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo4la6e87a88c9b"
+          ]
+        },
+        {
+          "criterion_id": "AC-SLA-QUALITY",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo4la6e87a88c9b"
+          ]
+        },
+        {
+          "criterion_id": "AC-POLICY-FDE",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo4la6e87a88c9b"
+          ]
+        },
+        {
+          "criterion_id": "AC-CONTRACT",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo4la6e87a88c9b"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "delivery.report",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3fz47a237ad97",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "delivery.report.implement",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3g14hbef4c4ef",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo3xh5afe6342cb",
+          "kind": "test_result",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "node --test test/report/**/*.test.ts: 3 passed, 0 failed, exit 0"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "code/report",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "74b2fb33249a019997e795939c072d270a1ca5b78f640f8fc90f6c5fbe7305d1"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "U-REPORT",
+          "verdict": "pass",
+          "independent": true,
+          "method": "executable",
+          "evidence_ids": [
+            "evd_0mwgoo3xh5afe6342cb"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "discovery",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2of0i6696fbe8",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "discovery.analyze",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2oi0u786cdde5",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo2rx04c60e9b8c",
+          "kind": "source_excerpt",
+          "epistemic": "observed_fact",
+          "origin": "business",
+          "statement": "syn-req-001 (Propulsion Test) states: \"Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_t…"
+        },
+        {
+          "id": "evd_0mwgoo2ry05d4155e9e",
+          "kind": "source_excerpt",
+          "epistemic": "observed_fact",
+          "origin": "business",
+          "statement": "syn-req-002 (Supply Chain Analytics) states: \"The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check tha…"
+        },
+        {
+          "id": "evd_0mwgoo2ry06bdc13596",
+          "kind": "source_excerpt",
+          "epistemic": "observed_fact",
+          "origin": "business",
+          "statement": "syn-req-003 (Manufacturing Quality) states: \"For the weekly ops review I need an SLA report on the freshness of our NCR tables, grouped by owner team. If a dat…"
+        },
+        {
+          "id": "evd_0mwgoo2ry0787db50c3",
+          "kind": "source_excerpt",
+          "epistemic": "observed_fact",
+          "origin": "business",
+          "statement": "syn-req-004 (Forward Deployed Engineering) states: \"Three forward deployed engineers each hand-rolled their own dataset freshness checks with different thresho…"
+        },
+        {
+          "id": "evd_0mwgoo2ry08fc7ec5d3",
+          "kind": "analysis",
+          "epistemic": "interpretation",
+          "origin": "agent",
+          "statement": "The consolidated requests can be served by one capability. This is an interpretation: lexical overlap nominated it and the stakeholders have not confirmed it."
+        },
+        {
+          "id": "evd_0mwgoo2sc1g5f130f56",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:overlap_report on discovery/overlap-report: 4 distinct needs recorded for 4 consolidated requests"
+        },
+        {
+          "id": "evd_0mwgoo2se1j5ef7ac21",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:epistemics on discovery/overlap-report: observed facts: 4, interpretations: 1, unknowns: 3"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "discovery/overlap-report",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "a7eff5848ca4ecfcb0247dfb4630814887f13837388a1dc475a65c67f2f5df68"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "D-OVERLAP",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo2sc1g5f130f56"
+          ]
+        },
+        {
+          "criterion_id": "D-EPISTEMICS",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo2se1j5ef7ac21"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "planning",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2oh0ob7e0a68d",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "planning.contract",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2oi0y639b1773",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo33l26dea619b3",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:contract on contract/health-record: contract version 1 with 5 required fields"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "contract/health-record",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "c1e5d895129fee4cb109d6c8459e43351ab30d56b1707fa17671d57f631874fb"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "P-CONTRACT",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo33l26dea619b3"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "planning.criteria",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2oi0y639b1773",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo2yl1y80f5b156",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:criteria on plan/acceptance-criteria: 4 stakeholder needs each map to a criterion"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "plan/acceptance-criteria",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "e734cc997ed6eccb1235624901a3a9dc739a42e114f648b697854083572f3fce"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "P-CRITERIA",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo2yl1y80f5b156"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "planning.plan",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo2ok157554a80f",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo39p2hccceb883",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:nonempty on plan/work-graph: all required outputs are present and non-empty"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "plan/work-graph",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "7ff02f0c09831e8165891e0f6676bf4477f04a82fbf09aec869991de0e701a9d"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "P-PLAN",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo39p2hccceb883"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "reliability",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39w2x86164f73",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "reliability.knowledge",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3a03f08cabb63",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "fixture",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo4qk7483dd8eef",
+          "kind": "inspection",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "inspect:knowledge on knowledge/mission-notes: 3 notes each carry kind, scope and source"
+        }
+      ],
+      "artifacts": [
+        {
+          "key": "knowledge/mission-notes",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "c5bb53f43a93e843f5d6d69cc86e603d434a001fadcdee0d294a5c5e9013582b"
+        }
+      ],
+      "verifications": [
+        {
+          "criterion_id": "K-PROVENANCE",
+          "verdict": "pass",
+          "independent": true,
+          "method": "inspection",
+          "evidence_ids": [
+            "evd_0mwgoo4qk7483dd8eef"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "review.packet",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo3a13jbe6468d7",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "runtime",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [],
+      "artifacts": [
+        {
+          "key": "review/packet",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "0e26e08660e076fb75566b2f8f07841f99c3840b2d820a2acf6760d96b347470"
+        },
+        {
+          "key": "review/packet.md",
+          "version_no": 1,
+          "currency": "current",
+          "content_hash": "8da01617980537db80c72ea86a44d38f9a14ea9accde8b362894d984c69584af"
+        }
+      ],
+      "verifications": []
+    },
+    {
+      "key": "verification",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39u2r2ff2f210",
+      "generation": 1,
+      "attempts": [],
+      "evidence": [],
+      "artifacts": [],
+      "verifications": []
+    },
+    {
+      "key": "verification.acceptance",
+      "status": "accepted",
+      "owner_id": "agt_0mwgoo39z3bc47eb796",
+      "generation": 1,
+      "attempts": [
+        {
+          "attempt_no": 1,
+          "status": "succeeded",
+          "provider": "runtime",
+          "model_requested": null,
+          "model_actual": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evd_0mwgoo4ld6p8bfa4c81",
+          "kind": "verification",
+          "epistemic": "observed_fact",
+          "origin": "runtime",
+          "statement": "delivery.integrate: 5/5 criteria pass at 371c356a38"
+        }
+      ],
+      "artifacts": [],
+      "verifications": []
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_0mwgoo4te7i8e345085",
+      "kind": "outward_action",
+      "status": "open",
+      "chosen": null,
+      "owner_id": "chief_of_staff",
+      "superseded_by": null
+    }
+  ],
+  "outcome": {
+    "id": "out_0mwgoo4ur7ue4c08276",
+    "mission_id": "msn_0mwgoo2o507f4189557",
+    "task_id": null,
+    "terminal_state": "accepted",
+    "verified_success": true,
+    "criterion_results": [
+      {
+        "criterion_id": "L-DECOMP",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "U-ENGINE",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "AC-FRESH-PROPULSION",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "AC-SCHEMA-SUPPLY",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "AC-SLA-QUALITY",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "AC-POLICY-FDE",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "AC-CONTRACT",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "U-REPORT",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "D-OVERLAP",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "D-EPISTEMICS",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "P-CONTRACT",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "P-CRITERIA",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "P-PLAN",
+        "verdict": "pass",
+        "independent": true
+      },
+      {
+        "criterion_id": "K-PROVENANCE",
+        "verdict": "pass",
+        "independent": true
+      }
+    ],
+    "escaped_defects": null,
+    "rework_count": 0,
+    "integration_failures": 0,
+    "human_corrections": 0,
+    "recovery_events": 0,
+    "total_usage": {
+      "model_calls": 8,
+      "worker_invocations": 11,
+      "tokens": 0,
+      "cost_usd_est": 0,
+      "wall_ms": 986
+    },
+    "elapsed_ms": 2829,
+    "critical_path_wait_ms": 144,
+    "messages": 0,
+    "message_bytes": 0,
+    "release_id": "r1",
+    "source": "fixture",
+    "label_source": "executable_check",
+    "created_at": "2026-11-14T17:32:20.504Z"
+  },
+  "memories": [
+    {
+      "id": "mem_0mwgoo4qn78fd227751",
+      "kind": "fact",
+      "certainty": "verified",
+      "status": "active"
+    },
+    {
+      "id": "mem_0mwgoo4qn79717d47f7",
+      "kind": "decision",
+      "certainty": "verified",
+      "status": "active"
+    },
+    {
+      "id": "mem_0mwgoo4qn7ac4abf6b2",
+      "kind": "procedure",
+      "certainty": "untested",
+      "status": "active"
+    },
+    {
+      "id": "mem_0mwgoo4qn7bf8b3b6aa",
+      "kind": "skill_candidate",
+      "certainty": "untested",
+      "status": "active"
+    }
+  ],
+  "observations": []
+}

@@ -1,0 +1,41 @@
+{
+  "id": "can_0mwgoobtf9se9d96122",
+  "release_id": "r2",
+  "prior_release_id": "r1",
+  "scope": {
+    "max_missions": 2,
+    "data_class": "synthetic",
+    "scenario": null
+  },
+  "status": "retained",
+  "missions": [],
+  "observations": [
+    {
+      "at": "2026-11-14T17:32:29.524Z",
+      "metric": "accuracy_drop_vs_approval",
+      "value": 0,
+      "threshold": 0.05,
+      "breached": false,
+      "injected": false
+    },
+    {
+      "at": "2026-11-14T17:32:29.524Z",
+      "metric": "escaped_defect_rate_increase",
+      "value": 0,
+      "threshold": 0.02,
+      "breached": false,
+      "injected": false
+    },
+    {
+      "at": "2026-11-14T17:32:29.524Z",
+      "metric": "canary_missions_with_acceptance_failures",
+      "value": null,
+      "threshold": 0,
+      "breached": false,
+      "injected": false
+    }
+  ],
+  "started_at": "2026-11-14T17:32:29.523Z",
+  "ended_at": "2026-11-14T17:32:29.583Z",
+  "reason": "no breach observed"
+}

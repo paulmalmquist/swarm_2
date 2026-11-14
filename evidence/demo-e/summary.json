@@ -1,0 +1,41 @@
+{
+  "demo": "e",
+  "title": "Rejection of a candidate that omits required verification",
+  "labels": [
+    "DETERMINISTIC FIXTURE EVALUATION — executable validators on synthetic cases; no model was run"
+  ],
+  "steps": [
+    {
+      "claim": "The candidate really is cheaper",
+      "observed": "steps per review 2 → 1",
+      "ok": true
+    },
+    {
+      "claim": "It is cheaper because it omits a required verification step",
+      "observed": "The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.",
+      "ok": true
+    },
+    {
+      "claim": "The release gate rejects it; a hard gate cannot be outscored",
+      "observed": "Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.",
+      "ok": true
+    },
+    {
+      "claim": "The omission has a measured consequence on held-out cases",
+      "observed": "share of breaking changes approved 0.8 → 1",
+      "ok": true
+    },
+    {
+      "claim": "The rejected candidate and its result are preserved",
+      "observed": "candidate ad307fc1e0c2ada6 kept in custody; receipt rcpt_0mwgoorsoa63622eb68",
+      "ok": true
+    }
+  ],
+  "files": [
+    "fast-review-rejected.receipt.json",
+    "fast-review-rejected.receipt.md",
+    "README.md"
+  ],
+  "ok": true,
+  "ms": 375
+}

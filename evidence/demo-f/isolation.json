@@ -1,0 +1,17 @@
+{
+  "capability": {
+    "uid_separation": true,
+    "candidate_uid": 65534,
+    "node_permission_model": true,
+    "mode": "enforced",
+    "notes": [
+      "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+    ]
+  },
+  "what_is_enforced": "Candidate code (validators and policies) executes under a separate operating-system user with Node's permission model on top; the protected rules, held-out cases, evaluation records and release registry are owned by the gate's user with mode 0700.",
+  "what_is_only_procedural": [
+    "A live model worker acting as candidate author runs as the operator user in this build; whether `claude -p` can authenticate under the candidate uid was not verified.",
+    "The held-out generator is committed in this repository for reproducibility, so an author with repository read access as the operator user could read it.",
+    "The operator account (root here) can edit the protected store; that is detected by digest comparison, not prevented."
+  ]
+}
