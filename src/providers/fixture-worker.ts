@@ -119,7 +119,8 @@ async function main(): Promise<void> {
   const usage: UsageRecord = {
     source: 'fixture-worker',
     meter_kind: 'fixture_declared',
-    call_count: 1,
+    // A fixture worker makes no model call. Reporting one would misstate what ran.
+    call_count: 0,
     input_units: null,
     output_units: null,
     cache_read_units: null,
