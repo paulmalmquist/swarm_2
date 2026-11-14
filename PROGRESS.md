@@ -4,8 +4,9 @@ Durable notes so the work survives a context reset. Read this first, then `docs/
 
 ## State
 
-All seven increments of the build order are complete and pushed on branch
-`claude/swarm-2-agent-org-ffiy5j` (draft pull request #1).
+All seven increments of the build order are complete and merged into `main` (pull request #1,
+merged 2026-11-14). Follow-up work goes on branch `claude/swarm-2-agent-org-ffiy5j`, restarted from
+`main`, as a new pull request.
 
 | Increment | State | Where to look |
 |---|---|---|

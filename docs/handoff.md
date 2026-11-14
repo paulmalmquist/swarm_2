@@ -103,4 +103,5 @@ Stopping loses nothing: the next run resumes from stored state.
 4. **The promotion rules.** The thresholds in `protected/policy.json` are first settings.
    Changing them is your decision; no experiment can.
 
-The pull request is a draft. Nothing has been merged.
+Pull request #1, which carries everything described here, was merged into `main` on 2026-11-14.
+Later corrections arrive as separate pull requests.
