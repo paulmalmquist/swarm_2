@@ -40,7 +40,8 @@ Through durable state and contracts, not conversation.
   recovery and completion is set aside before delivery starts.
 - What needs a person **comes to you as a decision** with options and consequences: a merge
   approval, a conflict, work that failed for good, a worker that is blocked, a limit reached, a
-  request the analysis left out of scope, a proposed change to the rules.
+  mission that has stopped because nothing in it can run, a request the analysis left out of
+  scope, a proposed change to the rules.
 
 ## What did it attempt to improve?
 
@@ -57,16 +58,16 @@ Through durable state and contracts, not conversation.
 
 - **Live, small:** three missions and two improvement runs with real models. Enough to show the
   organization works with real workers and where it broke; not enough to state any rate.
-- **Fixture:** nine demonstrations and 62 tests show the machinery — ownership, recovery,
+- **Fixture:** nine demonstrations and 63 tests show the machinery — ownership, recovery,
   invalidation, isolation, the gate, trial and rollback — behaves as designed with scripted workers.
 - **Simulation:** the coordination and improvement-process comparisons rest on testbeds with
   assumed rates, written by the same author as the candidates. One accepted result is narrow and
   disappears under a sensitivity check; the report says so.
 
 Running it with real workers found eleven defects that scripted workers never triggered. Checking
-the report against its own evidence afterwards found three more: two in how spend was counted,
-and one that could leave a result waiting for good on a check that had crashed. All are listed in
-the report with what was changed. Three things worth knowing before relying on it:
+the report against its own evidence afterwards found four more: two in how spend was counted, and
+two that could leave a mission stopped with nobody told. All are listed in the report with what
+was changed. Three things worth knowing before relying on it:
 
 1. Acceptance tests in the scenario are pre-written. One of them demands something no requirement
    states, and that cost a live mission its repair limit. In real use, someone has to own the tests.

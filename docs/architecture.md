@@ -104,8 +104,14 @@ freshness is reused across missions instead of repeated. Commands carry idempote
 is a no-op, and a reused key with a different body is quarantined.
 
 **Recovery.** Everything needed to resume is in the store. A new coordinator fences attempts left
-in flight, stops orphaned worker processes, frees their call slots and continues. Nothing is
-reconstructed from chat history.
+in flight, stops orphaned worker processes, frees their call slots and continues. A result whose
+check did not finish is checked again. Nothing is reconstructed from chat history.
+
+**Stopping.** A mission does not sit idle unannounced. Work that fails for good, a wall-clock
+limit, and work left with nothing able to run each stop the mission, mark it blocked and put one
+decision to the chief of staff. A worker that says it is blocked puts its question to the chief
+of staff while the rest of the mission continues. Waiting for provider capacity is the exception:
+it resumes by itself and is the operator's to watch.
 
 **External effects.** An effect outside the store is recorded as an intent first. If its outcome is
 unknown the target is asked what happened before anything is retried (`performEffect` in

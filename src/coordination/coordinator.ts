@@ -46,6 +46,8 @@ export class Coordinator {
   private running = new Map<string, Running>();
   private busy = new Set<string>();
   private pending = new Set<Promise<void>>();
+  /** Consecutive passes on which a mission had work left and nothing able to run. */
+  private stalledPasses = new Map<string, number>();
   private defsCache = new Map<string, ReleaseDefs>();
   log: (msg: string) => void;
   /** Set by the memory module: turns accepted knowledge notes into scoped memories. */
@@ -559,7 +561,59 @@ export class Coordinator {
       kernel.setMissionStatus(mission_id, 'review_ready', 'runtime', { reason: 'all work accepted; awaiting the decision in the review packet' });
       return true;
     }
-    return false;
+    return this.askIfStalled(m);
+  }
+
+  /**
+   * Work remains, nothing is in flight and nothing can start: the mission has stopped. A blocker
+   * with an owner's name on it is visible to whoever looks, but it is in nobody's queue, so a stop
+   * that no one has been asked about is put to a person, once, and the mission is no longer shown
+   * as running. Two things are not a stop: waiting for provider capacity, which resumes by itself,
+   * and waiting on a decision a person already has.
+   */
+  private askIfStalled(m: Mission): boolean {
+    const { kernel, store, comms } = this.rt;
+    const clear = (): boolean => {
+      this.stalledPasses.delete(m.id);
+      return false;
+    };
+    // Readiness is settled first, so the gap between one step finishing and the next becoming
+    // ready is never mistaken for a stop.
+    if (kernel.refreshReadiness(m.id).length) {
+      this.stalledPasses.delete(m.id);
+      return true;
+    }
+    const tasks = store.tasks.where('"mission_id" = ?', m.id);
+    const inFlight = [...this.running.values()].map((r) => r.task_id).concat([...this.busy]).some((id) => store.tasks.get(id)?.mission_id === m.id);
+    if (inFlight || tasks.some((t) => ['ready', 'leased', 'submitted', 'verifying'].includes(t.status))) return clear();
+    if (tasks.some((t) => t.status === 'blocked' && ['provider_rate_limited', 'provider_unavailable'].includes(t.blocked_reason ?? ''))) return clear();
+    if (store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).some((d) => d.requires_human)) return clear();
+    const left = tasks.filter((t) => !['accepted', 'cancelled', 'not_selected'].includes(t.status));
+    if (left.length === 0) return clear();
+    // Seen on two passes in a row before anyone is asked.
+    const passes = (this.stalledPasses.get(m.id) ?? 0) + 1;
+    this.stalledPasses.set(m.id, passes);
+    if (passes < 2) return false;
+    this.stalledPasses.delete(m.id);
+    const blocked = left.filter((t) => t.status === 'blocked');
+    const shown = (blocked.length ? blocked : left.filter((t) => t.executor !== 'container')).slice(0, 4);
+    const why = shown.map((t) => `"${t.title}" is ${t.status}${t.blocked_reason ? ` (${t.blocked_reason})` : ''}${t.next_action ? `, waiting on ${t.next_action.owner_id}: ${truncate(t.next_action.action, 120)}` : ''}`).join('; ');
+    comms.openDecision({
+      mission_id: m.id,
+      task_id: shown[0]?.id ?? null,
+      kind: 'stalled',
+      question: `"${m.title}" has stopped: nothing in it can run, and ${left.length} task(s) are not finished. ${why}. What should happen?`,
+      owner_id: 'chief_of_staff',
+      owner_kind: 'chief_of_staff',
+      requires_human: true,
+      options: [
+        { id: 'resume', label: 'Release the blocked work and try again', evidence_ids: [], consequences: ['Blocked tasks are released for another attempt', 'If what stopped them has not changed, the mission stops again and asks again'], proposed_by: 'runtime' },
+        { id: 'cancel', label: 'Cancel the mission and keep its artifacts', evidence_ids: [], consequences: ['Reservations are released', 'Finished artifacts stay available'], proposed_by: 'runtime' },
+        { id: 'hold', label: 'Hold it for investigation', evidence_ids: [], consequences: ['Nothing further runs on this mission'], proposed_by: 'runtime' },
+      ],
+    });
+    kernel.setMissionStatus(m.id, 'blocked', 'runtime', { reason: 'nothing can run', unfinished: left.length });
+    return true;
   }
 
   private stopMissionWorkers(mission_id: string): void {

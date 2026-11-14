@@ -325,8 +325,19 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
           kernel.unblock(t.id, cmd.actor, `retry decided by ${cmd.actor}: ${cmd.data.rationale}`);
           effect = 'task released for another attempt';
         }
-      } else if (['failure_escalation', 'limit_reached', 'blocked_work'].includes(decision.kind) && decision.chosen === 'cancel') {
-        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : 'failure'}: ${cmd.data.rationale}` } });
+      } else if (decision.kind === 'blocked_work' && decision.chosen === 'hold' && ['planning', 'active'].includes(m.status)) {
+        // Held by a person: the mission is no longer shown as running, and is not asked about again.
+        kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'held for investigation by the chief of staff' });
+        effect = 'mission held; nothing further runs on it';
+      } else if (decision.kind === 'stalled' && decision.chosen === 'resume' && m.status === 'blocked') {
+        // Whatever was blocked gets another attempt. If the cause is unchanged it blocks again, and
+        // the mission stops and asks again: a person is in the loop each time round.
+        const released = store.tasks.where(`"mission_id" = ? AND "status" = 'blocked'`, m.id);
+        for (const t of released) kernel.unblock(t.id, cmd.actor, `resume decided by ${cmd.actor}: ${cmd.data.rationale}`);
+        kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'resumed by the chief of staff after a stop' });
+        effect = `${released.length} blocked task(s) released; mission resumed`;
+      } else if (['failure_escalation', 'limit_reached', 'blocked_work', 'stalled'].includes(decision.kind) && decision.chosen === 'cancel') {
+        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : decision.kind === 'stalled' ? 'it stopped with nothing able to run' : 'failure'}: ${cmd.data.rationale}` } });
         effect = 'mission cancelled; artifacts kept';
       } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
         // Only a person can extend a ceiling. The extension is one more period of the configured length.

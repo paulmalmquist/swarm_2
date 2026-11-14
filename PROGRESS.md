@@ -8,8 +8,8 @@ All seven increments of the build order are complete and merged into `main` (pul
 merged 2026-11-14). Follow-up work goes on branch `claude/swarm-2-agent-org-ffiy5j`, restarted from
 `main`, as a new pull request.
 
-Pull request #2 carries what auditing the evidence report turned up: three runtime defects fixed
-(two in spend accounting, one that stranded a result whose check had crashed), thirteen tests
+Pull request #2 carries what auditing the evidence report turned up: four runtime defects fixed
+(two in spend accounting, two that could leave a mission stopped with nobody told), fourteen tests
 added, the report corrected, and a test that rebuilds the report's figures from `evidence/`
 (`docs/evidence-report.md`, sections 5 and 9).
 
@@ -30,7 +30,7 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 62 tests, about two minutes
+npm test                           # 63 tests, about two minutes
 npm run check:report               # the figures the documents quote, rebuilt from evidence/
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration

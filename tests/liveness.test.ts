@@ -163,6 +163,58 @@ test('a result left mid-check by a coordinator that stopped is checked again by 
   }
 });
 
+test('a mission in which nothing can run stops and asks a person; one waiting for capacity does not', async () => {
+  const { rt, cleanup } = freshRuntime();
+  const co = new Coordinator(rt);
+  try {
+    const { cos, mission, task } = await readyTask(rt, co, 'stalled');
+    // The state the kernel leaves when a task has no budget for another attempt: a blocker with a
+    // next action for the chief of staff, and until now no decision in anyone's queue.
+    rt.kernel.block(rt.store.tasks.must(task.id), 'budget_exhausted', { owner_id: 'chief_of_staff', owner_kind: 'chief_of_staff', action: `Budget exhausted for: ${task.title}`, since: rt.store.clock.iso() });
+    assert.equal(await co.runUntilIdle({ mission_id: mission.id, max_ms: 30_000 }), 'idle');
+    await co.drain();
+
+    const d = rt.store.decisions.first(`"mission_id" = ? AND "kind" = 'stalled' AND "status" = 'open'`, mission.id)!;
+    assert.ok(d, 'the stop reaches a person as a decision');
+    assert.equal(d.requires_human, true);
+    assert.equal(d.owner_kind, 'chief_of_staff');
+    assert.match(d.question, /nothing in it can run/i);
+    assert.match(d.question, /budget_exhausted/, 'it says what is in the way');
+    assert.deepEqual(d.options.map((o) => o.id), ['resume', 'cancel', 'hold']);
+    assert.equal(rt.store.missions.must(mission.id).status, 'blocked', 'and the mission is no longer shown as running');
+    const att = cos.attention();
+    assert.ok(att.source !== 'unavailable' && att.items.some((i) => i.id === d.id));
+    await co.tick(mission.id);
+    assert.equal(rt.store.decisions.where(`"mission_id" = ? AND "kind" = 'stalled'`, mission.id).length, 1, 'asked once');
+
+    const res = cos.resolveDecision({ command: 'resolveDecision', actor: 'paul', key: 'stalled-resume', data: { decision_id: d.id, chosen: 'resume', rationale: 'the budget was raised' } });
+    assert.ok(res.source !== 'unavailable' && /released/.test(res.effect));
+    assert.equal(rt.store.missions.must(mission.id).status, 'active');
+    await co.runUntilIdle({ mission_id: mission.id, max_ms: 30_000 });
+    await co.drain();
+    assert.equal(rt.store.missions.must(mission.id).status, 'review_ready', 'released work runs and the mission completes');
+  } finally {
+    co.stop();
+    cleanup();
+  }
+
+  // Waiting for provider capacity is not a stall: it resumes by itself and belongs to the operator.
+  const second = freshRuntime();
+  const co2 = new Coordinator(second.rt);
+  try {
+    const { mission, task } = await readyTask(second.rt, co2, 'capacity');
+    second.rt.kernel.block(second.rt.store.tasks.must(task.id), 'provider_rate_limited', { owner_id: 'operator', owner_kind: 'operator', action: 'Provider capacity exhausted', since: second.rt.store.clock.iso() });
+    // The fixture provider has capacity, so the coordinator releases the task itself and finishes.
+    await co2.runUntilIdle({ mission_id: mission.id, max_ms: 30_000 });
+    await co2.drain();
+    assert.equal(second.rt.store.decisions.where(`"mission_id" = ? AND "kind" = 'stalled'`, mission.id).length, 0);
+    assert.equal(second.rt.store.missions.must(mission.id).status, 'review_ready');
+  } finally {
+    co2.stop();
+    second.cleanup();
+  }
+});
+
 test('the test command given to implementers runs on this Node version', () => {
   const policy = JSON.parse(readFileSync(join(REPO_ROOT, 'definitions/coordination/v1/coordination.json'), 'utf8')) as CoordinationDef;
   const coders = decomposePlan(policy).tasks;

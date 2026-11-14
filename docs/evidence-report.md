@@ -29,7 +29,7 @@ Strongbox or Paul OS was reachable (`docs/capability-matrix.md`).
 | Provider and chief-of-staff adapters | Built: a fixture provider, a live `claude -p` provider, a local chief-of-staff port over three transports | `src/providers/`, `src/cos/port.ts` |
 | Separation of real execution from fixtures | Built: provenance on every response, per-attempt provider, evidence basis on every release | `docs/architecture.md` §8 |
 | Executable evaluation and promotion mechanism | Built: release gate, held-out sets, receipts, canary, rollback | `src/gate/` |
-| Tests for coordination, recovery, isolation, rollback | 62 tests, all passing | `tests/` |
+| Tests for coordination, recovery, isolation, rollback | 63 tests, all passing | `tests/` |
 | Reproducible demonstration commands | Nine fixture demonstrations, two live drivers | `demos/`, `package.json` |
 | Example improvement receipts and release manifests | In every improvement bundle | `evidence/demo-c`, `-d`, `-e`, `-g`, `-h`, `-i`, `live-improve*` |
 | Architecture and integration documentation, operator guide | Written | `docs/` |
@@ -181,7 +181,7 @@ was restored; 2 missions, 12 artifacts and 4 memories
 that depended on the withdrawn release were identified and marked; one decision was opened about
 the mission still in flight.
 
-**Tests.** 62 tests pass in about two minutes: ownership and fencing, dependencies and
+**Tests.** 63 tests pass in about two minutes: ownership and fencing, dependencies and
 invalidation, budgets and authority, idempotency, cancellation, a full mission, five execution
 patterns, recovery, the gate, isolation, canary and rollback, the arena, communication, connectors
 and reconciled effects, limits, the portfolio, escalation and scope change, spend accounting,
@@ -260,7 +260,7 @@ workers both arrangements produce the same code, and no live comparison was run.
 
 Failures of the system, in the order they were found. Each is fixed unless it says otherwise,
 and each fix has a test that exercises the corrected behaviour. Items 1 to 11 were found by running real workers, 12 and 13 by reasoning
-while building, and 14 to 16 by checking this report against its evidence and against its own
+while building, and 14 to 17 by checking this report against its evidence and against its own
 claims (section 9).
 
 1. **A worker-declared artifact path that was a directory stranded its task** (first live run).
@@ -301,6 +301,12 @@ claims (section 9).
     had started, so the mission would have sat idle with nobody told. Found by writing the test
     item 5 did not have. Such a result is now checked again, by the same coordinator or the next
     one, and after three errors it goes back to its author and then to a person.
+17. **A mission could stop with nobody asked.** A task that had run out of budget, hit the
+    invocation cap or was waiting for a human review was shown as a blocker with an owner's name
+    on it, but nothing was put in anyone's queue: the mission stayed "active" and the coordinator
+    went idle. Found by looking for other ways into the state in item 16. A mission with work left
+    and nothing able to run now stops, is shown as blocked, and asks the chief of staff once:
+    release the blocked work, cancel, or hold. Waiting for provider capacity is not a stop.
 
 Experiments that did not go the candidate's way, which is the gate working: the naive scripted
 check, the cheaper check that skipped a required step, the tampering candidate, both first
@@ -367,7 +373,7 @@ the interface's metrics; it is not used as a measure of success anywhere.
 ## 8. Reproduce
 
 ```
-npm test                                     # 62 tests
+npm test                                     # 63 tests
 npm run demo:all                             # demonstrations A–I; rewrites evidence/demo-*
 npm run check:report                         # the figures quoted here, rebuilt from evidence/
 SWARM2_LIVE=1 node demos/live.ts live-x      # a live mission; writes evidence/live-x
@@ -393,7 +399,7 @@ command gave a blocked mission twice and a reviewable one once, for the reasons 
    - `live-b`'s cost given without saying that three stopped attempts are missing from it, and
      behind that the two accounting defects in section 5, items 14 and 15;
    - "each has a test", which was untrue for five of the fixes. The tests were then written, and
-     one of them failed: item 16;
+     one of them failed: item 16. Looking for other ways into that state found item 17;
    - 832 output tokens that were 830, and a description of the rejected candidates' false alarms
      that the receipts do not itemize.
 3. **Mechanically, from now on.** `tests/report.test.ts` rebuilds ninety quoted figures from the
