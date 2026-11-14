@@ -1,7 +1,7 @@
 {
   "outcome": {
-    "id": "out_0mwgs1x6y7w21cc0a1c",
-    "mission_id": "msn_0mwgs1usx07efa05d3e",
+    "id": "out_0mwgxr5nc7w07a05d4f",
+    "mission_id": "msn_0mwgxr3ik07242382f5",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -87,16 +87,16 @@
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 1103
+      "wall_ms": 946
     },
-    "elapsed_ms": 3095,
+    "elapsed_ms": 2762,
     "critical_path_wait_ms": 118,
     "messages": 1,
     "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T19:07:02.605Z"
+    "created_at": "2026-11-14T21:46:38.043Z"
   },
   "critical_path": {
     "keys": [
@@ -127,12 +127,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 14,
+        "wall_ms": 13,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:06:59.692Z"
+        "observed_at": "2026-11-14T21:46:35.411Z"
       }
     },
     {
@@ -149,12 +149,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 15,
+        "wall_ms": 12,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:06:59.973Z"
+        "observed_at": "2026-11-14T21:46:35.677Z"
       }
     },
     {
@@ -171,12 +171,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 14,
+        "wall_ms": 8,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.194Z"
+        "observed_at": "2026-11-14T21:46:35.865Z"
       }
     },
     {
@@ -198,7 +198,7 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.401Z"
+        "observed_at": "2026-11-14T21:46:36.082Z"
       }
     },
     {
@@ -215,12 +215,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 11,
+        "wall_ms": 7,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.682Z"
+        "observed_at": "2026-11-14T21:46:36.300Z"
       }
     },
     {
@@ -237,12 +237,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 81,
+        "wall_ms": 72,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:01.063Z"
+        "observed_at": "2026-11-14T21:46:36.707Z"
       }
     },
     {
@@ -259,12 +259,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 56,
+        "wall_ms": 53,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:01.112Z"
+        "observed_at": "2026-11-14T21:46:36.765Z"
       }
     },
     {
@@ -281,12 +281,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 678,
+        "wall_ms": 568,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.084Z"
+        "observed_at": "2026-11-14T21:46:37.564Z"
       }
     },
     {
@@ -303,12 +303,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 192,
+        "wall_ms": 171,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.305Z"
+        "observed_at": "2026-11-14T21:46:37.740Z"
       }
     },
     {
@@ -325,12 +325,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 9,
+        "wall_ms": 10,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.427Z"
+        "observed_at": "2026-11-14T21:46:37.858Z"
       }
     },
     {
@@ -347,12 +347,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 20,
+        "wall_ms": 19,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.553Z"
+        "observed_at": "2026-11-14T21:46:37.994Z"
       }
     }
   ]

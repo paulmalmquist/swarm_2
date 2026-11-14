@@ -83,8 +83,9 @@
 #242 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SLA-QUALITY
 #243 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-POLICY-FDE
 #244 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-CONTRACT
-#253 task_leased key=reliability.knowledge token=g4a3
-#259 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
-#264 budget_reopened key=review.packet
-#266 task_leased key=review.packet token=g2a2
-#274 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready
+#252 budget_reopened key=reliability.knowledge
+#254 task_leased key=reliability.knowledge token=g4a3
+#260 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
+#265 budget_reopened key=review.packet
+#267 task_leased key=review.packet token=g2a2
+#275 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready

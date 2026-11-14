@@ -37,7 +37,7 @@
 #43 task_status_changed key=planning.contract to=verifying
 #44 verification_recorded key=planning.contract verdict=pass criterion_id=P-CONTRACT
 #45 task_accepted key=planning.contract
-#46 handoff_offered to=agt_0mwgs1uti157fe87d7d
+#46 handoff_offered to=agt_0mwgxr3j815ecf19ac4
 #47 task_ready key=planning.plan
 #48 task_leased key=planning.plan token=g1a1
 #49 handoff_accepted
@@ -77,7 +77,7 @@
 #83 task_created key=delivery.engine.implement
 #84 task_created key=delivery.report.implement
 #85 plan_materialized
-#86 handoff_offered to=agt_0mwgs1vir393631d2c7
+#86 handoff_offered to=agt_0mwgxr45x390828bd9d
 #87 task_ready key=delivery.engine
 #88 task_ready key=delivery.report
 #89 task_ready key=delivery.engine.implement
@@ -124,7 +124,7 @@
 #130 result_submitted key=verification.acceptance token=g1a1 status=completed
 #131 task_accepted key=verification.acceptance
 #132 task_accepted key=delivery.integrate
-#133 handoff_offered to=agt_0mwgs1vis3h146e66ed
+#133 handoff_offered to=agt_0mwgxr45y3hc64b4b95
 #134 task_ready key=reliability.knowledge
 #135 swarm_completed
 #136 task_status_changed key=delivery to=accepted

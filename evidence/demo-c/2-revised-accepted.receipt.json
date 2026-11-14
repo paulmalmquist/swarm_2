@@ -1,27 +1,28 @@
 {
-  "receipt_id": "rcpt_0mwgs24d29s998359dd",
-  "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+  "receipt_id": "rcpt_0mwgxrcj49s4d208c8a",
+  "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract. A first attempt blocked top-level breaks but also blocked safe additions.",
     "observation_ids": [
-      "obs_0mwgs23r894f3dc7bc4",
-      "obs_0mwgs23r895b0608f2a",
-      "obs_0mwgs23r8967ccb85d4",
-      "obs_0mwgs23r897796e93c5",
-      "obs_0mwgs23r898973c820a",
-      "obs_0mwgs23r8994eecbacb",
-      "obs_0mwgs23r89a2730dfad",
-      "obs_0mwgs23r89bd656cc2e",
-      "obs_0mwgs23r89c736c898d",
-      "obs_0mwgs23r89dd6f6f0b7",
-      "obs_0mwgs23r89ee2582ac5",
-      "obs_0mwgs23r89f22f643cb",
-      "obs_0mwgs23r99g44d2b1db"
+      "obs_0mwgxrbx89427fe4218",
+      "obs_0mwgxrbx8958b800a3a",
+      "obs_0mwgxrbx896b57af02c",
+      "obs_0mwgxrbx897ccb9fca3",
+      "obs_0mwgxrbx8989465f196",
+      "obs_0mwgxrbx89918a19d28",
+      "obs_0mwgxrbx89a6b635954",
+      "obs_0mwgxrbx99b918c5183",
+      "obs_0mwgxrbx99c8e933df0",
+      "obs_0mwgxrbx99dbd1f45cf",
+      "obs_0mwgxrbx99e7f793b98",
+      "obs_0mwgxrbx99f83eaea45",
+      "obs_0mwgxrbx99ge761b47d"
     ],
     "observed_failure_count": 13
   },
   "hypothesis": "If the comparison walks nested fields and treats only removals, narrowing type changes, newly required fields, removed enum values and unit changes as breaking, breaking changes will be blocked without blocking safe additions.",
+  "authorship": null,
   "expected_benefit": "Fewer approved breaking changes with no increase in blocked safe changes.",
   "possible_regressions": [
     "An unanticipated kind of safe change could still be blocked",
@@ -51,10 +52,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:11.514Z",
+    "frozen_at": "2026-11-14T21:46:46.591Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9"
+      "snapshot:594970a2964a446f03e3462245cb58cd11a9619f9d557634425d297cda7d6be0"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -67,21 +68,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:07:11.576Z",
+      "at": "2026-11-14T21:46:46.656Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:11.894Z",
+      "at": "2026-11-14T21:46:46.960Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 318,
+    "wall_ms": 304,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -178,12 +179,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.139,
-      "incumbent": 0.136,
-      "baseline": 0.132,
-      "diff_vs_incumbent": 0.003,
+      "candidate": 0.141,
+      "incumbent": 0.16,
+      "baseline": 0.136,
+      "diff_vs_incumbent": -0.019,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.007,
+      "diff_vs_baseline": 0.005,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -370,7 +371,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:11.894Z",
+  "decided_at": "2026-11-14T21:46:46.960Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -389,13 +390,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
-    "receipt_id": "rcpt_0mwgs24d29s998359dd",
+    "evaluation_snapshot_hash": "594970a2964a446f03e3462245cb58cd11a9619f9d557634425d297cda7d6be0",
+    "receipt_id": "rcpt_0mwgxrcj49s4d208c8a",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T19:07:11.894Z",
-    "manifest_hash": "1ccecd238ee578d87534dba553f354a29a0f40af7189e21287b53fe505accaa8"
+    "created_at": "2026-11-14T21:46:46.960Z",
+    "manifest_hash": "12fe3a079fff7875cc4eab60715a4563b0c949a8c05f11593ff10923c6c1e043"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -411,5 +412,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "e977520a3330bd033ed85b9f45387029b6a3faa91d2533a9e28ea9caad4f5e7f"
+  "receipt_hash": "cb1ccee8e2fb25499a75071c97f0c6925af15e42a3724ff9869d24f6b23b04a0"
 }

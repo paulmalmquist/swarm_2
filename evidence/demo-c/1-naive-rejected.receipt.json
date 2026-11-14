@@ -1,26 +1,27 @@
 {
-  "receipt_id": "rcpt_0mwgs242g9mf2b19c90",
-  "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+  "receipt_id": "rcpt_0mwgxrc8t9m1bf42dbc",
+  "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract: removed, renamed and retyped fields pass because the procedure never compares the contract before and after.",
     "observation_ids": [
-      "obs_0mwgs23r894f3dc7bc4",
-      "obs_0mwgs23r895b0608f2a",
-      "obs_0mwgs23r8967ccb85d4",
-      "obs_0mwgs23r897796e93c5",
-      "obs_0mwgs23r898973c820a",
-      "obs_0mwgs23r8994eecbacb",
-      "obs_0mwgs23r89a2730dfad",
-      "obs_0mwgs23r89c736c898d",
-      "obs_0mwgs23r89dd6f6f0b7",
-      "obs_0mwgs23r89ee2582ac5",
-      "obs_0mwgs23r89f22f643cb",
-      "obs_0mwgs23r99g44d2b1db"
+      "obs_0mwgxrbx89427fe4218",
+      "obs_0mwgxrbx8958b800a3a",
+      "obs_0mwgxrbx896b57af02c",
+      "obs_0mwgxrbx897ccb9fca3",
+      "obs_0mwgxrbx8989465f196",
+      "obs_0mwgxrbx89918a19d28",
+      "obs_0mwgxrbx89a6b635954",
+      "obs_0mwgxrbx99c8e933df0",
+      "obs_0mwgxrbx99dbd1f45cf",
+      "obs_0mwgxrbx99e7f793b98",
+      "obs_0mwgxrbx99f83eaea45",
+      "obs_0mwgxrbx99ge761b47d"
     ],
     "observed_failure_count": 12
   },
   "hypothesis": "If the review procedure compares the contract before and after the change, breaking interface changes will be blocked and review accuracy on fresh changes will rise.",
+  "authorship": null,
   "expected_benefit": "Fewer approved breaking changes; higher review accuracy.",
   "possible_regressions": [
     "Safe changes could be blocked if the comparison is too eager",
@@ -50,10 +51,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:11.111Z",
+    "frozen_at": "2026-11-14T21:46:46.176Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919"
+      "snapshot:4c3b4191a2abf67e1d52355484ef4f406c6851d02a8576ec1b28c7805fcc7e7e"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -66,21 +67,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:07:11.182Z",
+      "at": "2026-11-14T21:46:46.247Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:11.512Z",
+      "at": "2026-11-14T21:46:46.589Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 329,
+    "wall_ms": 341,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -177,12 +178,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.194,
-      "incumbent": 0.153,
-      "baseline": 0.123,
-      "diff_vs_incumbent": 0.042,
+      "candidate": 0.113,
+      "incumbent": 0.112,
+      "baseline": 0.145,
+      "diff_vs_incumbent": 0.002,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.071,
+      "diff_vs_baseline": -0.032,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -371,7 +372,7 @@
   "decision": "reject",
   "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:11.512Z",
+  "decided_at": "2026-11-14T21:46:46.589Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -387,5 +388,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "482ef4cf929e467a912c8a99dd6f8e9d4155bf43ec0dcbd7df50454be4cb92ad"
+  "receipt_hash": "dbd6f0d494caa26408b08e973dc16c8e17939a23aae0520f277b438c03d8e369"
 }

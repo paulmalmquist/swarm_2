@@ -10,7 +10,7 @@
   "steps": [
     {
       "claim": "A killed worker loses ownership and the work is re-leased under a new fencing token",
-      "observed": "attempt 1 (pid 8827) is \"killed\"; the task is now on token g1a2",
+      "observed": "attempt 1 (pid 9934) is \"killed\"; the task is now on token g1a2",
       "ok": true
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "claim": "An orphaned worker is stopped rather than left running",
-      "observed": "pid 9024 outlived the coordinator that started it and was stopped on recovery",
+      "observed": "pid 10141 outlived the coordinator that started it and was stopped on recovery",
       "ok": true
     },
     {
@@ -60,5 +60,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 8270
+  "ms": 7902
 }

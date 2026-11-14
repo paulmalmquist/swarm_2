@@ -3,38 +3,39 @@
     "seq": 1,
     "experiment_id": null,
     "kind": "protected_store_sealed",
-    "at": "2026-11-14T19:07:11.055Z",
+    "at": "2026-11-14T21:46:46.116Z",
     "payload": {
       "digest": "2536453dd42a6f44bcd00de83a166788dbc51e3ac17fad3c66750dea8b9c736f",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
       "isolation": "enforced"
     },
-    "hash": "7b6ac4887add8dd718419ad69d0bfefcbcf517657f74b6ed01071b12170523bd"
+    "hash": "905cdd5f7d139c33420a69e05edf0582047ed9e0cdd0c653c8b106606ed8d09a"
   },
   {
     "seq": 2,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "experiment_opened",
-    "at": "2026-11-14T19:07:11.111Z",
+    "at": "2026-11-14T21:46:46.176Z",
     "payload": {
       "level": "execution",
       "title": "Add an interface compatibility step to change review",
       "hypothesis": "If the review procedure compares the contract before and after the change, breaking interface changes will be blocked and review accuracy on fresh changes will rise.",
-      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
+      "lineage_id": "exp_0mwgxrbxb9i8b1b9929",
       "revises": null,
       "parent": {
         "component": "execution",
         "version": 1,
         "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
-      }
+      },
+      "authorship": null
     },
-    "hash": "79913252cd1c47761be7335de600ddc73a56394ef53c6d602093c6ac708ba4f2"
+    "hash": "ff8c481ba855c951b89bace606766f435f617b118c80a314eb672c9cc2a7ceec"
   },
   {
     "seq": 3,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "protocol_frozen",
-    "at": "2026-11-14T19:07:11.111Z",
+    "at": "2026-11-14T21:46:46.176Z",
     "payload": {
       "protocol_id": "promotion-policy@1/execution",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
@@ -42,18 +43,18 @@
       "holdout_set": "holdout-A",
       "workload": "review",
       "cases": 80,
-      "frozen_at": "2026-11-14T19:07:11.111Z",
+      "frozen_at": "2026-11-14T21:46:46.176Z",
       "executor": "validator-executor",
       "budget_units": 2000,
       "note": "frozen before any candidate was submitted"
     },
-    "hash": "39a8b79f269f3924ace6842feb11136b53c12dc7bee1099bc63c2e9d8bc9caa1"
+    "hash": "9dc37259a62b0cc463ab734c17abf6ae0bece23859d15c665c7eab0ad537a153"
   },
   {
     "seq": 4,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "candidate_submitted",
-    "at": "2026-11-14T19:07:11.182Z",
+    "at": "2026-11-14T21:46:46.246Z",
     "payload": {
       "candidate_id": "exec-interface-compat-naive",
       "candidate_hash": "f0309264a641e273177570d2203676c1c1cd9740fc35cf12ab487c939d7d2c63",
@@ -62,74 +63,75 @@
         "validators/interface_compat.mjs"
       ]
     },
-    "hash": "2ec7ecf636cf871869a5670f80bff64170008b3806a647621371c3905deecd79"
+    "hash": "48557f00b1a9378d2396670dfec6ecf9b29bd411482135a59673d5f41bba4436"
   },
   {
     "seq": 5,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "development_attempt",
-    "at": "2026-11-14T19:07:11.182Z",
+    "at": "2026-11-14T21:46:46.247Z",
     "payload": {
       "note": "development check by the candidate author",
       "cases": 40,
       "accuracy": 0.875
     },
-    "hash": "6707d8d85512862e54f0c5cc74598e58ce2d5ae07a9cc345e2f104c2c74f4ea2"
+    "hash": "ecef269d010c9232b8f0999956a0a9cc7a1c841ea0297e6e033b83a595d2f17f"
   },
   {
     "seq": 6,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "holdout_evaluation",
-    "at": "2026-11-14T19:07:11.513Z",
+    "at": "2026-11-14T21:46:46.589Z",
     "payload": {
       "set": "holdout-A",
       "cases": 80,
       "units": 241,
-      "evaluation_snapshot_hash": "35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919",
+      "evaluation_snapshot_hash": "4c3b4191a2abf67e1d52355484ef4f406c6851d02a8576ec1b28c7805fcc7e7e",
       "intact": true
     },
-    "hash": "c0047724609cf7f2d171c37c29e6d64536561c1d7cca12f99ff74fbb8c377be9"
+    "hash": "94e4930975e99178710d396a4f062164226fb1ba6aa6a7d8253bc82bed23ac67"
   },
   {
     "seq": 7,
-    "experiment_id": "exp_0mwgs23ra9i4ff19a0e",
+    "experiment_id": "exp_0mwgxrbxb9i8b1b9929",
     "kind": "decision",
-    "at": "2026-11-14T19:07:11.513Z",
+    "at": "2026-11-14T21:46:46.589Z",
     "payload": {
       "decision": "reject",
       "justification": "Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.",
-      "receipt_id": "rcpt_0mwgs242g9mf2b19c90",
-      "receipt_hash": "482ef4cf929e467a912c8a99dd6f8e9d4155bf43ec0dcbd7df50454be4cb92ad",
+      "receipt_id": "rcpt_0mwgxrc8t9m1bf42dbc",
+      "receipt_hash": "dbd6f0d494caa26408b08e973dc16c8e17939a23aae0520f277b438c03d8e369",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-      "evaluation_snapshot_hash": "35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919",
+      "evaluation_snapshot_hash": "4c3b4191a2abf67e1d52355484ef4f406c6851d02a8576ec1b28c7805fcc7e7e",
       "release_id": null
     },
-    "hash": "993fdddbf0fd930b06b56105def9f2fabf5e088857f0c7ae9fab34b267cabf2d"
+    "hash": "b2fbf68095c552305a343fc133aaba34d844d23875c52ad1903e112733b769e0"
   },
   {
     "seq": 8,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "experiment_opened",
-    "at": "2026-11-14T19:07:11.515Z",
+    "at": "2026-11-14T21:46:46.591Z",
     "payload": {
       "level": "execution",
       "title": "Recursive interface compatibility step for change review",
       "hypothesis": "If the comparison walks nested fields and treats only removals, narrowing type changes, newly required fields, removed enum values and unit changes as breaking, breaking changes will be blocked without blocking safe additions.",
-      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
-      "revises": "exp_0mwgs23ra9i4ff19a0e",
+      "lineage_id": "exp_0mwgxrbxb9i8b1b9929",
+      "revises": "exp_0mwgxrbxb9i8b1b9929",
       "parent": {
         "component": "execution",
         "version": 1,
         "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
-      }
+      },
+      "authorship": null
     },
-    "hash": "2f8a646a07da1c2d1efe897398cab30b67048b3a7cb223d8c707578cf9da346b"
+    "hash": "ff22c85b45db88d18c9e53466820b8e4cedfbf1bd14f5b5235acad3787ae43cd"
   },
   {
     "seq": 9,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "protocol_frozen",
-    "at": "2026-11-14T19:07:11.515Z",
+    "at": "2026-11-14T21:46:46.591Z",
     "payload": {
       "protocol_id": "promotion-policy@1/execution",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
@@ -137,30 +139,30 @@
       "holdout_set": "holdout-B",
       "workload": "review",
       "cases": 80,
-      "frozen_at": "2026-11-14T19:07:11.514Z",
+      "frozen_at": "2026-11-14T21:46:46.591Z",
       "executor": "validator-executor",
       "budget_units": 2000,
       "note": "frozen before any candidate was submitted"
     },
-    "hash": "b6a37789de512530aadbc498e8bcfe665cfa57c39f659b31bdb0e0ea9f6c578b"
+    "hash": "68f3dd6a1f19748ae27789b1be6c895ab706c90cf7f578f5006dd5037421a191"
   },
   {
     "seq": 10,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "holdout_reclassified_as_development",
-    "at": "2026-11-14T19:07:11.515Z",
+    "at": "2026-11-14T21:46:46.591Z",
     "payload": {
-      "lineage_id": "exp_0mwgs23ra9i4ff19a0e",
+      "lineage_id": "exp_0mwgxrbxb9i8b1b9929",
       "set": "holdout-A",
-      "because": "experiment exp_0mwgs23ra9i4ff19a0e revealed results on it"
+      "because": "experiment exp_0mwgxrbxb9i8b1b9929 revealed results on it"
     },
-    "hash": "dbffab85111fe85b35f8e76d653d2051ae780a08e3fc1f1f3f1cabbee84022d8"
+    "hash": "f98a881ca0e1d5be03cd9ab3a700e218000e46c7ce89e83dbc8c924d6573c7c6"
   },
   {
     "seq": 11,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "candidate_submitted",
-    "at": "2026-11-14T19:07:11.576Z",
+    "at": "2026-11-14T21:46:46.656Z",
     "payload": {
       "candidate_id": "exec-interface-compat",
       "candidate_hash": "98c90f728966afbdb6f4af94f76ce6f06b4e96c773edb750ef0ce5ed480a9d43",
@@ -169,57 +171,57 @@
         "validators/interface_compat.mjs"
       ]
     },
-    "hash": "b75f1d044b7e798c46dc37ae341cffe9a28516552e4268405607216943854945"
+    "hash": "8607e22206f929316ec391f1342693d96ed0020029200d98772bd20ac68a175a"
   },
   {
     "seq": 12,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "development_attempt",
-    "at": "2026-11-14T19:07:11.576Z",
+    "at": "2026-11-14T21:46:46.656Z",
     "payload": {
       "note": "development check by the candidate author",
       "cases": 40,
       "accuracy": 1
     },
-    "hash": "78a3be86ef6b01e0136020634a6bd484875e61a99cf0d90e5440fda7a4f7cdcc"
+    "hash": "000d4e85e400eec69248de457ffeffa560f01eeb77cc6daa35bd3844fc582ff2"
   },
   {
     "seq": 13,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "holdout_evaluation",
-    "at": "2026-11-14T19:07:11.895Z",
+    "at": "2026-11-14T21:46:46.962Z",
     "payload": {
       "set": "holdout-B",
       "cases": 80,
       "units": 241,
-      "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
+      "evaluation_snapshot_hash": "594970a2964a446f03e3462245cb58cd11a9619f9d557634425d297cda7d6be0",
       "intact": true
     },
-    "hash": "8bfdc3facc8737d6bdbe33a75bf8feb531c9d76792ca5f119c2471f97b0aefde"
+    "hash": "b1dd6f7590fa78a8c625a43a9aced3bcfa892473607a012f028d8dbbd5997f54"
   },
   {
     "seq": 14,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "decision",
-    "at": "2026-11-14T19:07:11.895Z",
+    "at": "2026-11-14T21:46:46.962Z",
     "payload": {
       "decision": "accept",
       "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
-      "receipt_id": "rcpt_0mwgs24d29s998359dd",
-      "receipt_hash": "e977520a3330bd033ed85b9f45387029b6a3faa91d2533a9e28ea9caad4f5e7f",
+      "receipt_id": "rcpt_0mwgxrcj49s4d208c8a",
+      "receipt_hash": "cb1ccee8e2fb25499a75071c97f0c6925af15e42a3724ff9869d24f6b23b04a0",
       "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-      "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
+      "evaluation_snapshot_hash": "594970a2964a446f03e3462245cb58cd11a9619f9d557634425d297cda7d6be0",
       "release_id": "r2"
     },
-    "hash": "5692c44b13b5c6521c07cbe72e73418e567a4052fbda7dd91ad50c4b7d72866a"
+    "hash": "5c919417c0c3d4626405ef8e48c2fec86ba9ffcd68e5d7175bcbb98884a53619"
   },
   {
     "seq": 15,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "canary_started",
-    "at": "2026-11-14T19:07:11.896Z",
+    "at": "2026-11-14T21:46:46.964Z",
     "payload": {
-      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "canary_id": "can_0mwgxrcj89u875553a3",
       "release_id": "r2",
       "prior_release_id": "r1",
       "scope": {
@@ -228,18 +230,18 @@
         "scenario": null
       }
     },
-    "hash": "3f02fb42e9712bbbaaabd11c5d84ae3a2afa86e18cc45c63beb4f553ec93703f"
+    "hash": "c44f8b469fe5b94ba275b492ed6d0b115c57a9bb09485569a7e56fd14600b1d6"
   },
   {
     "seq": 16,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "canary_observation",
-    "at": "2026-11-14T19:07:11.950Z",
+    "at": "2026-11-14T21:46:47.034Z",
     "payload": {
-      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "canary_id": "can_0mwgxrcj89u875553a3",
       "observations": [
         {
-          "at": "2026-11-14T19:07:11.897Z",
+          "at": "2026-11-14T21:46:46.964Z",
           "metric": "accuracy_drop_vs_approval",
           "value": 0,
           "threshold": 0.05,
@@ -247,7 +249,7 @@
           "injected": false
         },
         {
-          "at": "2026-11-14T19:07:11.897Z",
+          "at": "2026-11-14T21:46:46.964Z",
           "metric": "escaped_defect_rate_increase",
           "value": 0,
           "threshold": 0.02,
@@ -255,7 +257,7 @@
           "injected": false
         },
         {
-          "at": "2026-11-14T19:07:11.897Z",
+          "at": "2026-11-14T21:46:46.964Z",
           "metric": "canary_missions_with_acceptance_failures",
           "value": null,
           "threshold": 0,
@@ -265,19 +267,19 @@
       ],
       "injected_regression": null
     },
-    "hash": "fc3f2fb199c2d5a4f6c623afe90e21be619909471a165ba708b3803b95f8603e"
+    "hash": "a8ed6b8197aca8d14dc52b097b25ddc7dd08c59568e08e98109973b690045dde"
   },
   {
     "seq": 17,
-    "experiment_id": "exp_0mwgs242i9o38f7ce9e",
+    "experiment_id": "exp_0mwgxrc8u9o5ec098e9",
     "kind": "canary_retained",
-    "at": "2026-11-14T19:07:11.952Z",
+    "at": "2026-11-14T21:46:47.037Z",
     "payload": {
-      "canary_id": "can_0mwgs24d49u14d5f92d",
+      "canary_id": "can_0mwgxrcj89u875553a3",
       "release_id": "r2",
       "prior_release_id": "r1",
       "missions": []
     },
-    "hash": "b86d63f2513edf4d8cd285c02a7683372202f01aa377274a780d76542cd3811d"
+    "hash": "63157fd17c58bd88ed6c11279c551e029f67ba3e58ba6b51d30753dae777af4f"
   }
 ]

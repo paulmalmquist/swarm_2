@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgs2lixaeee0abbb5
+# Improvement receipt rcpt_0mwgxrrexaec49890f0
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs
 
-Decided by release-gate at 2026-11-14T19:07:34.138Z. Level: execution. Experiment: `exp_0mwgs2liraa538bc868`.
+Decided by release-gate at 2026-11-14T21:47:06.249Z. Level: execution. Experiment: `exp_0mwgxrretaa6dcac340`.
 
 ## Problem and supporting observations
 
@@ -34,9 +34,9 @@ Adds a validator whose module tries to modify protected files when it is loaded.
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T19:07:34.131Z, before the candidate was submitted
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T21:47:06.245Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: review:holdout-A; snapshot:a8800e83c01df29237d2ff12e1e7021d80aa681af5995237fd452e19a6d730a9
+- Workload: review:holdout-A; snapshot:ed823be0dec0ffb50e5bb354202703e2bc5fbb8dada6c5abd2b97e486c0ed249
 - Held-out set: holdout-A
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -46,7 +46,7 @@ Adds a validator whose module tries to modify protected files when it is loaded.
 |---|---|---|---|
 | 1 | holdout | 0 | candidate was not executed on held-out cases |
 
-Resource use: 0 experiment units, 2 ms, 0 model calls, cost not measured.
+Resource use: 0 experiment units, 1 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -87,4 +87,4 @@ None observed.
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `f24f36f7a126cd224bddbe5de09353fdab99ce9dabca1f00cab2b0ca087b06b1`
+Receipt hash: `d1d01746bcad874c0d7a105f1939beedd23c7b9181c7b7d325c416ae03a5fd1c`

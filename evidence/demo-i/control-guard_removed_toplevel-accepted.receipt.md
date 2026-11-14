@@ -1,16 +1,16 @@
-# Improvement receipt rcpt_0mwgs5go11c119a7a57
+# Improvement receipt rcpt_0mwgxuf7s1c682cb1ed
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: ACCEPT** — Accepted: accuracy improved by 0.1125 against the incumbent (95% interval 0.05 to 0.1875) with every hard gate passed.
 
-Decided by release-gate at 2026-11-14T19:09:47.810Z. Level: execution. Experiment: `exp_0mwgs5gdl18c3e2ac5f`.
+Decided by release-gate at 2026-11-14T21:49:10.408Z. Level: execution. Experiment: `exp_0mwgxuey618b4261da2`.
 
 ## Problem and supporting observations
 
 Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).
 
-Verified failure observations cited: 7 (for example `obs_0mwgs5fybzqf0c8fe18`, `obs_0mwgs5fybzrb8a0294f`, `obs_0mwgs5fybzt9463a386`).
+Verified failure observations cited: 7 (for example `obs_0mwgxueknzqe14190e2`, `obs_0mwgxueknzr2d7850a9`, `obs_0mwgxuekozt75d97c6a`).
 
 ## Hypothesis
 
@@ -35,9 +35,9 @@ Adds the guard_removed_toplevel check to the change-review skill.
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T19:09:47.433Z, before the candidate was submitted
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T21:49:10.063Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: review:holdout-B; snapshot:ed7045f4b028dec066403d9e37691cebbb62280516c2b43bdecc86ea2f6de390
+- Workload: review:holdout-B; snapshot:5c53d79adeb41ade15d1044e6a8610eee718619a1772a422e2b439f458156a40
 - Held-out set: holdout-B
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -48,7 +48,7 @@ Adds the guard_removed_toplevel check to the change-review skill.
 | 1 | development | 40 | development check by the candidate author |
 | 2 | holdout | 80 | one evaluation on holdout-B |
 
-Resource use: 281 experiment units, 315 ms, 0 model calls, cost not measured.
+Resource use: 281 experiment units, 293 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -59,7 +59,7 @@ Resource use: 281 experiment units, 315 ms, 0 model calls, cost not measured.
 | escaped_defect_rate (lower is better) | 0.7442 | 0.9535 | 0.9535 | -0.2093 | — | 80 |
 | false_alarm_rate (lower is better) | 0 | 0 | 0 | 0 | — | 80 |
 | steps_per_review (lower is better) | 3 | 2 | 2 | 1 | 1 to 1 | 80 |
-| wall_ms_per_review (lower is better) | 0.127 | 0.151 | 0.155 | -0.024 | — | 80 |
+| wall_ms_per_review (lower is better) | 0.139 | 0.101 | 0.107 | 0.038 | — | 80 |
 
 Method for the primary metric: paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 9 better, 0 worse, 71 same, p=0.00391.
 
@@ -106,8 +106,8 @@ Release **r2** (canary; evidence basis: fixture; parent r1)
 | coordination | v1 | `a2731e7d2ba012c8` |
 | evolution | v1 | `d81a4b43a3303a68` |
 
-Policy hash `a79f643c873bbd0d`; evaluation snapshot `ed7045f4b028dec0`; receipt rcpt_0mwgs5go11c119a7a57; manifest hash `5e06a6efdc070e3c`.
+Policy hash `a79f643c873bbd0d`; evaluation snapshot `5c53d79adeb41ade`; receipt rcpt_0mwgxuf7s1c682cb1ed; manifest hash `86cbf4458e4cad3d`.
 
 Rollback target: r1.
 
-Receipt hash: `ce95cd83b7b3ffee4aac6ee1a83cd8e71a382c1e4b7f9fe215b6c547d0214e1d`
+Receipt hash: `2d5af24c1c77d1143cfad0c89c6aefc473962f247b585bdd460724479e1e91d9`

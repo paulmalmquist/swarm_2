@@ -9,7 +9,7 @@ Decide whether to approve the merge request draft. Approval records your decisio
 
 Give every team one policy-driven way to see which datasets are stale, drifting or unmeasured, and who owns them.
 
-## Requests consolidated
+## Requests this mission was authorized with
 
 - **Propulsion Test** (syn-ana-propulsion, `syn-req-001`): Our hotfire review dashboard silently showed three day old engine test data last week. We need to know when the engine_test_runs dataset is stale, with a 60 minute threshold, before every review.
 - **Supply Chain Analytics** (syn-ben-supplychain, `syn-req-002`): The BOM cost dashboard broke when an upstream column was renamed and nobody noticed for days. We need a check that compares each table schema against its declared contract and reports drift by field.
@@ -18,7 +18,7 @@ Give every team one policy-driven way to see which datasets are stale, drifting 
 
 Shared capability: A shared, policy-driven dataset-health capability: freshness against per-dataset thresholds and schema conformance against declared fields, with an SLA report and alerts
 
-### Distinct needs preserved
+### Each stakeholder's need, kept distinct
 
 - syn-ana-propulsion: Know when a dataset is older than its own threshold, and be alerted before a review → AC-FRESH-PROPULSION (satisfied)
 - syn-ben-supplychain: Detect schema drift against a declared contract and name the fields involved → AC-SCHEMA-SUPPLY (satisfied)
@@ -27,7 +27,7 @@ Shared capability: A shared, policy-driven dataset-health capability: freshness 
 
 ## Exact changes
 
-Base `658c558a2f` → head `d77b281166` on `integration`
+Base `7e460e64c9` → head `cc5ccb39ad` on `integration`
 
 - A contracts/health-record.schema.json
 - A src/engine/evaluate.ts
@@ -39,21 +39,21 @@ Base `658c558a2f` → head `d77b281166` on `integration`
 
 | Criterion | For | Verdict | Independent | Evidence |
 |---|---|---|---|---|
-| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgs1wym6ga49bb7dc |
-| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgs1wym6ga49bb7dc |
-| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgs1wym6ga49bb7dc |
-| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgs1wym6ga49bb7dc |
-| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgs1wym6ga49bb7dc |
+| AC-FRESH-PROPULSION: A dataset older than its own threshold is reported stale and raises an alert | syn-ana-propulsion | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
+| AC-SCHEMA-SUPPLY: An upstream column rename is reported as schema drift naming the missing and unexpected fields | syn-ben-supplychain | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
+| AC-SLA-QUALITY: The SLA report groups datasets by owner team and shows an unmeasured dataset as unknown, never as zero or fresh | syn-chloe-quality | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
+| AC-POLICY-FDE: Thresholds come from policy configuration; changing only the policy changes the result | syn-dev-fde | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
+| AC-CONTRACT: Every health record conforms to the pinned HealthRecord contract | all | pass | yes | evd_0mwgxr5ex6gc2b1cbd1 |
 
 ## Remaining concerns
 
-- Drift detection compares declared and observed type names literally
-- Actual load cadences are not given; thresholds are taken from the requests where stated
-- Whether an alert should page someone or only appear in a report is not stated
-- No request says how long drift may persist before it matters
-- The contract carries no severity ranking; the weekly review may want one
-- Thresholds in the criteria come from the requests and have not been confirmed by dataset owners
-- Open question from agt_0mwgs1ute0u06bdb2cb: Should a stale-data alert page someone, or only appear in the report? No request says.
+- Open question from the analyst (discovery): Should a stale-data alert page someone, or only appear in the report? No request says.
+- Stated by the worker on delivery.engine.implement: Drift detection compares declared and observed type names literally
+- Stated by the worker on discovery.analyze: Actual load cadences are not given; thresholds are taken from the requests where stated
+- Stated by the worker on discovery.analyze: Whether an alert should page someone or only appear in a report is not stated
+- Stated by the worker on discovery.analyze: No request says how long drift may persist before it matters
+- Stated by the worker on planning.contract: The contract carries no severity ranking; the weekly review may want one
+- Stated by the worker on planning.criteria: Thresholds in the criteria come from the requests and have not been confirmed by dataset owners
 
 ## Decision requested
 
@@ -68,4 +68,4 @@ Approval marks the merge request draft approved. The merge itself stays with the
 - Model calls: 0
 - Tokens: 0
 - Cost: not measured
-- Worker wall time: 1083 ms
+- Worker wall time: 927 ms

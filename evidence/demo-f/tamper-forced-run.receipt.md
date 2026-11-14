@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgs2lquakfe6eb66b
+# Improvement receipt rcpt_0mwgxrrm8akd2065ff8
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs
 
-Decided by release-gate at 2026-11-14T19:07:34.423Z. Level: execution. Experiment: `exp_0mwgs2lizag15315271`.
+Decided by release-gate at 2026-11-14T21:47:06.512Z. Level: execution. Experiment: `exp_0mwgxrreyag77891a3b`.
 
 ## Problem and supporting observations
 
@@ -34,9 +34,9 @@ Adds a validator whose module tries to modify protected files when it is loaded.
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T19:07:34.139Z, before the candidate was submitted
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T21:47:06.250Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: review:holdout-A; snapshot:7ceff0274e75a5d451d17a50fb45ac9cb1a0a5f5eff9c2cc3f0e856152990351
+- Workload: review:holdout-A; snapshot:4bdb4423ece645fd02dfbc962866f2bb5d5ddbe4e7d390ab7e336184eb2f2b96
 - Held-out set: holdout-A
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -46,7 +46,7 @@ Adds a validator whose module tries to modify protected files when it is loaded.
 |---|---|---|---|
 | 1 | holdout | 80 | one evaluation on holdout-A |
 
-Resource use: 241 experiment units, 279 ms, 0 model calls, cost not measured.
+Resource use: 241 experiment units, 258 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -57,7 +57,7 @@ Resource use: 241 experiment units, 279 ms, 0 model calls, cost not measured.
 | escaped_defect_rate (lower is better) | 0.8 | 0.8 | 0.8 | 0 | — | 80 |
 | false_alarm_rate (lower is better) | 0 | 0 | 0 | 0 | — | 80 |
 | steps_per_review (lower is better) | 3 | 2 | 2 | 1 | 1 to 1 | 80 |
-| wall_ms_per_review (lower is better) | 0.142 | 0.114 | 0.134 | 0.028 | — | 80 |
+| wall_ms_per_review (lower is better) | 0.15 | 0.091 | 0.108 | 0.06 | — | 80 |
 
 Method for the primary metric: paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 0 better, 0 worse, 80 same, p=1.
 
@@ -104,4 +104,4 @@ Method for the primary metric: paired bootstrap over the same 80 cases (20000 re
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `296514006eb0d5f5d3ef1e4502ee0b35457e3191b518ee40416aae15bbbde57c`
+Receipt hash: `fb9eb2e525e7cc09a81c6e143c164d4ddec0edad59cb83103e3d3ed76bbf5adb`

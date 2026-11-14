@@ -20,7 +20,7 @@
     },
     {
       "claim": "The simpler configuration really is cheaper and faster",
-      "observed": "worker invocations per mission 12.875 → 10; completion 4144 ms → 3011 ms",
+      "observed": "worker invocations per mission 12.875 → 10; completion 3795 ms → 2825 ms",
       "ok": true
     },
     {
@@ -40,12 +40,12 @@
     },
     {
       "claim": "The cost of the step and the cost of going without it are both measured",
-      "observed": "the agreement step costs 1 worker invocations and 185.67 ms per mission; a mission where the workstreams disagreed cost 1 more invocations and 1005.4 ms more than the same mission with the agreement",
+      "observed": "the agreement step costs 1 worker invocations and 258 ms per mission; a mission where the workstreams disagreed cost 1 more invocations and 796.2 ms more than the same mission with the agreement",
       "ok": true
     },
     {
       "claim": "Integration failures and quality are reported, not assumed",
-      "observed": "integration failures per mission 0 → 0.625; truly correct missions 1 → 1; invocations 11.75 → 12 (difference 0.25, 95% interval -0.5 to 0.75); completion 3550 ms → 4109 ms",
+      "observed": "integration failures per mission 0 → 0.625; truly correct missions 1 → 1; invocations 11.75 → 12 (difference 0.25, 95% interval -0.5 to 0.75); completion 3407 ms → 3808 ms",
       "ok": true
     },
     {
@@ -64,5 +64,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 127528
+  "ms": 118919
 }
