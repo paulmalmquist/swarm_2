@@ -1,5 +1,9 @@
 # Evidence report
 
+The subsequent manufacturing pilot has its own [synthetic receipts](../evidence/manufacturing/summary.json)
+and [implementation limits](manufacturing.md). Test counts below describe this historical report,
+not the current suite. No live manufacturing evidence has been collected.
+
 **Historical evidence:** these live and fixture receipts precede the hardening in
 [hardening.md](hardening.md). They do not validate the new tool-free worker protocol or stronger canary rules.
 

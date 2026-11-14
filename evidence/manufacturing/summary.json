@@ -1,0 +1,23 @@
+{
+  "evidence_class": "synthetic",
+  "model_calls": 0,
+  "external_system_writes": 0,
+  "real_human_reviews": 0,
+  "fixture_comparison": {
+    "missed_hardware": [],
+    "extra_candidates": [],
+    "missed_unknowns": [],
+    "matches_reference": true
+  },
+  "candidates": 8,
+  "original_packet_hash": "42ade3ca98442d209d58dfd8f3f6df96530c9066cd1e8bad6288dfe43d94bb7c",
+  "corrected_packet_hash": "40eaed5d244d1673c783f698a31f2bca4a9fc074bd85534a8e4058c5f7f052ec",
+  "old_review_current_after_correction": false,
+  "corrected_packet_requires_new_review": true,
+  "limitations": [
+    "Invented hardware and source records",
+    "Public fixture reference, not held-out evidence",
+    "Scripted review demonstrates mechanics only",
+    "No live MES/PLM/QMS connection or engineering correctness claim"
+  ]
+}

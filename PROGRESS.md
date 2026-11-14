@@ -1,5 +1,16 @@
 # Progress notes
 
+## Research implementation — 2026-11-14
+
+Added a deterministic affected-hardware pilot: `src/manufacturing/`, a normalized local export
+adapter, CLI commands, an invented anomaly fixture, and `npm run demo:manufacturing`.
+It uses the existing runtime database/event log. Source versions, two time axes, exact identity
+matching, temporal genealogy, configuration conflicts, evidence comparison, access checks,
+immutable packets and review invalidation are implemented. No models or external systems are
+invoked. Validation: typecheck, 78/78 tests (17 manufacturing regressions), and the synthetic
+manufacturing demo pass locally. Receipts: `evidence/manufacturing/validation.json` and `tests.log`.
+See `docs/manufacturing.md` for trust boundaries and deferred research recommendations.
+
 ## Manufacturing view — 2026-11-14
 
 The primary diagram now follows hardware configuration, change impact, build effectivity,
@@ -40,7 +51,7 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 49 tests, about two minutes
+npm test                           # current regression suite; historical counts below are not current
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration
 SWARM2_LIVE=1 npm run demo:live    # cross-swarm mission on real model workers (uses the account)

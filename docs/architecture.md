@@ -2,10 +2,10 @@
 
 ![Target rocket manufacturing workflow](architecture-overview.svg)
 
-The diagram shows the intended manufacturing workflow. Its domain workstreams, hardware
-traceability and source-system integrations are not implemented by the current synthetic
-software-delivery scenario. The [runtime diagram](runtime-overview.svg) shows what supports
-that future workflow today.
+The diagram shows the intended manufacturing workflow. A [deterministic pilot](manufacturing.md)
+now implements hardware genealogy, configuration comparison and version-pinned investigation
+packets over local source exports. Live manufacturing integrations and agent investigation
+roles are still planned. The [runtime diagram](runtime-overview.svg) shows the infrastructure.
 
 The manufacturing work unit is a question tied to specific hardware and its configuration:
 which serials or lots are affected, which requirement or revision applies, and whether build

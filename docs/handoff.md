@@ -1,5 +1,12 @@
 # Chief-of-staff handoff
 
+**Manufacturing addition:** [the affected-hardware pilot](manufacturing.md) runs without a model
+over versioned source exports. Try `npm run demo:manufacturing`; inspect its synthetic
+[packet and correction receipt](../evidence/manufacturing/summary.json). It implements genealogy,
+configuration conflicts, evidence comparison and packet-review invalidation. It has no live
+source connection and cannot authorize a manufacturing disposition. Older counts below are
+historical; current regression receipts are under `evidence/manufacturing/` and `evidence/hardening/`.
+
 **Updated after PR #1 merged:** see [hardening.md](hardening.md) for current boundaries and
 [the architecture diagram](architecture-overview.svg). Live evidence below predates the hardening.
 

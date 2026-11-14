@@ -1,0 +1,37 @@
+{
+  "id": "synthetic-pilot-policy",
+  "revision": 1,
+  "configuration_authorities": [
+    {
+      "scope": "built",
+      "dimension": "process",
+      "systems": [
+        "syn-mes"
+      ]
+    },
+    {
+      "scope": "built",
+      "dimension": "material_lot",
+      "systems": [
+        "syn-mes"
+      ]
+    },
+    {
+      "scope": "built",
+      "dimension": "design_revision",
+      "systems": [
+        "syn-design"
+      ]
+    }
+  ],
+  "reviewers": [
+    {
+      "principal_id": "syn-engineer",
+      "role": "engineering"
+    },
+    {
+      "principal_id": "syn-quality",
+      "role": "quality"
+    }
+  ]
+}

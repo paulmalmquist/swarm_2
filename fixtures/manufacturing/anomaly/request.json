@@ -1,0 +1,23 @@
+{
+  "dataset_id": "synthetic-anomaly",
+  "finding": {
+    "system": "syn-qms",
+    "type": "finding",
+    "native_id": "SYN-NCR-1042"
+  },
+  "seed_lot": {
+    "system": "syn-mes",
+    "type": "hardware",
+    "native_id": "SYN-MAT-L17"
+  },
+  "exposure_start": "2026-11-01T00:00:00.000Z",
+  "exposure_end": "2026-11-10T00:00:00.000Z",
+  "configuration_at": "2026-11-09T00:00:00.000Z",
+  "configuration_scope": "built",
+  "required_dimensions": [
+    "process",
+    "material_lot",
+    "design_revision"
+  ],
+  "claim_class": "acceptance"
+}

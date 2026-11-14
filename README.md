@@ -14,8 +14,9 @@ It never sends, merges, deploys or commits anyone to anything. It prepares, veri
 
 ![Target rocket manufacturing workflow](docs/architecture-overview.svg)
 
-This is the intended manufacturing workflow. The generic swarm runtime exists; hardware
-traceability, manufacturing analysis and source-system connections still need implementation.
+This is the intended manufacturing workflow. The runtime now includes a
+[read-only affected-hardware pilot](docs/manufacturing.md) using versioned local source exports.
+Manufacturing source-system connections and agent investigations remain to be implemented.
 The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure beneath it.
 
 [Hardening changes and limits](docs/hardening.md).
@@ -25,6 +26,7 @@ The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure b
 | If you want to | Read |
 |---|---|
 | Know what it can do today and how to run, inspect and stop it | [docs/handoff.md](docs/handoff.md) |
+| Investigate potentially affected hardware from a finding and lot hypothesis | [docs/manufacturing.md](docs/manufacturing.md) |
 | Know what ran, what improved, what failed and what is unverified | [docs/evidence-report.md](docs/evidence-report.md) |
 | Operate it | [docs/operator-guide.md](docs/operator-guide.md) |
 | Understand the design | [docs/architecture.md](docs/architecture.md) |
@@ -39,6 +41,7 @@ Linux and Node 22.18 or later. Install Git, `bubblewrap` and `util-linux`; unpri
 ```
 npm test                 # regression suite: coordination, recovery, isolation, rollback, limits, escalation
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
+npm run demo:manufacturing # synthetic genealogy, evidence packet and correction/re-review
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
 ```
 

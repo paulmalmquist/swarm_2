@@ -20,10 +20,11 @@
     "demo:f": "node --disable-warning=ExperimentalWarning demos/run.ts f",
     "demo:g": "node --disable-warning=ExperimentalWarning demos/run.ts g",
     "demo:all": "node --disable-warning=ExperimentalWarning demos/run.ts all",
-    "verify": "npm run typecheck && npm test && npm run demo:all",
+    "verify": "npm run typecheck && npm test && npm run demo:all && npm run demo:manufacturing",
     "demo:h": "node --disable-warning=ExperimentalWarning demos/run.ts h",
     "demo:i": "node --disable-warning=ExperimentalWarning demos/run.ts i",
-    "demo:live": "node --disable-warning=ExperimentalWarning demos/live.ts"
+    "demo:live": "node --disable-warning=ExperimentalWarning demos/live.ts",
+    "demo:manufacturing": "node --disable-warning=ExperimentalWarning demos/manufacturing.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

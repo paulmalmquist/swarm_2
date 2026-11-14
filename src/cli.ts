@@ -67,6 +67,7 @@ const HELP = `swarm2 — an organization of agent swarms beneath your chief of s
   serve [--port N] [--run]               review interface and API (--run also runs the coordinator)
   gate <subcommand>                      release gate (see docs/operator-guide.md)
   evolve <subcommand>                    improvement experiments
+  manufacturing <subcommand>             read-only affected-hardware investigations (docs/manufacturing.md)
 
   --home DIR   state directory (default ./var, or SWARM2_HOME)
   Live model execution is off unless SWARM2_LIVE=1.`;
@@ -81,6 +82,10 @@ async function main(): Promise<void> {
   if (cmd === 'gate' || cmd === 'evolve') {
     const { gateCli } = await import('./gate/cli.ts');
     return gateCli(cmd, argv.slice(1), flag('home'));
+  }
+  if (cmd === 'manufacturing') {
+    const { manufacturingCli } = await import('./manufacturing/cli.ts');
+    return manufacturingCli(argv.slice(1), flag('home'));
   }
   const rt = openRuntime({ home: flag('home') });
   const cos = new LocalChiefOfStaff(rt);

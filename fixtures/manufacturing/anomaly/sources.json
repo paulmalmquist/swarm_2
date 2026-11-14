@@ -1,0 +1,730 @@
+{
+  "dataset_id": "synthetic-anomaly",
+  "data_class": "synthetic",
+  "records": [
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-MAT-L17"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-MAT-L17",
+        "label": "SYN-MAT-L17",
+        "hardware_kind": "lot",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-MAT-L03"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-MAT-L03",
+        "label": "SYN-MAT-L03",
+        "hardware_kind": "lot",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-SN008"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-SN008",
+        "label": "SYN-SN008",
+        "hardware_kind": "serial",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-SN009"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-SN009",
+        "label": "SYN-SN009",
+        "hardware_kind": "serial",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-SN010"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-SN010",
+        "label": "SYN-SN010",
+        "hardware_kind": "serial",
+        "aliases": [],
+        "genealogy_status": "incomplete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-ASM-020"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-ASM-020",
+        "label": "SYN-ASM-020",
+        "hardware_kind": "assembly",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-ASM-021"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-ASM-021",
+        "label": "SYN-ASM-021",
+        "hardware_kind": "assembly",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-ASM-022"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-ASM-022",
+        "label": "SYN-ASM-022",
+        "hardware_kind": "assembly",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "hardware",
+        "native_id": "SYN-REF-077"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "hardware",
+      "payload": {
+        "id": "SYN-REF-077",
+        "label": "SYN-REF-077",
+        "hardware_kind": "serial",
+        "aliases": [],
+        "genealogy_status": "declared_complete"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-LOT-LINK-008"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-MAT-L17"
+        },
+        "relationship": "produced_from"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-LOT-LINK-009"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-MAT-L17"
+        },
+        "relationship": "produced_from"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-LOT-LINK-010"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN010"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-MAT-L17"
+        },
+        "relationship": "produced_from"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-LOT-LINK-011"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN011"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-MAT-L17"
+        },
+        "relationship": "produced_from"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-INSTALL-008-020"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": "2026-11-05T00:00:00.000Z",
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-ASM-020"
+        },
+        "relationship": "installed_in"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-INSTALL-008-021"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-05T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-ASM-021"
+        },
+        "relationship": "installed_in"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "relationship",
+        "native_id": "SYN-INSTALL-009-022"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "relationship",
+      "payload": {
+        "from": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "to": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-ASM-022"
+        },
+        "relationship": "installed_in"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-008-process"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "scope": "built",
+        "dimension": "process",
+        "value": "SYN-PS-12 Rev C"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-008-material_lot"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "scope": "built",
+        "dimension": "material_lot",
+        "value": "SYN-MAT-L17"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-design",
+        "type": "configuration",
+        "native_id": "SYN-CFG-008-design_revision"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "scope": "built",
+        "dimension": "design_revision",
+        "value": "SYN-PART-441 Rev A"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-009-process"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "scope": "built",
+        "dimension": "process",
+        "value": "SYN-PS-12 Rev C"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-009-material_lot"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "scope": "built",
+        "dimension": "material_lot",
+        "value": "SYN-MAT-L17"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-design",
+        "type": "configuration",
+        "native_id": "SYN-CFG-009-design_revision"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "scope": "built",
+        "dimension": "design_revision",
+        "value": "SYN-PART-441 Rev A"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-010-process"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN010"
+        },
+        "scope": "built",
+        "dimension": "process",
+        "value": "SYN-PS-12 Rev C"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-mes",
+        "type": "configuration",
+        "native_id": "SYN-CFG-010-material_lot"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN010"
+        },
+        "scope": "built",
+        "dimension": "material_lot",
+        "value": "SYN-MAT-L17"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-design",
+        "type": "configuration",
+        "native_id": "SYN-CFG-010-design_revision"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN010"
+        },
+        "scope": "built",
+        "dimension": "design_revision",
+        "value": "SYN-PART-441 Rev A"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-qms",
+        "type": "configuration",
+        "native_id": "SYN-CONTRARY-009"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "configuration",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN009"
+        },
+        "scope": "built",
+        "dimension": "process",
+        "value": "SYN-PS-12 Rev D"
+      }
+    },
+    {
+      "source": {
+        "system": "syn-qms",
+        "type": "finding",
+        "native_id": "SYN-NCR-1042"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "finding",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "observed_at": "2026-11-09T00:00:00.000Z",
+        "description": "Invented inspection anomaly. No engineering acceptance thresholds or real company data."
+      }
+    },
+    {
+      "source": {
+        "system": "syn-test",
+        "type": "evidence",
+        "native_id": "SYN-QT-77"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "evidence",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-REF-077"
+        },
+        "evidence_class": "qualification",
+        "configuration": {
+          "process": "SYN-PS-12 Rev C",
+          "material_lot": "SYN-MAT-L03",
+          "design_revision": "SYN-PART-441 Rev A"
+        },
+        "description": "Invented qualification record on another serial and lot."
+      }
+    },
+    {
+      "source": {
+        "system": "syn-test",
+        "type": "evidence",
+        "native_id": "SYN-AT-008"
+      },
+      "revision": 1,
+      "valid_from": "2026-11-01T00:00:00.000Z",
+      "valid_to": null,
+      "access_tags": [
+        "synthetic-manufacturing"
+      ],
+      "withdrawn": false,
+      "kind": "evidence",
+      "payload": {
+        "hardware": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-SN008"
+        },
+        "evidence_class": "acceptance",
+        "configuration": {
+          "process": "SYN-PS-12 Rev C"
+        },
+        "description": "Invented partial configuration record; remaining dimensions are missing."
+      }
+    }
+  ]
+}
