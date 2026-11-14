@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgooszfbh913a1bdb",
-  "experiment_id": "exp_0mwgoosowbd17dc7028",
+  "receipt_id": "rcpt_0mwgq2clzbjf4330bf8",
+  "experiment_id": "exp_0mwgq2cb1bf72b22823",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract. A first attempt blocked top-level breaks but also blocked safe additions.",
@@ -36,11 +36,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "32fd8d1b7d9906579adf86d00f62655339074816e7bd093b8d017f9327d4e147",
-    "frozen_at": "2026-11-14T17:32:51.392Z",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "frozen_at": "2026-11-14T18:11:22.957Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:f5e88706e5ff3cc1837fa030b185b6417499377be2811e25d20bd6e93cbdb355"
+      "snapshot:6949a489535a29b89d9b311a3067fbec1be77271d62c8369784ce58bcc002cbc"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -53,21 +53,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T17:32:51.452Z",
+      "at": "2026-11-14T18:11:23.020Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T17:32:51.771Z",
+      "at": "2026-11-14T18:11:23.351Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 318,
+    "wall_ms": 330,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -164,12 +164,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.176,
-      "incumbent": 0.135,
-      "baseline": 0.116,
-      "diff_vs_incumbent": 0.041,
+      "candidate": 0.182,
+      "incumbent": 0.128,
+      "baseline": 0.133,
+      "diff_vs_incumbent": 0.055,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.06,
+      "diff_vs_baseline": 0.049,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -356,7 +356,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T17:32:51.771Z",
+  "decided_at": "2026-11-14T18:11:23.351Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -374,14 +374,14 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "policy_hash": "32fd8d1b7d9906579adf86d00f62655339074816e7bd093b8d017f9327d4e147",
-    "evaluation_snapshot_hash": "f5e88706e5ff3cc1837fa030b185b6417499377be2811e25d20bd6e93cbdb355",
-    "receipt_id": "rcpt_0mwgooszfbh913a1bdb",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "evaluation_snapshot_hash": "6949a489535a29b89d9b311a3067fbec1be77271d62c8369784ce58bcc002cbc",
+    "receipt_id": "rcpt_0mwgq2clzbjf4330bf8",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T17:32:51.771Z",
-    "manifest_hash": "7613bca942ee11246362cb1305327a5e2d09f17ed9fcabbc07f44a827bd79d1c"
+    "created_at": "2026-11-14T18:11:23.351Z",
+    "manifest_hash": "16897eacd5976dbc2cfc8550a4691be19cc333435c2e30d9ad61f7f730852682"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -389,13 +389,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "979de11c80c7f711dad824628ceb64d916d5c937e51dfe970c0fae6c78866302",
-    "protected_digest_after": "979de11c80c7f711dad824628ceb64d916d5c937e51dfe970c0fae6c78866302",
+    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "f0b3c2cac6f929dfbc7e67097f4d00c901811cf0ade3394404a2399cc8282d8a"
+  "receipt_hash": "246a40c5cca36b2a9a141bfda65726024ede7276bedf9abe75c7d6163766e673"
 }

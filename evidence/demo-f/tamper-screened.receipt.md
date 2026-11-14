@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgoortcac9786a68f
+# Improvement receipt rcpt_0mwgq2bcaae009c879f
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs
 
-Decided by release-gate at 2026-11-14T17:32:50.256Z. Level: execution. Experiment: `exp_0mwgoort7a89a122b3b`.
+Decided by release-gate at 2026-11-14T18:11:21.706Z. Level: execution. Experiment: `exp_0mwgq2bc6aa3df5ccb9`.
 
 ## Problem and supporting observations
 
@@ -34,9 +34,9 @@ Adds a validator whose module tries to modify protected files when it is loaded.
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T17:32:50.251Z, before the candidate was submitted
-- Policy hash: `32fd8d1b7d990657`
-- Workload: review:holdout-A; snapshot:31187f18ae50d0a851fed08dac5909a138aea5c3d06f87f2d1250897e09434ff
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T18:11:21.702Z, before the candidate was submitted
+- Policy hash: `19b51d6fce298df7`
+- Workload: review:holdout-A; snapshot:ed0bbf1b59917cd48fd92973e85bb7e0ef788313e505743a9f6d596c3f2443b1
 - Held-out set: holdout-A
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -87,4 +87,4 @@ None observed.
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `6506270e0b74d3c8609f78e84cc64f595b57cb4eb11bf33c15a99035fd25dbf4`
+Receipt hash: `d58cc9b6c41c550b3329756cd31a5501ad951f6d5de10a1d2a422a01ebbbced3`

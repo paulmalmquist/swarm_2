@@ -20,7 +20,7 @@
     },
     {
       "claim": "The simpler configuration really is cheaper and faster",
-      "observed": "worker invocations per mission 12.875 → 10; completion 3978 ms → 2868 ms",
+      "observed": "worker invocations per mission 12.875 → 10; completion 4195 ms → 3054 ms",
       "ok": true
     },
     {
@@ -41,5 +41,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 59232
+  "ms": 62613
 }

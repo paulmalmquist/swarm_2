@@ -3,13 +3,13 @@
   "before_rollback": {
     "missions": [
       {
-        "id": "msn_0mwgooszhblfea878c0",
+        "id": "msn_0mwgq2cm2bn3483e9ea",
         "title": "Shared dataset-health capability (canary-1)",
         "status": "review_ready",
         "in_flight": false
       },
       {
-        "id": "msn_0mwgoovcjjc1f76b527",
+        "id": "msn_0mwgq2f1ejgff3c6e5f",
         "title": "Shared dataset-health capability (canary-2)",
         "status": "planning",
         "in_flight": true
@@ -19,97 +19,97 @@
       {
         "key": "intake/requests",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "discovery/overlap-report",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "plan/acceptance-criteria",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "contract/health-record",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "plan/work-graph",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "plan/delivery-decomposition",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "code/engine",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "code/report",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "code/integrated",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "knowledge/mission-notes",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "review/packet",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       },
       {
         "key": "review/packet.md",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "current"
       }
     ],
     "memories": [
       {
-        "id": "mem_0mwgoov5zin32950517",
+        "id": "mem_0mwgq2eumir6c7cd97f",
         "kind": "fact",
         "statement": "Four synthetic teams asked for dataset freshness or schema checks within two days; one shared capability covers all four needs.",
         "status": "active"
       },
       {
-        "id": "mem_0mwgoov60io403d79f7",
+        "id": "mem_0mwgq2eumisde07a9ba",
         "kind": "decision",
         "statement": "The engine and the report meet at HealthRecord contract version 1; both pin it before implementation.",
         "status": "active"
       },
       {
-        "id": "mem_0mwgoov60ipcc0b2a46",
+        "id": "mem_0mwgq2eumitc679ff02",
         "kind": "procedure",
         "statement": "Pin the shared record as a versioned contract artifact before starting parallel producer and consumer workstreams, then verify the merged result against that contract.",
         "status": "active"
       },
       {
-        "id": "mem_0mwgoov60iq29762114",
+        "id": "mem_0mwgq2eumiu6e138afe",
         "kind": "skill_candidate",
         "statement": "Agree a versioned record contract before parallel producer and consumer work: Write the record as a versioned schema → Pin its exact version in both workstreams → Merge one workstream at a time → Run a test at the boundary that validates produced records against the schema and feeds them to the consumer",
         "status": "active"
@@ -119,13 +119,13 @@
   "after_rollback": {
     "missions": [
       {
-        "id": "msn_0mwgooszhblfea878c0",
+        "id": "msn_0mwgq2cm2bn3483e9ea",
         "title": "Shared dataset-health capability (canary-1)",
         "status": "review_ready",
         "in_flight": false
       },
       {
-        "id": "msn_0mwgoovcjjc1f76b527",
+        "id": "msn_0mwgq2f1ejgff3c6e5f",
         "title": "Shared dataset-health capability (canary-2)",
         "status": "planning",
         "in_flight": true
@@ -135,97 +135,97 @@
       {
         "key": "intake/requests",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "discovery/overlap-report",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "plan/acceptance-criteria",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "contract/health-record",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "plan/work-graph",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "plan/delivery-decomposition",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "code/engine",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "code/report",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "code/integrated",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "knowledge/mission-notes",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "review/packet",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       },
       {
         "key": "review/packet.md",
         "version_no": 1,
-        "mission_id": "msn_0mwgooszhblfea878c0",
+        "mission_id": "msn_0mwgq2cm2bn3483e9ea",
         "currency": "needs_revalidation"
       }
     ],
     "memories": [
       {
-        "id": "mem_0mwgoov5zin32950517",
+        "id": "mem_0mwgq2eumir6c7cd97f",
         "kind": "fact",
         "statement": "Four synthetic teams asked for dataset freshness or schema checks within two days; one shared capability covers all four needs.",
         "status": "invalidated"
       },
       {
-        "id": "mem_0mwgoov60io403d79f7",
+        "id": "mem_0mwgq2eumisde07a9ba",
         "kind": "decision",
         "statement": "The engine and the report meet at HealthRecord contract version 1; both pin it before implementation.",
         "status": "invalidated"
       },
       {
-        "id": "mem_0mwgoov60ipcc0b2a46",
+        "id": "mem_0mwgq2eumitc679ff02",
         "kind": "procedure",
         "statement": "Pin the shared record as a versioned contract artifact before starting parallel producer and consumer workstreams, then verify the merged result against that contract.",
         "status": "invalidated"
       },
       {
-        "id": "mem_0mwgoov60iq29762114",
+        "id": "mem_0mwgq2eumiu6e138afe",
         "kind": "skill_candidate",
         "statement": "Agree a versioned record contract before parallel producer and consumer work: Write the record as a versioned schema → Pin its exact version in both workstreams → Merge one workstream at a time → Run a test at the boundary that validates produced records against the schema and feeds them to the consumer",
         "status": "invalidated"

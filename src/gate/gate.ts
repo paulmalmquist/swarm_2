@@ -30,7 +30,7 @@ export interface PromotionPolicy {
   forbidden_capabilities: string[];
   holdout: { max_uses_per_lineage: number; max_total_uses_per_set?: number };
   exploration?: { budget_units: number };
-  canary: { max_missions: number; fresh_cases: number; rollback_if: { accuracy_drop_gt: number; escaped_defect_rate_increase_gt: number; acceptance_failures_gt: number } };
+  canary: { max_missions: number; fresh_cases: number; rollback_if: { accuracy_drop_gt: number; escaped_defect_rate_increase_gt: number; acceptance_failures_gt: number; policy_refused_actions_gt?: number } };
   decision_rule: Record<string, string>;
 }
 
@@ -665,6 +665,13 @@ export class Gate {
     const m = this.rt.registry.manifest(release_id);
     if (m.status !== 'canary') throw new SwarmError('not_qualified', `Release ${release_id} is ${m.status}; only a release the gate accepted can enter a canary`);
     if (this.canaries.first(`"status" = 'running'`)) throw new SwarmError('canary_in_progress', 'Another canary is running');
+    // A release is qualified against one parent. If a different release has become active since,
+    // promoting this one would silently drop that release's changes.
+    const active = this.rt.registry.active();
+    if (m.parent_release_id && m.parent_release_id !== active) {
+      this.append(this.experiments.first('"release_id" = ?', release_id)?.id ?? null, 'canary_refused_stale_parent', { release_id, qualified_against: m.parent_release_id, active });
+      throw new SwarmError('stale_parent', `Release ${release_id} was qualified against ${m.parent_release_id}, but ${active} is now active. Rebuild the candidate on ${active} and evaluate it again.`, { release_id, qualified_against: m.parent_release_id, active });
+    }
     const c: CanaryRecord = { id: newId('can'), release_id, prior_release_id: m.rollback_target ?? this.rt.registry.active(), scope: { max_missions: scope.max_missions ?? this.policy().canary.max_missions, data_class: 'synthetic', scenario: scope.scenario ?? null }, status: 'running', missions: [], observations: [], started_at: this.clock.iso(), ended_at: null, reason: null };
     this.canaries.put(c);
     const exp = this.experiments.first('"release_id" = ?', release_id);
@@ -713,6 +720,15 @@ export class Gate {
       observations.push({ at, metric: 'accuracy_drop_vs_approval', value: round(drop), threshold: pol.canary.rollback_if.accuracy_drop_gt, breached: drop > pol.canary.rollback_if.accuracy_drop_gt, injected: Boolean(opts.inject_regression) });
       observations.push({ at, metric: 'escaped_defect_rate_increase', value: round(escapedUp), threshold: pol.canary.rollback_if.escaped_defect_rate_increase_gt, breached: escapedUp > pol.canary.rollback_if.escaped_defect_rate_increase_gt, injected: Boolean(opts.inject_regression) });
     }
+    if (exp?.level === 'evolution') {
+      // An improvement-policy release is tried by letting it decide the organization's improvement
+      // work within a bounded budget. It is rolled back if it asks for steps the runtime must refuse.
+      const steps = (this.rt.store.getMeta<{ steps: { policy: { canary_id: string | null }; outcome: string }[] }>('evolution:portfolio')?.steps ?? []).filter((s) => s.policy.canary_id === c.id);
+      const refused = steps.filter((s) => s.outcome.startsWith('refused')).length;
+      const limit = pol.canary.rollback_if.policy_refused_actions_gt ?? 0;
+      observations.push({ at, metric: 'decisions_made_under_canary', value: steps.length, threshold: 1, breached: false, injected: false });
+      observations.push({ at, metric: 'policy_actions_refused', value: refused, threshold: limit, breached: refused > limit, injected: false });
+    }
     const failures = c.missions.filter((id) => this.rt.store.observations.where('"mission_id" = ?', id).some((o) => o.kind === 'acceptance_failure' || o.kind === 'escaped_defect')).length;
     observations.push({ at, metric: 'canary_missions_with_acceptance_failures', value: c.missions.length ? failures : null, threshold: pol.canary.rollback_if.acceptance_failures_gt, breached: failures > pol.canary.rollback_if.acceptance_failures_gt, injected: false });
     c = { ...c, observations: [...c.observations, ...observations] };
@@ -728,6 +744,8 @@ export class Gate {
     const c = this.canaries.must(canary_id);
     if (c.status !== 'running') throw new SwarmError('canary_closed', `Canary ${canary_id} is ${c.status}`);
     if (c.observations.length === 0) throw new SwarmError('not_observed', 'A canary cannot be retained before it has been observed');
+    const decided = c.observations.filter((o) => o.metric === 'decisions_made_under_canary').at(-1);
+    if (decided && Number(decided.value ?? 0) < 1) throw new SwarmError('not_observed', 'This release changes the improvement policy, and the policy has not made a decision under the canary yet');
     const { registry } = this.rt;
     registry.setStatus(c.release_id, 'active');
     registry.setStatus(c.prior_release_id, 'retired');

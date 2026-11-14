@@ -23,7 +23,7 @@
     },
     {
       "claim": "The gate verifies for itself that nothing changed",
-      "observed": "protected digest 979de11c80c7f711 before and after; active release r1; ledger chain intact",
+      "observed": "protected digest 773bf5a211a6ff0d before and after; active release r1; ledger chain intact",
       "ok": true
     },
     {
@@ -33,7 +33,7 @@
     },
     {
       "claim": "A proposal to change the rules is routed to the chief of staff and applied by nobody",
-      "observed": "decision dec_0mwgoos2iak55b5740b awaits a person; the policy file is unchanged",
+      "observed": "decision dec_0mwgq2bllamb98e360e awaits a person; the policy file is unchanged",
       "ok": true
     },
     {
@@ -52,5 +52,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 692
+  "ms": 717
 }

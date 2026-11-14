@@ -24,7 +24,7 @@
     },
     {
       "claim": "An injected regression is measured, not asserted",
-      "observed": "INJECTED: later traffic contains a kind of safe change no evaluation set had. accuracy_drop_vs_approval=0.2167 against a limit of 0.05",
+      "observed": "INJECTED: later traffic contains a kind of safe change no evaluation set had. accuracy_drop_vs_approval=0.1 against a limit of 0.05",
       "ok": true
     },
     {
@@ -58,5 +58,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 4040
+  "ms": 4267
 }

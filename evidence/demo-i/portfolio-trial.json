@@ -1,0 +1,358 @@
+{
+  "note": "Canary of the expected-value policy. SYNTHETIC workload and fix library.",
+  "tally": {
+    "spent": 656,
+    "accepted": [
+      "guard_removed_toplevel"
+    ],
+    "not_accepted": [
+      "guard_type_strict (rejected)"
+    ],
+    "units_on_experiments_not_accepted": 323,
+    "units_on_builds_never_submitted": 0,
+    "held_out_evaluations_used": 2
+  },
+  "steps": [
+    {
+      "n": 1,
+      "at": "2026-11-14T18:12:51.894Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_removed_toplevel"
+      },
+      "outcome": "built on r1",
+      "cost": 40,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 2,
+      "at": "2026-11-14T18:12:52.116Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "pilot",
+        "candidate_id": "guard_removed_toplevel",
+        "cases": 12
+      },
+      "outcome": "pilot on 12 observed cases: fixed 6 of 6 targeted failures, broke 0 working cases",
+      "cost": 12,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 3,
+      "at": "2026-11-14T18:12:52.566Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "submit",
+        "candidate_id": "guard_removed_toplevel"
+      },
+      "outcome": "accept on holdout-A; r3 is qualified for a canary",
+      "cost": 281,
+      "experiment_id": "exp_0mwgq4956auf2ef8cc1",
+      "receipt_id": "rcpt_0mwgq49g4ayb7f1fef0"
+    },
+    {
+      "n": 4,
+      "at": "2026-11-14T18:12:52.632Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "build",
+        "candidate_id": "guard_type_strict"
+      },
+      "outcome": "built on r1",
+      "cost": 30,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 5,
+      "at": "2026-11-14T18:12:52.873Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "pilot",
+        "candidate_id": "guard_type_strict",
+        "cases": 12
+      },
+      "outcome": "pilot on 12 observed cases: fixed 3 of 3 targeted failures, broke 0 working cases",
+      "cost": 12,
+      "experiment_id": null,
+      "receipt_id": null
+    },
+    {
+      "n": 6,
+      "at": "2026-11-14T18:12:53.315Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "submit",
+        "candidate_id": "guard_type_strict"
+      },
+      "outcome": "reject on holdout-B",
+      "cost": 281,
+      "experiment_id": "exp_0mwgq49qcb3d38f2d9d",
+      "receipt_id": "rcpt_0mwgq4a0yb796437dce"
+    },
+    {
+      "n": 7,
+      "at": "2026-11-14T18:12:53.362Z",
+      "policy": {
+        "release_id": "r2",
+        "evolution_version": 2,
+        "id": "expected-value",
+        "canary_id": "can_0mwgq48uv9h55cb7c91"
+      },
+      "action": {
+        "type": "stop",
+        "reason": "no remaining step is worth its cost"
+      },
+      "outcome": "stopped: no remaining step is worth its cost",
+      "cost": 0,
+      "experiment_id": null,
+      "receipt_id": null
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "guard_removed_toplevel",
+      "problem_ids": [
+        "field_removed",
+        "field_renamed"
+      ],
+      "statement": "If change review also runs guard_removed_toplevel, verified failures of field_removed, field_renamed will be blocked without blocking safe changes.",
+      "status": "accepted",
+      "parent_release": "r1",
+      "build_cost": 40,
+      "built": true,
+      "pilot": {
+        "cases": 12,
+        "attempted": 6,
+        "fixed": 6,
+        "broke": 0
+      },
+      "submitted": true,
+      "result": "accept",
+      "experiment_id": "exp_0mwgq4956auf2ef8cc1",
+      "receipt_id": "rcpt_0mwgq49g4ayb7f1fef0",
+      "release_id": "r3",
+      "failed_approach_memory_id": null,
+      "cost_so_far": 333
+    },
+    {
+      "id": "guard_removed_recursive",
+      "problem_ids": [
+        "nested_field_renamed",
+        "field_removed",
+        "field_renamed"
+      ],
+      "statement": "If change review also runs guard_removed_recursive, verified failures of nested_field_renamed, field_removed, field_renamed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 70,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_type_strict",
+      "problem_ids": [
+        "type_changed",
+        "nullability_removed"
+      ],
+      "statement": "If change review also runs guard_type_strict, verified failures of type_changed, nullability_removed will be blocked without blocking safe changes.",
+      "status": "rejected",
+      "parent_release": "r1",
+      "build_cost": 30,
+      "built": true,
+      "pilot": {
+        "cases": 12,
+        "attempted": 3,
+        "fixed": 3,
+        "broke": 0
+      },
+      "submitted": true,
+      "result": "reject",
+      "experiment_id": "exp_0mwgq49qcb3d38f2d9d",
+      "receipt_id": "rcpt_0mwgq4a0yb796437dce",
+      "release_id": null,
+      "failed_approach_memory_id": "mem_0mwgq4a0zb982052300",
+      "cost_so_far": 323
+    },
+    {
+      "id": "guard_type_narrowing",
+      "problem_ids": [
+        "type_changed",
+        "nullability_removed"
+      ],
+      "statement": "If change review also runs guard_type_narrowing, verified failures of type_changed, nullability_removed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 50,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_required",
+      "problem_ids": [
+        "required_added"
+      ],
+      "statement": "If change review also runs guard_required, verified failures of required_added will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 30,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_enum",
+      "problem_ids": [
+        "enum_value_removed"
+      ],
+      "statement": "If change review also runs guard_enum, verified failures of enum_value_removed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 30,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "guard_unit",
+      "problem_ids": [
+        "unit_changed"
+      ],
+      "statement": "If change review also runs guard_unit, verified failures of unit_changed will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 60,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    },
+    {
+      "id": "style_strict",
+      "problem_ids": [
+        "style_nit"
+      ],
+      "statement": "If change review also runs style_strict, verified failures of style_nit will be blocked without blocking safe changes.",
+      "status": "proposed",
+      "parent_release": null,
+      "build_cost": 20,
+      "built": false,
+      "pilot": null,
+      "submitted": false,
+      "result": null,
+      "experiment_id": null,
+      "receipt_id": null,
+      "release_id": null,
+      "failed_approach_memory_id": null,
+      "cost_so_far": 0
+    }
+  ],
+  "problems": [
+    {
+      "id": "enum_value_removed",
+      "verified_count": 1,
+      "observed_count": 1,
+      "severity": 3,
+      "resolved": false
+    },
+    {
+      "id": "field_removed",
+      "verified_count": 4,
+      "observed_count": 4,
+      "severity": 5,
+      "resolved": true
+    },
+    {
+      "id": "field_renamed",
+      "verified_count": 3,
+      "observed_count": 3,
+      "severity": 5,
+      "resolved": true
+    },
+    {
+      "id": "required_added",
+      "verified_count": 2,
+      "observed_count": 2,
+      "severity": 3,
+      "resolved": false
+    },
+    {
+      "id": "style_nit",
+      "verified_count": 0,
+      "observed_count": 30,
+      "severity": 0,
+      "resolved": false
+    },
+    {
+      "id": "type_changed",
+      "verified_count": 3,
+      "observed_count": 3,
+      "severity": 5,
+      "resolved": false
+    }
+  ]
+}

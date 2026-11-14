@@ -59,6 +59,8 @@ main { padding-top: 16px; }
 .cold p:first-child { font-size: 16px; }
 .cold p + p { color: var(--text-2); }
 .grid { display: grid; gap: 14px; }
+/* A grid item must be allowed to shrink, or a wide table inside it pushes the page sideways. */
+.grid > * { min-width: 0; }
 @media (min-width: 900px) { .grid.two { grid-template-columns: 1fr 1fr; } .grid.three { grid-template-columns: repeat(3, 1fr); } }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
 .card > h3 { margin-bottom: 8px; }

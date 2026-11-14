@@ -1,3 +1,4 @@
+import { portfolio } from '../evolution/portfolio.ts';
 import type { CoordinationDef } from '../contracts/definitions.ts';
 import type { Envelope, ImprovementReceipt, SourceLabel, Task } from '../contracts/types.ts';
 import { criticalPath } from '../coordination/metrics.ts';
@@ -195,6 +196,9 @@ export function evolution(rt: Runtime, gate: Gate): Envelope<Record<string, unkn
       canaries: gate.canaries.where('1=1').sort((a, b) => a.started_at.localeCompare(b.started_at)),
       rollbacks: gate.ledger().filter((l) => l.kind === 'rollback').map((l) => ({ at: l.at, ...l.payload })),
       rule_change_proposals: rt.store.decisions.where(`"kind" = 'rule_change'`).map((d) => ({ id: d.id, question: d.question, status: d.status, chosen: d.chosen })),
+      // The organization's own improvement work: what the policy in force has to choose from, and what it did.
+      portfolio: portfolio(rt, gate),
+      exploration: gate.exploration(),
       observations: Object.entries(rt.store.observations.where('1=1').reduce((a: Record<string, number>, o) => ((a[`${o.kind}:${o.failure_class}`] = (a[`${o.kind}:${o.failure_class}`] ?? 0) + 1), a), {})).map(([k, n]) => ({ signature: k, count: n })).sort((a, b) => b.count - a.count).slice(0, 12),
     },
     experiments.some((e) => e.source === 'live') ? 'live' : 'fixture',

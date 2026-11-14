@@ -1,23 +1,23 @@
 {
-  "receipt_id": "rcpt_0mwgoobtd9q5b78ecd0",
-  "experiment_id": "exp_0mwgoobj09m85bedd26",
+  "receipt_id": "rcpt_0mwgq1tv49s99cfe5fb",
+  "experiment_id": "exp_0mwgq1tkk9o3c6375cd",
   "level": "execution",
   "problem": {
     "statement": "Reviews approve changes that break the shared contract. A first attempt blocked top-level breaks but also blocked safe additions.",
     "observation_ids": [
-      "obs_0mwgoob7e9224880f29",
-      "obs_0mwgoob7e93bbad8eb2",
-      "obs_0mwgoob7e94ac8aff36",
-      "obs_0mwgoob7e952dc07b33",
-      "obs_0mwgoob7e9642e55f3d",
-      "obs_0mwgoob7e97620bc9a7",
-      "obs_0mwgoob7e98767ae9a6",
-      "obs_0mwgoob7f99a3430bf1",
-      "obs_0mwgoob7f9a4eb37c75",
-      "obs_0mwgoob7f9b306d1424",
-      "obs_0mwgoob7f9cb821c81b",
-      "obs_0mwgoob7f9d304f1695",
-      "obs_0mwgoob7f9e329c67e4"
+      "obs_0mwgq1t8p948e19da4f",
+      "obs_0mwgq1t8p9598591376",
+      "obs_0mwgq1t8p96bc05d697",
+      "obs_0mwgq1t8p978047450e",
+      "obs_0mwgq1t8p98985feea3",
+      "obs_0mwgq1t8p99da645bdc",
+      "obs_0mwgq1t8p9a16ba3141",
+      "obs_0mwgq1t8q9bc49e0138",
+      "obs_0mwgq1t8q9c70f3cf89",
+      "obs_0mwgq1t8q9d9d5b2945",
+      "obs_0mwgq1t8q9e0ae332bb",
+      "obs_0mwgq1t8q9f8bdde27e",
+      "obs_0mwgq1t8q9gf22338aa"
     ],
     "observed_failure_count": 13
   },
@@ -50,11 +50,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
-    "policy_hash": "32fd8d1b7d9906579adf86d00f62655339074816e7bd093b8d017f9327d4e147",
-    "frozen_at": "2026-11-14T17:32:29.148Z",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "frozen_at": "2026-11-14T18:10:58.676Z",
     "workload_refs": [
       "review:holdout-B",
-      "snapshot:2d507f6530b7cafa1e128da31c7586c7e693e92cd1ecbddfee5f4094bb9e8dde"
+      "snapshot:341f487d9d0d1040931e06771e81294db6ac173486ad94c40ae18c6f96a32ddb"
     ],
     "holdout_set": "holdout-B",
     "executor": "validator-executor",
@@ -67,21 +67,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T17:32:29.217Z",
+      "at": "2026-11-14T18:10:58.742Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T17:32:29.522Z",
+      "at": "2026-11-14T18:10:59.056Z",
       "cases": 80,
       "note": "one evaluation on holdout-B"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 305,
+    "wall_ms": 313,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -178,12 +178,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.149,
+      "candidate": 0.159,
       "incumbent": 0.121,
-      "baseline": 0.11,
-      "diff_vs_incumbent": 0.027,
+      "baseline": 0.15,
+      "diff_vs_incumbent": 0.038,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.038,
+      "diff_vs_baseline": 0.008,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -370,7 +370,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.5125 against the incumbent (95% interval 0.4 to 0.625) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T17:32:29.522Z",
+  "decided_at": "2026-11-14T18:10:59.056Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -388,14 +388,14 @@
         "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
       }
     },
-    "policy_hash": "32fd8d1b7d9906579adf86d00f62655339074816e7bd093b8d017f9327d4e147",
-    "evaluation_snapshot_hash": "2d507f6530b7cafa1e128da31c7586c7e693e92cd1ecbddfee5f4094bb9e8dde",
-    "receipt_id": "rcpt_0mwgoobtd9q5b78ecd0",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "evaluation_snapshot_hash": "341f487d9d0d1040931e06771e81294db6ac173486ad94c40ae18c6f96a32ddb",
+    "receipt_id": "rcpt_0mwgq1tv49s99cfe5fb",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T17:32:29.521Z",
-    "manifest_hash": "948f0611c7ebf4c1b3eeb564ac57e8ae249651530e46a0fa713fb2328209914e"
+    "created_at": "2026-11-14T18:10:59.056Z",
+    "manifest_hash": "03a366cc7382187130e48ad4abbcee87e60e439a80cf03c855264f4a2c0562f3"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -403,13 +403,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "979de11c80c7f711dad824628ceb64d916d5c937e51dfe970c0fae6c78866302",
-    "protected_digest_after": "979de11c80c7f711dad824628ceb64d916d5c937e51dfe970c0fae6c78866302",
+    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "cfda358fb92d0274765e1b214bb57720e4697fb677b7d111d60e66c91da182d4"
+  "receipt_hash": "213698744ce52b5294d6da4ab6fbc702aeb3bef7847e2187ac78175755176698"
 }

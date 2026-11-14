@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgoorsoa63622eb68
+# Improvement receipt rcpt_0mwgq2bb1a81633df03
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.
 
-Decided by release-gate at 2026-11-14T17:32:50.233Z. Level: execution. Experiment: `exp_0mwgooriya214f7675c`.
+Decided by release-gate at 2026-11-14T18:11:21.661Z. Level: execution. Experiment: `exp_0mwgq2b22a4bb063c80`.
 
 ## Problem and supporting observations
 
@@ -34,9 +34,9 @@ Removes the tests_present step from the procedure and its validator from the ski
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T17:32:49.882Z, before the candidate was submitted
-- Policy hash: `32fd8d1b7d990657`
-- Workload: review:holdout-A; snapshot:a7286377085d925fd2499927024b398b3942bb4c249d26c6f07c4c35060bff55
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T18:11:21.338Z, before the candidate was submitted
+- Policy hash: `19b51d6fce298df7`
+- Workload: review:holdout-A; snapshot:ae59142ba7e70d18f55ccddf3bacbea892d355b592a549682eee113a6bfe18f3
 - Held-out set: holdout-A
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -47,7 +47,7 @@ Removes the tests_present step from the procedure and its validator from the ski
 | 1 | development | 40 | development check by the candidate author |
 | 2 | holdout | 80 | one evaluation on holdout-A |
 
-Resource use: 281 experiment units, 288 ms, 0 model calls, cost not measured.
+Resource use: 281 experiment units, 268 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -58,7 +58,7 @@ Resource use: 281 experiment units, 288 ms, 0 model calls, cost not measured.
 | escaped_defect_rate (lower is better) | 1 | 0.8 | 0.8 | 0.2 | — | 80 |
 | false_alarm_rate (lower is better) | 0 | 0 | 0 | 0 | — | 80 |
 | steps_per_review (lower is better) | 1 | 2 | 2 | -1 | -1 to -1 | 80 |
-| wall_ms_per_review (lower is better) | 0.105 | 0.107 | 0.119 | -0.003 | — | 80 |
+| wall_ms_per_review (lower is better) | 0.093 | 0.107 | 0.105 | -0.014 | — | 80 |
 
 Method for the primary metric: paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 0 better, 10 worse, 70 same, p=0.00195.
 
@@ -99,4 +99,4 @@ Method for the primary metric: paired bootstrap over the same 80 cases (20000 re
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `dc8ada83ac3c8aae0657b1009614f3b422b5cf5b49bf3ccfb641a8a63fe56aba`
+Receipt hash: `0fb951756b8abf33b1a09f656e831054e2d6bf6d8ed7d5301835ad7d198133f0`

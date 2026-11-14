@@ -1,7 +1,7 @@
 {
   "outcome": {
-    "id": "out_0mwgoo4ur7ue4c08276",
-    "mission_id": "msn_0mwgoo2o507f4189557",
+    "id": "out_0mwgq1mmv7wf9a7a573",
+    "mission_id": "msn_0mwgq1k8507cf4ff4d1",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -83,20 +83,20 @@
     "human_corrections": 0,
     "recovery_events": 0,
     "total_usage": {
-      "model_calls": 8,
+      "model_calls": 0,
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 986
+      "wall_ms": 1136
     },
-    "elapsed_ms": 2829,
-    "critical_path_wait_ms": 144,
-    "messages": 0,
-    "message_bytes": 0,
+    "elapsed_ms": 3120,
+    "critical_path_wait_ms": 146,
+    "messages": 1,
+    "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T17:32:20.504Z"
+    "created_at": "2026-11-14T18:10:49.690Z"
   },
   "critical_path": {
     "keys": [
@@ -105,12 +105,12 @@
       "reliability.knowledge",
       "review.packet"
     ],
-    "wait_ms": 144
+    "wait_ms": 146
   },
   "communication": {
-    "messages": 0,
-    "bytes": 0,
-    "deliveries": 0
+    "messages": 1,
+    "bytes": 86,
+    "deliveries": 1
   },
   "usage": [
     {
@@ -122,17 +122,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 9,
+        "wall_ms": 12,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:17.803Z"
+        "observed_at": "2026-11-14T18:10:46.742Z"
       }
     },
     {
@@ -144,17 +144,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 8,
+        "wall_ms": 9,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:18.039Z"
+        "observed_at": "2026-11-14T18:10:46.999Z"
       }
     },
     {
@@ -166,17 +166,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 10,
+        "wall_ms": 13,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:18.208Z"
+        "observed_at": "2026-11-14T18:10:47.204Z"
       }
     },
     {
@@ -188,7 +188,7 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
@@ -198,7 +198,7 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:18.409Z"
+        "observed_at": "2026-11-14T18:10:47.408Z"
       }
     },
     {
@@ -210,7 +210,7 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
@@ -220,7 +220,7 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:18.651Z"
+        "observed_at": "2026-11-14T18:10:47.662Z"
       }
     },
     {
@@ -232,17 +232,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 63,
+        "wall_ms": 65,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:19.032Z"
+        "observed_at": "2026-11-14T18:10:48.091Z"
       }
     },
     {
@@ -254,17 +254,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 56,
+        "wall_ms": 53,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:19.100Z"
+        "observed_at": "2026-11-14T18:10:48.150Z"
       }
     },
     {
@@ -281,12 +281,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 610,
+        "wall_ms": 709,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:19.962Z"
+        "observed_at": "2026-11-14T18:10:49.100Z"
       }
     },
     {
@@ -303,12 +303,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 179,
+        "wall_ms": 224,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:20.161Z"
+        "observed_at": "2026-11-14T18:10:49.341Z"
       }
     },
     {
@@ -320,17 +320,17 @@
       "usage": {
         "source": "fixture-worker",
         "meter_kind": "fixture_declared",
-        "call_count": 1,
+        "call_count": 0,
         "input_units": null,
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 11,
+        "wall_ms": 12,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:20.322Z"
+        "observed_at": "2026-11-14T18:10:49.501Z"
       }
     },
     {
@@ -347,12 +347,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 17,
+        "wall_ms": 16,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T17:32:20.452Z"
+        "observed_at": "2026-11-14T18:10:49.638Z"
       }
     }
   ]

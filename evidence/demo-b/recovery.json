@@ -5,7 +5,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8121,
+      "pid": 29761,
       "error": null
     },
     {
@@ -13,7 +13,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8128,
+      "pid": 29768,
       "error": null
     },
     {
@@ -21,7 +21,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8135,
+      "pid": 29775,
       "error": null
     },
     {
@@ -29,7 +29,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8142,
+      "pid": 29782,
       "error": null
     },
     {
@@ -37,7 +37,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8149,
+      "pid": 29789,
       "error": null
     },
     {
@@ -45,7 +45,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "killed",
-      "pid": 8177,
+      "pid": 29817,
       "error": {
         "code": "worker_killed",
         "message": "fixture worker terminated by SIGKILL"
@@ -56,7 +56,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "expired",
-      "pid": 8196,
+      "pid": 29831,
       "error": {
         "code": "lease_expired",
         "message": "No heartbeat before the lease expired"
@@ -67,7 +67,7 @@
       "attempt_no": 2,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8216,
+      "pid": 29851,
       "error": null
     },
     {
@@ -75,7 +75,7 @@
       "attempt_no": 2,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8255,
+      "pid": 29890,
       "error": null
     },
     {
@@ -99,7 +99,7 @@
       "attempt_no": 1,
       "generation": 1,
       "status": "expired",
-      "pid": 8372,
+      "pid": 30007,
       "error": {
         "code": "coordinator_restart",
         "message": "Attempt was in flight when the coordinator stopped"
@@ -110,7 +110,7 @@
       "attempt_no": 2,
       "generation": 1,
       "status": "succeeded",
-      "pid": 8395,
+      "pid": 30030,
       "error": null
     },
     {
@@ -126,7 +126,7 @@
       "attempt_no": 3,
       "generation": 2,
       "status": "succeeded",
-      "pid": 8427,
+      "pid": 30062,
       "error": null
     },
     {
@@ -134,7 +134,7 @@
       "attempt_no": 3,
       "generation": 2,
       "status": "succeeded",
-      "pid": 8447,
+      "pid": 30082,
       "error": null
     },
     {
@@ -158,7 +158,7 @@
       "attempt_no": 3,
       "generation": 4,
       "status": "succeeded",
-      "pid": 8583,
+      "pid": 30218,
       "error": null
     },
     {
@@ -172,35 +172,35 @@
   ],
   "impacts": [
     {
-      "task_id": "tsk_0mwgoo5yk3y225c4b23",
+      "task_id": "tsk_0mwgq1nwh40adaa8731",
       "key": "delivery.engine.implement",
       "action": "rerun_required",
       "reason": "input contract/health-record changed to v2",
       "pids": []
     },
     {
-      "task_id": "tsk_0mwgoo5rc2s11f3219a",
+      "task_id": "tsk_0mwgq1np82uee7a2d16",
       "key": "delivery.integrate",
       "action": "downstream_blocked",
       "reason": "input code/engine needs revalidation",
       "pids": []
     },
     {
-      "task_id": "tsk_0mwgoo5re30c47faba4",
+      "task_id": "tsk_0mwgq1np932ba6bae39",
       "key": "reliability.knowledge",
       "action": "rerun_required",
       "reason": "input contract/health-record changed to v2",
       "pids": []
     },
     {
-      "task_id": "tsk_0mwgoo5re347cd34198",
+      "task_id": "tsk_0mwgq1np9362ba42e52",
       "key": "review.packet",
       "action": "downstream_blocked",
       "reason": "prerequisite reliability reopened",
       "pids": []
     },
     {
-      "task_id": "tsk_0mwgoo5yl42b2aeebe6",
+      "task_id": "tsk_0mwgq1nwh4469c1ffe8",
       "key": "delivery.report.implement",
       "action": "rerun_required",
       "reason": "input contract/health-record changed to v2",
@@ -209,7 +209,7 @@
   ],
   "coordinator_logs": {
     "first": [
-      "[coordinator] bootstrapped mission msn_0mwgoo4ys864193b963 with a hierarchical plan",
+      "[coordinator] bootstrapped mission msn_0mwgq1mxq88d14bf290 with a hierarchical plan",
       "[coordinator] dispatched discovery.analyze (fixture, token g1a1)",
       "[coordinator] dispatched planning.criteria (fixture, token g1a1)",
       "[coordinator] dispatched planning.contract (fixture, token g1a1)",

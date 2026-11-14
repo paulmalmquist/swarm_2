@@ -14,10 +14,10 @@ Each configuration runs the same eight seeded missions on the real runtime. Afte
 |---|---|---|
 | The simpler configuration is a coordination-level candidate with its own version | coordination v1 → candidate: Sets independent_verification to false: no verification swarm is formed and the integrated result is accepted on delivery's own combined tests. | held |
 | Both configurations run the same seeded missions end to end | 8 complete fixture missions per configuration from held-out set missions-A; a defect is injected into a first attempt in about half of them | held |
-| The simpler configuration really is cheaper and faster | worker invocations per mission 12.875 → 10; completion 3978 ms → 2868 ms | held |
+| The simpler configuration really is cheaper and faster | worker invocations per mission 12.875 → 10; completion 4195 ms → 3054 ms | held |
 | What it gives up is measured by an oracle, not assumed | defects reaching an accepted result per mission 0 → 0.625; truly correct missions 1 → 0.375 (difference -0.625, 95% interval -0.875 to -0.25) | held |
 | The decision follows the frozen rule | reject: Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes. | held |
 
 Files in this folder: `self-verification.receipt.json`, `self-verification.receipt.md`, `episodes.json`.
 
-Reproduce with `npm run demo:h`. Run time 59232 ms.
+Reproduce with `npm run demo:h`. Run time 62613 ms.

@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgpbsd7n671a3f81b",
-  "experiment_id": "exp_0mwgpaipg0160bcb834",
+  "receipt_id": "rcpt_0mwgq3rhv7f151db04c",
+  "experiment_id": "exp_0mwgq2f7cka08b8f80e",
   "level": "coordination",
   "problem": {
     "statement": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
@@ -30,11 +30,11 @@
   },
   "evaluation": {
     "protocol_id": "promotion-policy@1/coordination",
-    "policy_hash": "f2fb27cbc4d75c804302ea264ac288edf4481764a8472ac690aa687d61acad34",
-    "frozen_at": "2026-11-14T17:49:44.884Z",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "frozen_at": "2026-11-14T18:11:26.712Z",
     "workload_refs": [
       "mission-episodes:missions-A",
-      "snapshot:3da6bd63f6bafde88e5b204fb631a714a584a833376b68142688790255f33727"
+      "snapshot:a71dd94684bff6b9a4c8b3b08659fbe85bf10d1c11e711d264d5f79ecc912d84"
     ],
     "holdout_set": "missions-A",
     "executor": "mission-episodes",
@@ -47,14 +47,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T17:50:44.059Z",
+      "at": "2026-11-14T18:12:29.299Z",
       "cases": 8,
       "note": "one evaluation on missions-A"
     }
   ],
   "resource_use": {
     "experiment_units": 183,
-    "wall_ms": 59169,
+    "wall_ms": 62584,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -123,18 +123,18 @@
       "metric": "completion_ms",
       "unit": "milliseconds from start to a reviewable result",
       "higher_is_better": false,
-      "candidate": 2868,
-      "incumbent": 3977.875,
-      "baseline": 3977.875,
-      "diff_vs_incumbent": -1109.875,
+      "candidate": 3054,
+      "incumbent": 4195.125,
+      "baseline": 4195.125,
+      "diff_vs_incumbent": -1141.125,
       "ci95_vs_incumbent": [
-        -1544.75,
-        -588.625
+        -1580.75,
+        -575
       ],
-      "diff_vs_baseline": -1109.875,
+      "diff_vs_baseline": -1141.125,
       "ci95_vs_baseline": [
-        -1544.75,
-        -588.625
+        -1580.75,
+        -575
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
@@ -286,7 +286,7 @@
   "decision": "reject",
   "justification": "Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T17:50:44.059Z",
+  "decided_at": "2026-11-14T18:12:29.299Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -294,13 +294,13 @@
     "uid_separation": true,
     "candidate_uid": 65534,
     "node_permission_model": true,
-    "protected_digest_before": "541254da2aca12ceaa9919d26288770825779460b5541930726772ab6566e1fd",
-    "protected_digest_after": "541254da2aca12ceaa9919d26288770825779460b5541930726772ab6566e1fd",
+    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
     "intact": true,
     "notes": [
       "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "d7e6e091ad777bcada59333cfd2e2dfd34eb8da6ff95b4704a57d9c8c432bc43"
+  "receipt_hash": "eb246d6b68ade2ea7f1e8cac9bf68e937923ba72704480c721a796106667fe6c"
 }

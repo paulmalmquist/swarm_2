@@ -19,133 +19,134 @@
 #25 verification_recorded key=discovery.analyze verdict=pass criterion_id=D-OVERLAP
 #26 verification_recorded key=discovery.analyze verdict=pass criterion_id=D-EPISTEMICS
 #27 task_accepted key=discovery.analyze
-#28 swarm_completed
-#29 task_status_changed key=discovery to=accepted
-#30 task_ready key=planning
-#31 task_ready key=planning.criteria
-#32 task_leased key=planning.criteria token=g1a1
-#33 artifact_published key=plan/acceptance-criteria
-#34 result_submitted key=planning.criteria token=g1a1 status=completed
-#35 task_status_changed key=planning.criteria to=verifying
-#36 verification_recorded key=planning.criteria verdict=pass criterion_id=P-CRITERIA
-#37 task_accepted key=planning.criteria
-#38 task_ready key=planning.contract
-#39 task_leased key=planning.contract token=g1a1
-#40 artifact_published key=contract/health-record
-#41 result_submitted key=planning.contract token=g1a1 status=completed
-#42 task_status_changed key=planning.contract to=verifying
-#43 verification_recorded key=planning.contract verdict=pass criterion_id=P-CONTRACT
-#44 task_accepted key=planning.contract
-#45 handoff_offered to=agt_0mwgoo2ok157554a80f
-#46 task_ready key=planning.plan
-#47 task_leased key=planning.plan token=g1a1
-#48 handoff_accepted
-#49 artifact_published key=plan/work-graph
-#50 result_submitted key=planning.plan token=g1a1 status=completed
-#51 task_status_changed key=planning.plan to=verifying
-#52 verification_recorded key=planning.plan verdict=pass criterion_id=P-PLAN
-#53 task_accepted key=planning.plan
-#54 task_created key=delivery
-#55 swarm_formed
-#56 task_created key=verification
-#57 swarm_formed
-#58 task_created key=reliability
-#59 swarm_formed
-#60 task_created key=delivery.decompose
-#61 task_created key=delivery.integrate
-#62 task_created key=verification.acceptance
-#63 task_created key=reliability.knowledge
-#64 task_created key=review.packet
-#65 plan_materialized
-#66 task_ready key=reliability
-#67 task_ready key=verification
-#68 swarm_completed
-#69 task_status_changed key=planning to=accepted
-#70 task_ready key=delivery
-#71 task_ready key=delivery.decompose
-#72 task_leased key=delivery.decompose token=g1a1
-#73 artifact_published key=plan/delivery-decomposition
-#74 result_submitted key=delivery.decompose token=g1a1 status=completed
-#75 task_status_changed key=delivery.decompose to=verifying
-#76 verification_recorded key=delivery.decompose verdict=pass criterion_id=L-DECOMP
-#77 task_accepted key=delivery.decompose
-#78 task_created key=delivery.engine
-#79 swarm_formed
-#80 task_created key=delivery.report
-#81 swarm_formed
-#82 task_created key=delivery.engine.implement
-#83 task_created key=delivery.report.implement
-#84 plan_materialized
-#85 handoff_offered to=agt_0mwgoo39y3727784d95
-#86 task_ready key=delivery.engine
-#87 task_ready key=delivery.report
-#88 task_ready key=delivery.engine.implement
-#89 task_ready key=delivery.report.implement
-#90 task_leased key=delivery.engine.implement token=g1a1
-#91 task_leased key=delivery.report.implement token=g1a1
-#92 artifact_published key=code/engine
-#93 result_submitted key=delivery.engine.implement token=g1a1 status=completed
-#94 task_status_changed key=delivery.engine.implement to=verifying
-#95 artifact_published key=code/report
-#96 result_submitted key=delivery.report.implement token=g1a1 status=completed
-#97 task_status_changed key=delivery.report.implement to=verifying
-#98 artifact_published key=evidence/delivery.engine.implement/node-test-test-engine-test-ts
-#99 verification_recorded key=delivery.engine.implement verdict=pass criterion_id=U-ENGINE
-#100 task_accepted key=delivery.engine.implement
-#101 swarm_disbanded
-#102 task_status_changed key=delivery.engine to=accepted
-#103 artifact_published key=evidence/delivery.report.implement/node-test-test-report-test-ts
-#104 verification_recorded key=delivery.report.implement verdict=pass criterion_id=U-REPORT
-#105 task_accepted key=delivery.report.implement
-#106 swarm_disbanded
-#107 task_status_changed key=delivery.report to=accepted
-#108 task_ready key=delivery.integrate
-#109 task_leased key=delivery.integrate token=g1a1
-#110 handoff_accepted
-#111 integration_merge_started workstream=delivery.engine.implement
-#112 artifact_published key=evidence/delivery.integrate/after-merging-delivery-engine-implement-node-test-test-engine-test-ts
-#113 integration_merged workstream=delivery.engine.implement
-#114 integration_merge_started workstream=delivery.report.implement
-#115 artifact_published key=evidence/delivery.integrate/after-merging-delivery-report-implement-node-test-test-report-test-ts
-#116 integration_merged workstream=delivery.report.implement
-#117 artifact_published key=evidence/delivery.integrate/combined-result-node-test-test-test-ts
-#118 artifact_published key=code/integrated
-#119 result_submitted key=delivery.integrate token=g1a1 status=completed
-#120 task_ready key=verification.acceptance
-#121 task_leased key=verification.acceptance token=g1a1
-#122 task_status_changed key=delivery.integrate to=verifying
-#123 artifact_published key=evidence/delivery.integrate/protected-acceptance-suite
-#124 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-FRESH-PROPULSION
-#125 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SCHEMA-SUPPLY
-#126 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SLA-QUALITY
-#127 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-POLICY-FDE
-#128 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-CONTRACT
-#129 result_submitted key=verification.acceptance token=g1a1 status=completed
-#130 task_accepted key=verification.acceptance
-#131 task_accepted key=delivery.integrate
-#132 handoff_offered to=agt_0mwgoo3a03f08cabb63
-#133 task_ready key=reliability.knowledge
-#134 swarm_completed
-#135 task_status_changed key=delivery to=accepted
-#136 swarm_completed
-#137 task_status_changed key=verification to=accepted
-#138 task_leased key=reliability.knowledge token=g1a1
-#139 handoff_accepted
-#140 artifact_published key=knowledge/mission-notes
-#141 result_submitted key=reliability.knowledge token=g1a1 status=completed
-#142 task_status_changed key=reliability.knowledge to=verifying
-#143 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
-#144 task_accepted key=reliability.knowledge
-#145 knowledge_recorded
-#146 swarm_completed
-#147 task_status_changed key=reliability to=accepted
-#148 task_ready key=review.packet
-#149 task_leased key=review.packet token=g1a1
-#150 decision_opened
-#151 draft_prepared
-#152 artifact_published key=review/packet
-#153 artifact_published key=review/packet.md
-#154 result_submitted key=review.packet token=g1a1 status=completed
-#155 task_accepted key=review.packet
-#156 outcome_recorded
-#157 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready
+#28 message_routed to=chief_of_staff
+#29 swarm_completed
+#30 task_status_changed key=discovery to=accepted
+#31 task_ready key=planning
+#32 task_ready key=planning.criteria
+#33 task_leased key=planning.criteria token=g1a1
+#34 artifact_published key=plan/acceptance-criteria
+#35 result_submitted key=planning.criteria token=g1a1 status=completed
+#36 task_status_changed key=planning.criteria to=verifying
+#37 verification_recorded key=planning.criteria verdict=pass criterion_id=P-CRITERIA
+#38 task_accepted key=planning.criteria
+#39 task_ready key=planning.contract
+#40 task_leased key=planning.contract token=g1a1
+#41 artifact_published key=contract/health-record
+#42 result_submitted key=planning.contract token=g1a1 status=completed
+#43 task_status_changed key=planning.contract to=verifying
+#44 verification_recorded key=planning.contract verdict=pass criterion_id=P-CONTRACT
+#45 task_accepted key=planning.contract
+#46 handoff_offered to=agt_0mwgq1k8o15a2342956
+#47 task_ready key=planning.plan
+#48 task_leased key=planning.plan token=g1a1
+#49 handoff_accepted
+#50 artifact_published key=plan/work-graph
+#51 result_submitted key=planning.plan token=g1a1 status=completed
+#52 task_status_changed key=planning.plan to=verifying
+#53 verification_recorded key=planning.plan verdict=pass criterion_id=P-PLAN
+#54 task_accepted key=planning.plan
+#55 task_created key=delivery
+#56 swarm_formed
+#57 task_created key=verification
+#58 swarm_formed
+#59 task_created key=reliability
+#60 swarm_formed
+#61 task_created key=delivery.decompose
+#62 task_created key=delivery.integrate
+#63 task_created key=verification.acceptance
+#64 task_created key=reliability.knowledge
+#65 task_created key=review.packet
+#66 plan_materialized
+#67 task_ready key=reliability
+#68 task_ready key=verification
+#69 swarm_completed
+#70 task_status_changed key=planning to=accepted
+#71 task_ready key=delivery
+#72 task_ready key=delivery.decompose
+#73 task_leased key=delivery.decompose token=g1a1
+#74 artifact_published key=plan/delivery-decomposition
+#75 result_submitted key=delivery.decompose token=g1a1 status=completed
+#76 task_status_changed key=delivery.decompose to=verifying
+#77 verification_recorded key=delivery.decompose verdict=pass criterion_id=L-DECOMP
+#78 task_accepted key=delivery.decompose
+#79 task_created key=delivery.engine
+#80 swarm_formed
+#81 task_created key=delivery.report
+#82 swarm_formed
+#83 task_created key=delivery.engine.implement
+#84 task_created key=delivery.report.implement
+#85 plan_materialized
+#86 handoff_offered to=agt_0mwgq1kwf398b9db88f
+#87 task_ready key=delivery.engine
+#88 task_ready key=delivery.report
+#89 task_ready key=delivery.engine.implement
+#90 task_ready key=delivery.report.implement
+#91 task_leased key=delivery.engine.implement token=g1a1
+#92 task_leased key=delivery.report.implement token=g1a1
+#93 artifact_published key=code/engine
+#94 result_submitted key=delivery.engine.implement token=g1a1 status=completed
+#95 task_status_changed key=delivery.engine.implement to=verifying
+#96 artifact_published key=code/report
+#97 result_submitted key=delivery.report.implement token=g1a1 status=completed
+#98 task_status_changed key=delivery.report.implement to=verifying
+#99 artifact_published key=evidence/delivery.engine.implement/node-test-test-engine-test-ts
+#100 verification_recorded key=delivery.engine.implement verdict=pass criterion_id=U-ENGINE
+#101 task_accepted key=delivery.engine.implement
+#102 swarm_disbanded
+#103 task_status_changed key=delivery.engine to=accepted
+#104 artifact_published key=evidence/delivery.report.implement/node-test-test-report-test-ts
+#105 verification_recorded key=delivery.report.implement verdict=pass criterion_id=U-REPORT
+#106 task_accepted key=delivery.report.implement
+#107 swarm_disbanded
+#108 task_status_changed key=delivery.report to=accepted
+#109 task_ready key=delivery.integrate
+#110 task_leased key=delivery.integrate token=g1a1
+#111 handoff_accepted
+#112 integration_merge_started workstream=delivery.engine.implement
+#113 artifact_published key=evidence/delivery.integrate/after-merging-delivery-engine-implement-node-test-test-engine-test-ts
+#114 integration_merged workstream=delivery.engine.implement
+#115 integration_merge_started workstream=delivery.report.implement
+#116 artifact_published key=evidence/delivery.integrate/after-merging-delivery-report-implement-node-test-test-report-test-ts
+#117 integration_merged workstream=delivery.report.implement
+#118 artifact_published key=evidence/delivery.integrate/combined-result-node-test-test-test-ts
+#119 artifact_published key=code/integrated
+#120 result_submitted key=delivery.integrate token=g1a1 status=completed
+#121 task_ready key=verification.acceptance
+#122 task_leased key=verification.acceptance token=g1a1
+#123 task_status_changed key=delivery.integrate to=verifying
+#124 artifact_published key=evidence/delivery.integrate/protected-acceptance-suite
+#125 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-FRESH-PROPULSION
+#126 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SCHEMA-SUPPLY
+#127 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-SLA-QUALITY
+#128 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-POLICY-FDE
+#129 verification_recorded key=delivery.integrate verdict=pass criterion_id=AC-CONTRACT
+#130 result_submitted key=verification.acceptance token=g1a1 status=completed
+#131 task_accepted key=verification.acceptance
+#132 task_accepted key=delivery.integrate
+#133 handoff_offered to=agt_0mwgq1kwg3hdc7f9644
+#134 task_ready key=reliability.knowledge
+#135 swarm_completed
+#136 task_status_changed key=delivery to=accepted
+#137 swarm_completed
+#138 task_status_changed key=verification to=accepted
+#139 task_leased key=reliability.knowledge token=g1a1
+#140 handoff_accepted
+#141 artifact_published key=knowledge/mission-notes
+#142 result_submitted key=reliability.knowledge token=g1a1 status=completed
+#143 task_status_changed key=reliability.knowledge to=verifying
+#144 verification_recorded key=reliability.knowledge verdict=pass criterion_id=K-PROVENANCE
+#145 task_accepted key=reliability.knowledge
+#146 knowledge_recorded
+#147 swarm_completed
+#148 task_status_changed key=reliability to=accepted
+#149 task_ready key=review.packet
+#150 task_leased key=review.packet token=g1a1
+#151 decision_opened
+#152 draft_prepared
+#153 artifact_published key=review/packet
+#154 artifact_published key=review/packet.md
+#155 result_submitted key=review.packet token=g1a1 status=completed
+#156 task_accepted key=review.packet
+#157 outcome_recorded
+#158 mission_status_changed reason=all work accepted; awaiting the decision in the review packet to=review_ready

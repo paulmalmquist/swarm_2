@@ -1,5 +1,6 @@
 import { readdirSync } from 'node:fs';
 import { CANDIDATE_LIBRARY, observeReviewWork, runExperiment } from '../evolution/loop.ts';
+import { portfolio, portfolioCampaign, portfolioStep, recordReport } from '../evolution/portfolio.ts';
 import { installArena } from '../evolution/arena.ts';
 import { renderReceipt } from '../evolution/receipts.ts';
 import { openRuntime } from '../runtime.ts';
@@ -60,8 +61,23 @@ export async function gateCli(group: string, args: string[], home?: string): Pro
         const r = await runExperiment(rt, gate, pos[1], { revises_experiment: flag('revises') ?? null });
         return print({ experiment_id: r.experiment.id, decision: r.receipt.decision, justification: r.receipt.justification, receipt_id: r.receipt.receipt_id, release: r.receipt.release_manifest?.release_id ?? null, holdout_set: r.receipt.evaluation.holdout_set });
       }
+      case 'portfolio':
+        return print(portfolio(rt, gate));
+      case 'report': {
+        const cls = flag('class');
+        if (!cls) throw new SwarmError('usage', 'evolve report --class <failure class> [--count N] [--note "..."]');
+        return print({ recorded: recordReport(rt, { failure_class: cls, count: Number(flag('count') ?? 1), note: flag('note') ?? 'unverified report' }).length, certainty: 'suspected' });
+      }
+      case 'step': {
+        const r = await portfolioStep(rt, gate, { budget: Number(flag('budget') ?? 1500) });
+        return print(r);
+      }
+      case 'campaign': {
+        const r = await portfolioCampaign(rt, gate, { budget: Number(flag('budget') ?? 1500), max_steps: Number(flag('max-steps') ?? 40) });
+        return print({ ended: r.ended, steps: r.steps.map((s) => `${s.n}. ${s.action.type}${s.action.candidate_id ? ' ' + s.action.candidate_id : ''} → ${s.outcome} (${s.cost} units)`), spent: r.view.allocation.campaign_spent, hypotheses: r.view.hypotheses.map((h) => ({ id: h.id, status: h.status, release: h.release_id })) });
+      }
       default:
-        throw new SwarmError('usage', 'evolve candidates | observe | run <candidate> [--revises <experiment>]');
+        throw new SwarmError('usage', 'evolve candidates | observe | run <candidate> [--revises <experiment>] | portfolio | report --class C [--count N] | step [--budget N] | campaign [--budget N]');
     }
   } finally {
     gate.close();

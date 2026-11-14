@@ -1,0 +1,410 @@
+{
+  "receipt_id": "rcpt_0mwgq49g4ayb7f1fef0",
+  "experiment_id": "exp_0mwgq4956auf2ef8cc1",
+  "level": "execution",
+  "problem": {
+    "statement": "Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).",
+    "observation_ids": [
+      "obs_0mwgq48wb9k3cc3680f",
+      "obs_0mwgq48wb9l18b43b3d",
+      "obs_0mwgq48wc9n2899562c",
+      "obs_0mwgq48wc9rfd6724d2",
+      "obs_0mwgq48wc9t7d629f2c",
+      "obs_0mwgq48wc9uc0e081cf",
+      "obs_0mwgq48wc9vaca206df"
+    ],
+    "observed_failure_count": 7
+  },
+  "hypothesis": "If change review also runs guard_removed_toplevel, verified failures of field_removed, field_renamed will be blocked without blocking safe changes.",
+  "expected_benefit": "Fewer approved breaking changes of these classes.",
+  "possible_regressions": [
+    "Safe changes could be blocked",
+    "Each review runs one more step"
+  ],
+  "parent": {
+    "component": "execution",
+    "version": 1,
+    "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+  },
+  "change": {
+    "summary": "Adds the guard_removed_toplevel check to the change-review skill.",
+    "files": [
+      {
+        "path": "execution.json",
+        "before_hash": "623fb23304c6a4433e7da52b8aaca03d2c79de82363ba7f740994db42a24c693",
+        "after_hash": "b3d8be7800c28196eb9207757d8f97886d0a534e6072d7adaebd0d538767087f"
+      },
+      {
+        "path": "validators/guard_removed_toplevel.mjs",
+        "before_hash": null,
+        "after_hash": "0f3e2bc4ff5c05257fda2c2cdb0f1a85bc510998cbaa24d8dd48b145be089873"
+      }
+    ],
+    "candidate_hash": "4721f415018b69f7d26969fa47d9474ab9bbba0eafac567b5aac05e1826962d2"
+  },
+  "evaluation": {
+    "protocol_id": "promotion-policy@1/execution",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "frozen_at": "2026-11-14T18:12:52.170Z",
+    "workload_refs": [
+      "review:holdout-A",
+      "snapshot:8af9cae906fff0d3f34d985d0c49f53c762b10e40873a6fd0331abc54fedfbf0"
+    ],
+    "holdout_set": "holdout-A",
+    "executor": "validator-executor",
+    "execution_kind": "rerun",
+    "repeats": 1,
+    "deterministic": true,
+    "source": "fixture"
+  },
+  "attempts": [
+    {
+      "attempt_no": 1,
+      "kind": "development",
+      "at": "2026-11-14T18:12:52.225Z",
+      "cases": 40,
+      "note": "development check by the candidate author"
+    },
+    {
+      "attempt_no": 2,
+      "kind": "holdout",
+      "at": "2026-11-14T18:12:52.565Z",
+      "cases": 80,
+      "note": "one evaluation on holdout-A"
+    }
+  ],
+  "resource_use": {
+    "experiment_units": 281,
+    "wall_ms": 339,
+    "model_calls": 0,
+    "cost_usd_est": null
+  },
+  "comparisons": [
+    {
+      "metric": "accuracy",
+      "unit": "share of reviews with the right verdict and the affected field named",
+      "higher_is_better": true,
+      "candidate": 0.6625,
+      "incumbent": 0.5,
+      "baseline": 0.5,
+      "diff_vs_incumbent": 0.1625,
+      "ci95_vs_incumbent": [
+        0.0875,
+        0.25
+      ],
+      "diff_vs_baseline": 0.1625,
+      "ci95_vs_baseline": [
+        0.0875,
+        0.25
+      ],
+      "n": 80,
+      "method": "paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 13 better, 0 worse, 67 same, p=0.00024"
+    },
+    {
+      "metric": "harm_per_review",
+      "unit": "severity-weighted cost of wrong verdicts",
+      "higher_is_better": false,
+      "candidate": 1.6875,
+      "incumbent": 2.5,
+      "baseline": 2.5,
+      "diff_vs_incumbent": -0.8125,
+      "ci95_vs_incumbent": [
+        -1.25,
+        -0.4375
+      ],
+      "diff_vs_baseline": -0.8125,
+      "ci95_vs_baseline": [
+        -1.25,
+        -0.4375
+      ],
+      "n": 80,
+      "method": "paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 0 better, 13 worse, 67 same, p=0.00024"
+    },
+    {
+      "metric": "escaped_defect_rate",
+      "unit": "share of breaking changes approved",
+      "higher_is_better": false,
+      "candidate": 0.54,
+      "incumbent": 0.8,
+      "baseline": 0.8,
+      "diff_vs_incumbent": -0.26,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": -0.26,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "observed rate on the held-out set"
+    },
+    {
+      "metric": "false_alarm_rate",
+      "unit": "share of safe changes blocked",
+      "higher_is_better": false,
+      "candidate": 0,
+      "incumbent": 0,
+      "baseline": 0,
+      "diff_vs_incumbent": 0,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": 0,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "observed rate on the held-out set"
+    },
+    {
+      "metric": "steps_per_review",
+      "unit": "validator steps (counted by the gate)",
+      "higher_is_better": false,
+      "candidate": 3,
+      "incumbent": 2,
+      "baseline": 2,
+      "diff_vs_incumbent": 1,
+      "ci95_vs_incumbent": [
+        1,
+        1
+      ],
+      "diff_vs_baseline": 1,
+      "ci95_vs_baseline": [
+        1,
+        1
+      ],
+      "n": 80,
+      "method": "exact count; no sampling"
+    },
+    {
+      "metric": "wall_ms_per_review",
+      "unit": "milliseconds, measured outside the candidate process",
+      "higher_is_better": false,
+      "candidate": 0.174,
+      "incumbent": 0.106,
+      "baseline": 0.12,
+      "diff_vs_incumbent": 0.067,
+      "ci95_vs_incumbent": null,
+      "diff_vs_baseline": 0.054,
+      "ci95_vs_baseline": null,
+      "n": 80,
+      "method": "single timing of the whole batch; indicative only"
+    }
+  ],
+  "gates": [
+    {
+      "id": "protected_integrity",
+      "name": "Rules and records are intact",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation."
+    },
+    {
+      "id": "no_forbidden_capabilities",
+      "name": "No forbidden capabilities",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "findings",
+      "comparison_operator": "=",
+      "threshold": 0,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The candidate code uses no file, process, network or dynamic-code capability."
+    },
+    {
+      "id": "holdout_not_reused",
+      "name": "Held-out cases are unseen by this lineage",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Scored on holdout-A, which this candidate lineage has not been scored on before."
+    },
+    {
+      "id": "required_steps_present",
+      "name": "Required verification steps are performed",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 1,
+      "measurement_unit": "steps",
+      "comparison_operator": ">=",
+      "threshold": 1,
+      "samples": 1,
+      "minimum_samples": 1,
+      "weight": null,
+      "meaning": "Every step that may not be omitted fired on its probe case."
+    },
+    {
+      "id": "minimum_samples",
+      "name": "Enough scored cases",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 80,
+      "measurement_unit": "cases",
+      "comparison_operator": ">=",
+      "threshold": 40,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "80 cases scored; at least 40 are required."
+    },
+    {
+      "id": "escaped_defects_not_worse",
+      "name": "No more defects escape",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0.54,
+      "measurement_unit": "rate",
+      "comparison_operator": "<=",
+      "threshold": 0.8,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Share of breaking changes approved: candidate 54.0%, incumbent 80.0%."
+    },
+    {
+      "id": "false_alarms_within_margin",
+      "name": "Safe changes are not blocked",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "rate",
+      "comparison_operator": "<=",
+      "threshold": 0.05,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Share of safe changes blocked: candidate 0.0%, incumbent 0.0%; allowed margin 5.0%."
+    },
+    {
+      "id": "no_regression_vs_baseline",
+      "name": "No cumulative regression against the original baseline",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0.6625,
+      "measurement_unit": "accuracy",
+      "comparison_operator": ">=",
+      "threshold": 0.48,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": null,
+      "meaning": "Accuracy: candidate 66.3%, original baseline 50.0%."
+    },
+    {
+      "id": "cost_within_bound",
+      "name": "Cost stays within bound",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 3,
+      "measurement_unit": "steps",
+      "comparison_operator": "<=",
+      "threshold": 10,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Steps per review: candidate 3, incumbent 2; at most 5× is allowed."
+    },
+    {
+      "id": "accuracy_gain",
+      "name": "Review accuracy",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": 0.1625,
+      "measurement_unit": "accuracy difference",
+      "comparison_operator": ">",
+      "threshold": 0,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": 0.6,
+      "meaning": "Accuracy changed by 0.1625 (95% interval 0.0875 to 0.25)."
+    },
+    {
+      "id": "harm_reduction",
+      "name": "Severity-weighted harm",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": -0.8125,
+      "measurement_unit": "harm difference",
+      "comparison_operator": "<",
+      "threshold": 0,
+      "samples": 80,
+      "minimum_samples": 40,
+      "weight": 0.25,
+      "meaning": "Harm per review changed by -0.8125."
+    },
+    {
+      "id": "cost",
+      "name": "Cost per review",
+      "kind": "WEIGHTED",
+      "verdict": "FAILED",
+      "measurement_value": 1,
+      "measurement_unit": "steps",
+      "comparison_operator": "<=",
+      "threshold": 0,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": 0.15,
+      "meaning": "Steps per review changed by 1."
+    }
+  ],
+  "known_regressions": [
+    "Each review runs 1 more step(s)"
+  ],
+  "limitations": [
+    "Evaluated by executing the skill's validators on synthetic change-review cases. No model was run, so this says nothing about how a model worker would use the procedure text.",
+    "One deterministic pass over 80 cases: the interval reflects which cases were drawn, not run-to-run variation.",
+    "Fixture evidence does not certify live use."
+  ],
+  "decision": "accept",
+  "justification": "Accepted: accuracy improved by 0.1625 against the incumbent (95% interval 0.0875 to 0.25) with every hard gate passed.",
+  "decided_by": "release-gate",
+  "decided_at": "2026-11-14T18:12:52.565Z",
+  "release_manifest": {
+    "release_id": "r3",
+    "parent_release_id": "r1",
+    "components": {
+      "execution": {
+        "version": 2,
+        "content_hash": "4721f415018b69f7d26969fa47d9474ab9bbba0eafac567b5aac05e1826962d2"
+      },
+      "coordination": {
+        "version": 1,
+        "content_hash": "a2731e7d2ba012c81f7188f9200610300a2ba49c33a1b4681c3f42924b04a9bc"
+      },
+      "evolution": {
+        "version": 1,
+        "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
+      }
+    },
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "evaluation_snapshot_hash": "8af9cae906fff0d3f34d985d0c49f53c762b10e40873a6fd0331abc54fedfbf0",
+    "receipt_id": "rcpt_0mwgq49g4ayb7f1fef0",
+    "rollback_target": "r1",
+    "status": "canary",
+    "evidence_basis": "fixture",
+    "created_at": "2026-11-14T18:12:52.564Z",
+    "manifest_hash": "f631913347731b550dcc2efd642d789afaf62a3d6467d51e04161c6936a08123"
+  },
+  "rollback_target": "r1",
+  "isolation": {
+    "mode": "enforced",
+    "uid_separation": true,
+    "candidate_uid": 65534,
+    "node_permission_model": true,
+    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "intact": true,
+    "notes": [
+      "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+    ]
+  },
+  "evidence_basis": "fixture",
+  "receipt_hash": "98903ed1da800e47be4a99d975e03fa145823b6f6648c3067dda77a9605eea30",
+  "id": "rcpt_0mwgq49g4ayb7f1fef0"
+}

@@ -70,7 +70,8 @@
     "rollback_if": {
       "accuracy_drop_gt": 0.05,
       "escaped_defect_rate_increase_gt": 0.02,
-      "acceptance_failures_gt": 0
+      "acceptance_failures_gt": 0,
+      "policy_refused_actions_gt": 0
     }
   },
   "decision_rule": {

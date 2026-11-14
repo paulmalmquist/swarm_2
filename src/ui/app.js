@@ -380,6 +380,25 @@ async function showReceipt(id) {
   ]);
 }
 
+function portfolioCard(env) {
+  const pf = env.portfolio;
+  const ex = env.exploration;
+  if (!pf) return '';
+  const mark = (s) => (s === 'accepted' ? st('run', 'accepted') : s === 'rejected' ? st('stop', 'rejected') : s === 'inconclusive' ? st('warn', 'inconclusive') : s === 'dropped' ? st('done', 'dropped') : s === 'proposed' ? st('wait', 'proposed') : st('person', s));
+  const open = pf.problems.filter((p) => !p.resolved);
+  const used = Number.isFinite(ex.budget) ? `${ex.spent.toLocaleString('en-US')} of ${ex.budget.toLocaleString('en-US')} experiment units used at the release gate` : `${ex.spent.toLocaleString('en-US')} experiment units used at the release gate`;
+  return h('div', { class: 'card', style: 'margin-top:14px' }, h('h3', {}, 'Improvement work in hand'),
+    h('p', { class: 'small sec' }, `Decided by the improvement policy of ${pf.policy.release_id} (evolution version ${pf.policy.evolution_version}${pf.policy.canary_id ? ', in a canary' : ''}): ${pf.policy.prioritization} ${used}.`),
+    h('div', { class: 'grid two' },
+      h('div', {}, h('h4', {}, 'Open problems'),
+        open.length === 0 ? h('p', { class: 'empty' }, 'No failures are recorded under the release in force. Observing comes first: `swarm2 evolve observe`.') : h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Failure class'), h('th', { class: 'num' }, 'Verified'), h('th', { class: 'num' }, 'Unverified reports'), h('th', { class: 'num' }, 'Severity'))), h('tbody', {}, open.map((p) => h('tr', {}, h('td', {}, p.id.replace(/_/g, ' ')), h('td', { class: 'num' }, p.verified_count), h('td', { class: 'num' }, p.observed_count - p.verified_count), h('td', { class: 'num' }, p.verified_count ? Math.round(p.severity * 10) / 10 : '—'))))))),
+      h('div', {}, h('h4', {}, 'Hypotheses'),
+        h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Candidate fix'), h('th', {}, 'State'), h('th', {}, 'Pilot'), h('th', { class: 'num' }, 'Units'), h('th', {}, ''))), h('tbody', {}, pf.hypotheses.map((x) => h('tr', {}, h('td', {}, h('b', {}, x.id.replace(/_/g, ' ')), h('div', { class: 'small muted' }, x.problem_ids.join(', ').replace(/_/g, ' '))), h('td', {}, mark(x.status)), h('td', { class: 'small' }, x.pilot ? `fixed ${x.pilot.fixed} of ${x.pilot.attempted}, broke ${x.pilot.broke}` : '—'), h('td', { class: 'num' }, x.cost_so_far), h('td', {}, x.receipt_id ? h('button', { onclick: () => showReceipt(x.receipt_id) }, 'Receipt') : ''))))))),
+    ),
+    pf.steps.length ? h('details', { style: 'margin-top:10px' }, h('summary', {}, `${pf.steps.length} decisions taken by the policy`), h('ol', { class: 'small' }, pf.steps.map((x) => h('li', {}, h('b', {}, `${x.action.type}${x.action.candidate_id ? ' ' + x.action.candidate_id.replace(/_/g, ' ') : ''}`), ` — ${x.outcome} `, h('span', { class: 'muted' }, `(${x.cost} units, policy ${x.policy.id})`))))) : h('p', { class: 'small muted' }, 'The policy has taken no decision yet. `swarm2 evolve step` asks it for one.'),
+    h('p', { class: 'small muted' }, pf.limitation));
+}
+
 async function renderEvolution() {
   const env = await api('/evolution');
   if (env.source === 'unavailable') return [unavailable(env)];
@@ -405,6 +424,7 @@ async function renderEvolution() {
         const p = rc?.primary;
         return h('tr', {}, h('td', {}, h('b', {}, e.candidate?.candidate_id ?? '—'), h('div', { class: 'small sec' }, e.title)), h('td', {}, e.level), h('td', { class: 'small' }, lineageOf(e)), h('td', {}, e.stage.replace(/_/g, ' ')), h('td', {}, verdictMark(e.decision)), h('td', {}, dash(e.holdout_set)), h('td', { class: 'num small' }, p && p.diff_vs_incumbent !== null ? `${p.metric.replace(/_/g, ' ')} ${p.diff_vs_incumbent > 0 ? '+' : ''}${p.diff_vs_incumbent}${p.ci95_vs_incumbent ? ` (${p.ci95_vs_incumbent[0]} to ${p.ci95_vs_incumbent[1]})` : ''}` : '—'), h('td', {}, rc ? h('button', { onclick: () => showReceipt(rc.receipt_id) }, 'Receipt') : ''));
       }))))),
+    portfolioCard(env),
     h('div', { class: 'grid two', style: 'margin-top:14px' },
       h('div', { class: 'card' }, h('h3', {}, 'What has been observed'), env.observations.length === 0 ? h('p', { class: 'empty' }, 'No failures have been observed.') : h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Observation'), h('th', { class: 'num' }, 'Count'))), h('tbody', {}, env.observations.map((x) => h('tr', {}, h('td', {}, x.signature.replace(/_/g, ' ').replace(':', ': ')), h('td', { class: 'num' }, x.count))))))),
       h('div', { class: 'card' }, h('h3', {}, 'Proposed changes to the rules'), env.rule_change_proposals.length === 0 ? h('p', { class: 'empty' }, 'None. A proposal to change the promotion rules is a decision for you; no candidate can change the rules it is judged by.') : h('ul', { class: 'plain' }, env.rule_change_proposals.map((d) => h('li', {}, st(d.status === 'resolved' ? 'done' : 'person', d.status), ' ', d.question)))),

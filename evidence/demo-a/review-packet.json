@@ -1,5 +1,5 @@
 {
-  "mission_id": "msn_0mwgoo2o507f4189557",
+  "mission_id": "msn_0mwgq1k8507cf4ff4d1",
   "title": "Shared dataset-health capability",
   "cold_read": [
     "This packet covers \"Shared dataset-health capability\". 5 of 5 acceptance criteria passed independent verification.",
@@ -63,8 +63,8 @@
   },
   "exact_changes": {
     "ref": "integration",
-    "base_commit": "1998ef3b8729c2d65fb403d205a67ecbdf937469",
-    "head_commit": "371c356a38b2a0b43817d678bd50cfff4aae9599",
+    "base_commit": "3278dec8f91e7d4a80f878362ccf857b6a0e5e66",
+    "head_commit": "cba66c99681774451f6c12208c9c317a409116fc",
     "files": [
       {
         "status": "A",
@@ -97,7 +97,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgoo4la6e87a88c9b"
+        "evd_0mwgq1md76g5d657c8a"
       ]
     },
     {
@@ -108,7 +108,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgoo4la6e87a88c9b"
+        "evd_0mwgq1md76g5d657c8a"
       ]
     },
     {
@@ -119,7 +119,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgoo4la6e87a88c9b"
+        "evd_0mwgq1md76g5d657c8a"
       ]
     },
     {
@@ -130,7 +130,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgoo4la6e87a88c9b"
+        "evd_0mwgq1md76g5d657c8a"
       ]
     },
     {
@@ -141,7 +141,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgoo4la6e87a88c9b"
+        "evd_0mwgq1md76g5d657c8a"
       ]
     }
   ],
@@ -224,10 +224,11 @@
     "Whether an alert should page someone or only appear in a report is not stated",
     "No request says how long drift may persist before it matters",
     "The contract carries no severity ranking; the weekly review may want one",
-    "Thresholds in the criteria come from the requests and have not been confirmed by dataset owners"
+    "Thresholds in the criteria come from the requests and have not been confirmed by dataset owners",
+    "Open question from agt_0mwgq1k8m0ue9f275d1: Should a stale-data alert page someone, or only appear in the report? No request says."
   ],
   "decision_requested": {
-    "decision_id": "dec_0mwgoo4te7i8e345085",
+    "decision_id": "dec_0mwgq1mlf7k39f47cc9",
     "question": "Approve the integrated result of \"Shared dataset-health capability\" for merge into the protected branch?",
     "options": [
       "approve",
@@ -238,16 +239,16 @@
     "reversible": true
   },
   "resource_use": {
-    "model_calls": 8,
+    "model_calls": 0,
     "worker_invocations": 10,
     "tokens": 0,
     "cost_usd_est": 0,
-    "wall_ms": 969,
+    "wall_ms": 1120,
     "cost_basis": "none",
     "usage_completeness": "complete"
   },
   "release_id": "r1",
   "provider_mode": "fixture",
   "data_class": "synthetic",
-  "generated_at": "2026-11-14T17:32:20.451Z"
+  "generated_at": "2026-11-14T18:10:49.637Z"
 }

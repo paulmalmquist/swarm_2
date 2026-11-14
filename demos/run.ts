@@ -18,6 +18,7 @@ import type { ImprovementReceipt } from '../src/contracts/types.ts';
 import { LocalChiefOfStaff } from '../src/cos/port.ts';
 import { installArena } from '../src/evolution/arena.ts';
 import { observeReviewWork, runExperiment } from '../src/evolution/loop.ts';
+import { type PortfolioStep, type PortfolioView, portfolio, portfolioCampaign, recordReport } from '../src/evolution/portfolio.ts';
 import { renderManifest, renderReceipt } from '../src/evolution/receipts.ts';
 import { Gate, PROTECTED_SRC } from '../src/gate/gate.ts';
 import { CANDIDATE_UID } from '../src/gate/sandbox.ts';
@@ -523,9 +524,97 @@ async function demoH(): Promise<DemoResult> {
   }
 }
 
+// ───────────────────────────── I: the portfolio under each improvement policy ─────────────────────────────
+
+async function demoI(): Promise<DemoResult> {
+  const t0 = Date.now();
+  const rep = new Report(join(EVIDENCE, 'demo-i'));
+  const BUDGET = 900;
+  const open = (name: string) => {
+    const rt = freshHome(home(name));
+    const gate = new Gate(rt);
+    installArena(gate);
+    gate.init();
+    return { rt, gate };
+  };
+  const control = open('i-control');
+  const trial = open('i-trial');
+  try {
+    const seed = async (x: typeof control) => {
+      const seen = await observeReviewWork(x.rt, x.gate);
+      recordReport(x.rt, { failure_class: 'style_nit', count: 30, note: 'SYNTHETIC complaint, never verified: optional field names are not snake_case' });
+      return seen;
+    };
+    const line = (s: PortfolioStep): string => `${s.n}. ${s.action.type}${s.action.candidate_id ? ' ' + s.action.candidate_id : ''} → ${s.outcome} (${s.cost} units)`;
+    const tally = (v: PortfolioView) => {
+      const accepted = v.hypotheses.filter((h) => h.status === 'accepted');
+      const failed = v.hypotheses.filter((h) => h.submitted && h.status !== 'accepted');
+      const unsubmitted = v.hypotheses.filter((h) => h.built && !h.submitted);
+      return { spent: v.allocation.campaign_spent, accepted: accepted.map((h) => h.id), not_accepted: failed.map((h) => `${h.id} (${h.status})`), units_on_experiments_not_accepted: failed.reduce((a, h) => a + h.cost_so_far, 0), units_on_builds_never_submitted: unsubmitted.reduce((a, h) => a + h.cost_so_far, 0), held_out_evaluations_used: v.hypotheses.filter((h) => h.submitted).length };
+    };
+
+    // Control: the baseline release decides.
+    const seen = await seed(control);
+    const a = await portfolioCampaign(control.rt, control.gate, { budget: BUDGET });
+    const ta = tally(a.view);
+    rep.check('The organization keeps a portfolio of hypotheses built from its own recorded observations', a.view.problems.some((p) => p.verified_count > 0) && a.view.hypotheses.length >= 6, `${seen.observation_ids.length} verified review failures in ${Object.keys(seen.by_class).length} classes, plus 30 unverified reports of one complaint; ${a.view.hypotheses.length} hypotheses`);
+    rep.check('The policy of the release in force decides each step, inside a bounded budget', a.steps.every((s) => s.policy.id === 'frequency-first') && ta.spent <= BUDGET, `r1's policy (${a.steps[0]!.policy.id}) took ${a.steps.length} decisions and used ${ta.spent} of ${BUDGET} units`);
+
+    // Trial: the gate qualifies the expected-value policy; it is then tried in a bounded canary.
+    const evo = await runExperiment(trial.rt, trial.gate, 'evo-expected-value');
+    const release = evo.receipt.release_manifest?.release_id ?? null;
+    rep.check('The replacement policy first has to pass the release gate', evo.receipt.decision === 'accept' && release !== null, `${evo.receipt.decision}: ${evo.receipt.justification}`);
+    const canary = trial.gate.startCanary(release!, { max_missions: 0 });
+    await seed(trial);
+    const b = await portfolioCampaign(trial.rt, trial.gate, { budget: BUDGET });
+    const tb = tally(b.view);
+    rep.check('During the canary the new policy decides, and the default has not changed', b.steps.every((s) => s.policy.canary_id === canary.id && s.policy.id === 'expected-value') && trial.rt.registry.active() === 'r1', `${b.steps.length} decisions under canary ${canary.id}; active release still ${trial.rt.registry.active()}`);
+    rep.check('Replacing the policy changes what the organization works on', a.steps[0]!.action.candidate_id !== b.steps[0]!.action.candidate_id, `frequency-first began with ${a.steps[0]!.action.candidate_id}; expected-value began with ${b.steps[0]!.action.candidate_id} and piloted ${b.steps.filter((s) => s.action.type === 'pilot').length} times before submitting`);
+    rep.check('Every submission from either policy was decided by the same release gate', [...a.view.hypotheses, ...b.view.hypotheses].filter((h) => h.submitted).every((h) => h.receipt_id !== null), `control: ${ta.accepted.length} accepted, ${ta.not_accepted.join(', ') || 'none'} not accepted; trial: ${tb.accepted.length} accepted, ${tb.not_accepted.join(', ') || 'none'} not accepted`);
+    const failedMem = [...control.rt.store.memories.where(`"kind" = 'failed_approach'`), ...trial.rt.store.memories.where(`"kind" = 'failed_approach'`)];
+    rep.check('Each approach that did not pass is recorded so it is not repeated blindly', failedMem.length === ta.not_accepted.length + tb.not_accepted.length, failedMem.map((m) => `[${m.certainty}] ${m.statement.slice(0, 110)}…`).join(' | '));
+
+    const obs = await trial.gate.observeCanary(canary.id);
+    const refused = obs.observations.find((o) => o.metric === 'policy_actions_refused');
+    const retained = obs.status === 'running' ? trial.gate.retain(canary.id) : obs;
+    rep.check('The canary is observed, then retained', retained.status === 'retained' && trial.rt.registry.active() === release, `actions the runtime had to refuse: ${refused?.value}; ${release} is now the default for future work`);
+    const stale = b.view.hypotheses.find((h) => h.status === 'accepted');
+    let refusal = 'no accepted fix to test';
+    if (stale?.release_id) {
+      try {
+        trial.gate.startCanary(stale.release_id);
+        refusal = 'NOT refused';
+      } catch (e) {
+        refusal = e instanceof Error ? e.message : String(e);
+      }
+    }
+    const after = portfolio(trial.rt, trial.gate);
+    rep.check('A fix qualified against the old default is not promoted over the new one', /qualified against/.test(refusal) && after.hypotheses.every((h) => h.status === 'proposed'), `${refusal} All ${after.hypotheses.length} hypotheses were reopened to be rebuilt on ${release}.`);
+
+    rep.file('portfolio-control.json', { note: 'Baseline release r1, policy frequency-first. SYNTHETIC workload and fix library.', tally: ta, steps: a.steps, hypotheses: a.view.hypotheses, problems: a.view.problems });
+    rep.file('portfolio-trial.json', { note: 'Canary of the expected-value policy. SYNTHETIC workload and fix library.', tally: tb, steps: b.steps, hypotheses: b.view.hypotheses, problems: b.view.problems });
+    rep.file('comparison.json', { note: 'ONE campaign per policy on the same observations and budget. This is a case study of the two policies operating the real release gate. It is not a statistical comparison; Demonstration D is.', budget: BUDGET, control_frequency_first: ta, trial_expected_value: tb });
+    saveReceipt(rep, 'expected-value-policy', evo.receipt);
+    for (const h of [...a.view.hypotheses.map((x) => ['control', x] as const), ...b.view.hypotheses.map((x) => ['trial', x] as const)]) {
+      if (h[1].receipt_id) saveReceipt(rep, `${h[0]}-${h[1].id}-${h[1].status}`, (h[0] === 'control' ? control.gate : trial.gate).receipt(h[1].receipt_id));
+    }
+    return finish('i', 'The improvement policy in force runs the organization\'s own improvement work', [...FIXTURE_LABELS, 'SYNTHETIC — the review workload, the 30 unverified complaints and the library of candidate fixes (some deliberately flawed)', 'One campaign per policy: a case study, not a statistical comparison'], rep, t0, [
+      'Demonstration D compares two improvement policies statistically in a testbed. This one shows the policy of the release in force doing its real job: reading the organization\'s recorded observations and deciding what to build, pilot, submit to the release gate, or stop.',
+      `Control (frequency-first): ${a.steps.map(line).join('; ')}.`,
+      `Trial (expected-value, in a canary): ${b.steps.map(line).join('; ')}.`,
+      `Units that did not end in an accepted change — control: ${ta.units_on_experiments_not_accepted} on experiments not accepted plus ${ta.units_on_builds_never_submitted} on builds never submitted; trial: ${tb.units_on_experiments_not_accepted} plus ${tb.units_on_builds_never_submitted}. Each policy got ${ta.accepted.length} and ${tb.accepted.length} fix(es) accepted.`,
+    ]);
+  } finally {
+    control.gate.close();
+    control.rt.close();
+    trial.gate.close();
+    trial.rt.close();
+  }
+}
+
 // ───────────────────────────── runner ─────────────────────────────
 
-const DEMOS: Record<string, () => Promise<DemoResult>> = { a: demoA, b: demoB, c: demoC, d: demoD, e: demoE, f: demoF, g: demoG, h: demoH };
+const DEMOS: Record<string, () => Promise<DemoResult>> = { a: demoA, b: demoB, c: demoC, d: demoD, e: demoE, f: demoF, g: demoG, h: demoH, i: demoI };
 
 async function main(): Promise<void> {
   const which = (process.argv[2] ?? 'all').toLowerCase();

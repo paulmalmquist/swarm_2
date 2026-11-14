@@ -1,0 +1,366 @@
+{
+  "receipt_id": "rcpt_0mwgq48uu9f556c5a41",
+  "experiment_id": "exp_0mwgq3sgf9b90289cbe",
+  "level": "evolution",
+  "problem": {
+    "statement": "Improvement campaigns spend their budget on whatever is reported most often. Frequent complaints that were never verified, and fixes that would have failed a cheap check, consume budget that higher-value problems needed.",
+    "observation_ids": [],
+    "observed_failure_count": 0
+  },
+  "hypothesis": "If the improvement process ranks problems by verified failures times severity per unit of cost, pilots a built fix on observed cases before paying for a held-out evaluation, and stops when no remaining problem is worth its cost, then with the same budget on unseen failure episodes it will deliver more independently validated harm reduction and spend less on experiments that fail.",
+  "expected_benefit": "More validated harm reduction per fixed experiment budget; lower cost of failed experiments.",
+  "possible_regressions": [
+    "Pilots cost budget that could have funded another submission",
+    "A problem with few verified failures but high latent harm is ranked low",
+    "Stopping early leaves budget unused"
+  ],
+  "parent": {
+    "component": "evolution",
+    "version": 1,
+    "content_hash": "d81a4b43a3303a68265f23272c06b5c309c92d02223706731c6508b7eb1fcc55"
+  },
+  "change": {
+    "summary": "Replaces the frequency-first improvement policy with an expected-value policy: prioritization, a pilot step, pruning and a stopping rule all change.",
+    "files": [
+      {
+        "path": "evolution.json",
+        "before_hash": "2b2dd7a24db2bf8e5304cb6056059a898e8e594f13fa41a26260cb44c9456332",
+        "after_hash": "266d3e8691332c6e239ce0a9dc3b57d93fc8bf2b15a864dc2b07a6a0bdd11024"
+      },
+      {
+        "path": "policy.mjs",
+        "before_hash": "6d87ca58fc8a39253c681ce145c94d0bed1fca5a9928e5f281c32c720da44b33",
+        "after_hash": "d5ce3450ca42928bffce5c3f296e6ea3e81ac9531953b023118c9da269db0de9"
+      }
+    ],
+    "candidate_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363"
+  },
+  "evaluation": {
+    "protocol_id": "promotion-policy@1/evolution",
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "frozen_at": "2026-11-14T18:12:30.543Z",
+    "workload_refs": [
+      "improvement-arena:arena-A",
+      "snapshot:5641338be846b54eaf873ffa2b1ad7620c148f3f437610074ddeb412d77030ac"
+    ],
+    "holdout_set": "arena-A",
+    "executor": "improvement-arena",
+    "execution_kind": "rerun",
+    "repeats": 1,
+    "deterministic": true,
+    "source": "simulation"
+  },
+  "attempts": [
+    {
+      "attempt_no": 1,
+      "kind": "development",
+      "at": "2026-11-14T18:12:33.376Z",
+      "cases": 8,
+      "note": "development episodes run by the policy author"
+    },
+    {
+      "attempt_no": 2,
+      "kind": "holdout",
+      "at": "2026-11-14T18:12:51.798Z",
+      "cases": 30,
+      "note": "one evaluation on arena-A"
+    }
+  ],
+  "resource_use": {
+    "experiment_units": 46866,
+    "wall_ms": 18422,
+    "model_calls": 0,
+    "cost_usd_est": null
+  },
+  "comparisons": [
+    {
+      "metric": "validated_benefit",
+      "unit": "severity-weighted harm avoided per 100 reviews, measured on fresh cases",
+      "higher_is_better": true,
+      "candidate": 177.6167,
+      "incumbent": 165,
+      "baseline": 165,
+      "diff_vs_incumbent": 12.6167,
+      "ci95_vs_incumbent": [
+        0.4167,
+        25.4333
+      ],
+      "diff_vs_baseline": 12.6167,
+      "ci95_vs_baseline": [
+        0.5667,
+        25.15
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 11 better, 2 worse, 17 same, p=0.02246"
+    },
+    {
+      "metric": "validated_improvements",
+      "unit": "fixes accepted on held-out cases per campaign",
+      "higher_is_better": true,
+      "candidate": 2.0333,
+      "incumbent": 1.9,
+      "baseline": 1.9,
+      "diff_vs_incumbent": 0.1333,
+      "ci95_vs_incumbent": [
+        -0.0667,
+        0.3667
+      ],
+      "diff_vs_baseline": 0.1333,
+      "ci95_vs_baseline": [
+        -0.0667,
+        0.3667
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 6 better, 3 worse, 21 same, p=0.50781"
+    },
+    {
+      "metric": "failed_experiment_cost",
+      "unit": "budget units spent on fixes that were not accepted",
+      "higher_is_better": false,
+      "candidate": 120.0667,
+      "incumbent": 207.3333,
+      "baseline": 207.3333,
+      "diff_vs_incumbent": -87.2667,
+      "ci95_vs_incumbent": [
+        -113.3333,
+        -62.1333
+      ],
+      "diff_vs_baseline": -87.2667,
+      "ci95_vs_baseline": [
+        -113.6,
+        -62.1333
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 3 better, 27 worse, 0 same, p=0.00001"
+    },
+    {
+      "metric": "budget_spent",
+      "unit": "units of an equal budget of 420",
+      "higher_is_better": false,
+      "candidate": 372.8,
+      "incumbent": 411.3333,
+      "baseline": 411.3333,
+      "diff_vs_incumbent": -38.5333,
+      "ci95_vs_incumbent": [
+        -47.1333,
+        -29.5333
+      ],
+      "diff_vs_baseline": -38.5333,
+      "ci95_vs_baseline": [
+        -47.4,
+        -29.7333
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 2 better, 28 worse, 0 same, p=0"
+    },
+    {
+      "metric": "validated_benefit_per_100_units",
+      "unit": "harm avoided per 100 budget units actually spent",
+      "higher_is_better": true,
+      "candidate": 47.8968,
+      "incumbent": 40.0359,
+      "baseline": 40.0359,
+      "diff_vs_incumbent": 7.8609,
+      "ci95_vs_incumbent": [
+        5.1786,
+        10.7089
+      ],
+      "diff_vs_baseline": 7.8609,
+      "ci95_vs_baseline": [
+        5.1797,
+        10.6852
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 27 better, 3 worse, 0 same, p=0.00001"
+    },
+    {
+      "metric": "validated_benefit_without_unverified_complaints",
+      "unit": "sensitivity check: same episodes with no unverified complaint class",
+      "higher_is_better": true,
+      "candidate": 177.6167,
+      "incumbent": 172,
+      "baseline": 172,
+      "diff_vs_incumbent": 5.6167,
+      "ci95_vs_incumbent": [
+        -5.15,
+        16.65
+      ],
+      "diff_vs_baseline": 5.6167,
+      "ci95_vs_baseline": [
+        -4.9833,
+        16.5667
+      ],
+      "n": 30,
+      "method": "paired bootstrap over the same 30 episodes (20000 resamples, seeded); sign test: 10 better, 5 worse, 15 same, p=0.30176"
+    }
+  ],
+  "gates": [
+    {
+      "id": "protected_integrity",
+      "name": "Rules and records are intact",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The protected rules, held-out cases and records are byte-identical to the sealed state, before and after the evaluation."
+    },
+    {
+      "id": "no_forbidden_capabilities",
+      "name": "No forbidden capabilities",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "The policy code uses no file, process, network or dynamic-code capability."
+    },
+    {
+      "id": "holdout_not_reused",
+      "name": "Episodes are unseen by this lineage",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": null,
+      "measurement_unit": null,
+      "comparison_operator": "=",
+      "threshold": null,
+      "samples": 0,
+      "minimum_samples": 0,
+      "weight": null,
+      "meaning": "Run on episode set arena-A, which this lineage has not been scored on."
+    },
+    {
+      "id": "minimum_samples",
+      "name": "Enough episodes",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 30,
+      "measurement_unit": "episodes",
+      "comparison_operator": ">=",
+      "threshold": 20,
+      "samples": 30,
+      "minimum_samples": 20,
+      "weight": null,
+      "meaning": "30 episodes run; at least 20 are required."
+    },
+    {
+      "id": "budget_respected",
+      "name": "The experiment budget is respected",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "violations",
+      "comparison_operator": "=",
+      "threshold": 0,
+      "samples": 30,
+      "minimum_samples": 20,
+      "weight": null,
+      "meaning": "Episodes over budget: 0. Actions the arena had to refuse (unaffordable or malformed): 0."
+    },
+    {
+      "id": "policy_terminates",
+      "name": "Every campaign ends on its own",
+      "kind": "HARD_GATE",
+      "verdict": "PASSED",
+      "measurement_value": 0,
+      "measurement_unit": "campaigns",
+      "comparison_operator": "=",
+      "threshold": 0,
+      "samples": 30,
+      "minimum_samples": 20,
+      "weight": null,
+      "meaning": "Campaigns that hit the step limit or failed: 0."
+    },
+    {
+      "id": "benefit_gain",
+      "name": "Validated benefit at equal budget",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": 12.6167,
+      "measurement_unit": "harm avoided per 100 reviews",
+      "comparison_operator": ">",
+      "threshold": 0,
+      "samples": 30,
+      "minimum_samples": 20,
+      "weight": 0.7,
+      "meaning": "Validated benefit changed by 12.6167 (95% interval 0.4167 to 25.4333)."
+    },
+    {
+      "id": "failed_cost",
+      "name": "Cost of failed experiments",
+      "kind": "WEIGHTED",
+      "verdict": "PASSED",
+      "measurement_value": -87.2667,
+      "measurement_unit": "budget units",
+      "comparison_operator": "<=",
+      "threshold": 0,
+      "samples": 30,
+      "minimum_samples": 20,
+      "weight": 0.3,
+      "meaning": "Budget spent on fixes that failed changed by -87.2667 units per campaign."
+    }
+  ],
+  "known_regressions": [
+    "In 2 of 30 episodes the candidate policy delivered less validated benefit than the incumbent",
+    "Without the unverified complaint class the advantage is not demonstrated (difference 5.6167, 95% interval -5.15 to 16.65)"
+  ],
+  "limitations": [
+    "The arena is a synthetic testbed. Its failure distribution is invented and its fix library stands in for hypothesis generation; the result describes behaviour in this testbed, not improvement rates in real work.",
+    "By construction the arena contains a frequently reported, never verified complaint class. The comparison is repeated without it as a sensitivity check; only the main comparison decides.",
+    "Policies and validators are deterministic, so each episode is run once. The interval reflects which episodes were drawn.",
+    "Both policies were written by the same author who built the arena."
+  ],
+  "decision": "accept",
+  "justification": "Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.",
+  "decided_by": "release-gate",
+  "decided_at": "2026-11-14T18:12:51.798Z",
+  "release_manifest": {
+    "release_id": "r2",
+    "parent_release_id": "r1",
+    "components": {
+      "execution": {
+        "version": 1,
+        "content_hash": "bfbd9eb006fa426e0a5132f421ab9db73d3c01eacb7667ba3262461f0a234573"
+      },
+      "coordination": {
+        "version": 1,
+        "content_hash": "a2731e7d2ba012c81f7188f9200610300a2ba49c33a1b4681c3f42924b04a9bc"
+      },
+      "evolution": {
+        "version": 2,
+        "content_hash": "041479c9ba065b03743628d6ea9558789bf1635af1731757c7c84d3906099363"
+      }
+    },
+    "policy_hash": "19b51d6fce298df7d9d71997a4dab1e405a8968d0a80ed3a6278c281a8fd4ea3",
+    "evaluation_snapshot_hash": "5641338be846b54eaf873ffa2b1ad7620c148f3f437610074ddeb412d77030ac",
+    "receipt_id": "rcpt_0mwgq48uu9f556c5a41",
+    "rollback_target": "r1",
+    "status": "canary",
+    "evidence_basis": "simulation",
+    "created_at": "2026-11-14T18:12:51.798Z",
+    "manifest_hash": "aeb7eace994575847e51aa9dd5dc1346ba53b8ec4762f9c41187817d5306d781"
+  },
+  "rollback_target": "r1",
+  "isolation": {
+    "mode": "enforced",
+    "uid_separation": true,
+    "candidate_uid": 65534,
+    "node_permission_model": true,
+    "protected_digest_before": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "protected_digest_after": "773bf5a211a6ff0d1faa974350b7f5c0093695bfbb461caef2c2cd26766fba94",
+    "intact": true,
+    "notes": [
+      "candidate code runs as uid 65534; the protected store is owned by uid 0 with mode 0700"
+    ]
+  },
+  "evidence_basis": "simulation",
+  "receipt_hash": "f47f3a67365b8aa43afcf4d7015b0e84b7718c3533bb55ac94f6c587d9282871"
+}
