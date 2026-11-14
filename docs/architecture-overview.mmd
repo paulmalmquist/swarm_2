@@ -1,18 +1,18 @@
 flowchart TD
-    Paul["You / Chief of staff"] -->|authorize| Control["Coordinator + SQLite<br/>Leases · budgets · pinned inputs"]
-    Control --> Plan["Discovery + planning<br/>Contracts and work graph"]
-    Plan --> A["Delivery team A"]
-    Plan --> B["Delivery team B"]
-    A --> Check["Integrate + test<br/>Isolated code execution"]
-    B --> Check
-    Check --> Verify["Independent acceptance"]
-    Verify -->|repair| Plan
-    Verify --> Review["Review packet"]
-    Review -->|approve / revise / reject| Paul
-    Verify --> Memory["Sourced memory + outcomes"]
-    Memory -. context .-> Plan
-    Memory --> Candidate["Improvement candidate"]
-    Candidate --> Gate["Frozen evaluation gate"]
-    Gate --> Trial["Bounded trial + review"]
-    Trial -->|retain or roll back| Release["Versioned definitions"]
-    Release --> Control
+    subgraph Target["Target manufacturing workflow · integrations planned"]
+        Design["Design: requirements + revisions"] --> Context["Affected hardware + evidence"]
+        Build["Build: BOM + serial/lot + travelers"] --> Context
+        Quality["Quality + test: NCRs + results + qualification"] --> Context
+        Context --> Chief["Chief of staff: prioritize + assign"]
+        Chief --> Engineering["Engineering: change impact"]
+        Chief --> Manufacturing["Manufacturing: affected builds"]
+        Chief --> Assurance["Quality + test: evidence applicability"]
+        Engineering --> Review["Independent evidence review"]
+        Manufacturing --> Review
+        Assurance --> Review
+        Review --> Packet["Decision packet: hardware + options + evidence"]
+        Packet --> Human["Engineering + quality owners: review + authorize"]
+        Human --> Action["Approved disposition + rework + retest"]
+        Action --> Learning["Observed outcomes: propose + validate better checks"]
+        Learning -. future investigations .-> Chief
+    end

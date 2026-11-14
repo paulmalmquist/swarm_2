@@ -1,5 +1,12 @@
 # Progress notes
 
+## Manufacturing view — 2026-11-14
+
+The primary diagram now follows hardware configuration, change impact, build effectivity,
+evidence applicability and engineering/quality decisions. It is explicitly a target workflow;
+manufacturing domain contracts and integrations remain to be built. The existing infrastructure
+view is preserved in `docs/runtime-overview.svg`. Runtime controls are unchanged.
+
 ## Hardening update — 2026-11-14
 
 PR #1 merged at `15299b9`. The `codex/harden-swarm-runtime` branch adds isolation, complete-run

@@ -12,7 +12,11 @@ how it is coordinated, and how it finds improvements.
 
 It never sends, merges, deploys or commits anyone to anything. It prepares, verifies and asks.
 
-![Architecture overview](docs/architecture-overview.svg)
+![Target rocket manufacturing workflow](docs/architecture-overview.svg)
+
+This is the intended manufacturing workflow. The generic swarm runtime exists; hardware
+traceability, manufacturing analysis and source-system connections still need implementation.
+The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure beneath it.
 
 [Hardening changes and limits](docs/hardening.md).
 

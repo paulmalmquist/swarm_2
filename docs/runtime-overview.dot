@@ -1,0 +1,40 @@
+digraph swarm {
+  graph [rankdir=TB, newrank=true, bgcolor="#0b1220", pad="0.45", nodesep="0.35", ranksep="0.53", splines=polyline, fontname="DejaVu Sans", label="SWARM 2", labelloc=t, fontsize=23, fontcolor="#f0f6ff"];
+  node [shape=box, style="rounded,filled", fillcolor="#172439", color="#364a65", fontcolor="#edf3fa", fontname="DejaVu Sans", fontsize=12, margin="0.18,0.12", penwidth=1.2];
+  edge [color="#7991ae", fontcolor="#a8bbd0", fontname="DejaVu Sans", fontsize=9, arrowsize=0.65];
+  human [label="YOU / CHIEF OF STAFF", fillcolor="#283154", color="#9b9ef8"];
+  control [label="Coordinator + SQLite\nLeases · budgets · pinned inputs", fillcolor="#21304b", color="#7299d3"];
+  human -> control [label="authorize"];
+
+  subgraph cluster_delivery {
+    label="DELIVER"; color="#2c405a"; fontcolor="#90abc9"; fontsize=11; style=rounded; margin=20;
+    plan [label="Discovery + planning\nContracts and work graph"];
+    a [label="Delivery team A\nOwn workspace"];
+    b [label="Delivery team B\nOwn workspace"];
+    {rank=same; a; b;}
+    test [label="Integrate + test\nIsolated code execution", color="#4ea7ac"];
+    verify [label="Independent acceptance", color="#4ea7ac"];
+    review [label="Review packet", color="#9b9ef8"];
+    plan -> a; plan -> b; a -> test; b -> test; test -> verify; verify -> review;
+    verify -> plan [label="repair", color="#dcb46c", constraint=false];
+  }
+  subgraph cluster_learning {
+    label="IMPROVE"; color="#2c405a"; fontcolor="#90abc9"; fontsize=11; style=rounded; margin=20;
+    memory [label="Sourced memory\n+ outcomes"];
+    candidate [label="Improvement candidate"];
+    gate [label="Frozen evaluation gate", color="#4ea7ac"];
+    trial [label="Bounded trial + review", color="#4ea7ac"];
+    release [label="Versioned definitions"];
+    memory -> candidate; candidate -> gate; gate -> trial; trial -> release [label="retain / roll back"];
+  }
+  control -> plan;
+  {rank=same; plan; memory;}
+  {rank=same; test; gate;}
+  {rank=same; review; release;}
+  verify -> memory [label="evidence", constraint=false];
+  memory -> plan [label="context", style=dashed, constraint=false];
+  release -> control [label="future work", color="#7bc7b0", constraint=false];
+  review -> human [label="approve / revise / reject", color="#a7a6eb", constraint=false];
+  note [label="Model workers propose files. Runtime validates and executes.\nSlack · Jira · GitLab · BigQuery · Paul OS connections remain adapters.", shape=plaintext, fontcolor="#92a6bf", fontsize=10];
+  review -> note [style=invis]; release -> note [style=invis];
+}

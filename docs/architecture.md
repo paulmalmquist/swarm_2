@@ -1,6 +1,17 @@
 # Architecture
 
-![Architecture overview](architecture-overview.svg)
+![Target rocket manufacturing workflow](architecture-overview.svg)
+
+The diagram shows the intended manufacturing workflow. Its domain workstreams, hardware
+traceability and source-system integrations are not implemented by the current synthetic
+software-delivery scenario. The [runtime diagram](runtime-overview.svg) shows what supports
+that future workflow today.
+
+The manufacturing work unit is a question tied to specific hardware and its configuration:
+which serials or lots are affected, which requirement or revision applies, and whether build
+and test evidence still supports the proposed disposition. Agent output is an investigation
+packet for the responsible engineers. Engineering and quality authority stays with those
+people and their existing approval processes.
 
 Current security changes: [hardening.md](hardening.md).
 
@@ -8,7 +19,7 @@ swarm_2 is an execution and improvement layer that sits beneath an existing chie
 The chief of staff decides what matters and speaks for Paul. swarm_2 turns an authorized objective
 into coordinated work, verifies the result, and uses the outcome to change how later work is done.
 
-This document describes what is built. What ran, and with what result, is in
+The implementation sections below describe what is built. What ran, and with what result, is in
 [evidence-report.md](evidence-report.md).
 
 ## 1. Three responsibilities
@@ -27,7 +38,7 @@ generation of the work does (`Kernel.acceptTask`).
 
 ## 2. The smallest durable shape
 
-The overview above shows the control, delivery and improvement paths. SQLite owns operational state;
+The runtime diagram shows the control, delivery and improvement paths. SQLite owns operational state;
 the release gate keeps its own protected store. Generated code sees only explicit sandbox mounts.
 
 

@@ -1,0 +1,18 @@
+flowchart TD
+    Paul["You / Chief of staff"] -->|authorize| Control["Coordinator + SQLite · leases, budgets, pinned inputs"]
+    Control --> Plan["Discovery + planning · contracts and work graph"]
+    Plan --> A["Delivery team A"]
+    Plan --> B["Delivery team B"]
+    A --> Check["Integrate + test · isolated code execution"]
+    B --> Check
+    Check --> Verify["Independent acceptance"]
+    Verify -->|repair| Plan
+    Verify --> Review["Review packet"]
+    Review -->|approve / revise / reject| Paul
+    Verify --> Memory["Sourced memory + outcomes"]
+    Memory -. context .-> Plan
+    Memory --> Candidate["Improvement candidate"]
+    Candidate --> Gate["Frozen evaluation gate"]
+    Gate --> Trial["Bounded trial + review"]
+    Trial -->|retain or roll back| Release["Versioned definitions"]
+    Release --> Control
