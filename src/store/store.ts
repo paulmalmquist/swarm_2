@@ -109,6 +109,16 @@ export class Store {
     this.integration = new Repo(d, 'integration_queue', ['mission_id', 'task_id', 'integrator_task_id', 'status', 'position']);
     this.effects = new Repo(d, 'external_effects', ['adapter', 'idempotency_key', 'status']);
     this.init();
+    this.db.tx(() => {
+      for (const o of this.outcomes.where('1=1')) {
+        if (o.technical_success !== undefined) continue;
+        const m = this.missions.get(o.mission_id);
+        const review = this.getMeta<{ decision_id: string }>(`mission:${o.mission_id}:review`);
+        const d = review ? this.decisions.get(review.decision_id) : undefined;
+        const acceptance = d?.status !== 'resolved' ? 'pending' : d.chosen === 'approve' ? 'accepted' : d.chosen === 'reject' ? 'rejected' : 'changes_requested';
+        this.outcomes.put({ ...o, technical_success: o.verified_success, human_acceptance: acceptance, verified_success: o.verified_success && m?.status === 'completed' && acceptance === 'accepted', terminal_state: m?.status === 'completed' ? 'accepted' : m?.status === 'cancelled' ? 'cancelled' : 'review_ready' });
+      }
+    });
   }
 
   private repos(): Repo<{ id: string }>[] {

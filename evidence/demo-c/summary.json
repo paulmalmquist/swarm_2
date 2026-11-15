@@ -14,7 +14,7 @@
     },
     {
       "claim": "The first candidate is an executable change to a skill, judged on held-out cases against a frozen protocol",
-      "observed": "adds execution.json, validators/interface_compat.mjs; protocol frozen 2026-11-14T19:07:11.111Z; scored once on holdout-A",
+      "observed": "adds execution.json, validators/interface_compat.mjs; protocol frozen 2026-11-14T21:59:12.104Z; scored once on holdout-A",
       "ok": true
     },
     {
@@ -66,5 +66,5 @@
     "README.md"
   ],
   "ok": true,
-  "ms": 935
+  "ms": 840
 }

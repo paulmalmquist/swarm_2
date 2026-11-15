@@ -1,0 +1,15 @@
+{
+  "input_commits": [
+    "da85f12ab3269b2b699fb1e528833d53e012fdeb",
+    "10b9750bcec14aa9c401b055a09a43325a20cb29"
+  ],
+  "typescript": "passed",
+  "runtime_tests": 95,
+  "runtime_failures": 0,
+  "fixture_demonstrations": 9,
+  "fixture_checks_passed": 75,
+  "report_tests": 3,
+  "manufacturing_demo": "passed",
+  "live_model_execution": "not performed",
+  "bigquery_execution": "not performed"
+}

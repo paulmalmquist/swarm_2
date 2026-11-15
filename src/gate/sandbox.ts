@@ -1,7 +1,8 @@
-import { type ChildProcess, spawn, spawnSync } from 'node:child_process';
+import { type ChildProcess } from 'node:child_process';
 import { join } from 'node:path';
 import { REPO_ROOT } from '../config.ts';
 import type { IsolationCapability } from '../contracts/runtime.ts';
+import { isolatedNode, isolationCapability, killGroup } from '../security/process.ts';
 import { SwarmError } from '../lib/util.ts';
 
 export const CANDIDATE_UID = Number(process.env.SWARM2_CANDIDATE_UID ?? 65534);
@@ -15,23 +16,8 @@ let cached: IsolationCapability | null = null;
  */
 export function detectIsolation(): IsolationCapability {
   if (cached) return cached;
-  const notes: string[] = [];
-  let uid_separation = false;
-  if (typeof process.getuid === 'function' && process.getuid() === 0) {
-    const r = spawnSync('setpriv', [`--reuid=${CANDIDATE_UID}`, `--regid=${CANDIDATE_UID}`, '--clear-groups', 'true'], { encoding: 'utf8' });
-    uid_separation = r.status === 0;
-    if (!uid_separation) notes.push(`setpriv could not drop to uid ${CANDIDATE_UID}: ${(r.stderr ?? '').trim().slice(0, 120) || 'unavailable'}`);
-  } else {
-    notes.push('not running as root, so candidate code cannot be moved to a separate operating-system user');
-  }
-  const p = spawnSync(process.execPath, ['--permission', '--allow-fs-read=/nonexistent', '-e', '0'], { encoding: 'utf8' });
-  const node_permission_model = p.status === 0;
-  if (!node_permission_model) notes.push('this Node build does not support --permission');
-  const mode = uid_separation ? 'enforced' : node_permission_model ? 'seatbelt' : 'procedural';
-  if (mode === 'enforced') notes.push(`candidate code runs as uid ${CANDIDATE_UID}; the protected store is owned by uid ${process.getuid!()} with mode 0700`);
-  if (mode === 'seatbelt') notes.push('only Node\'s permission model separates candidate code from the protected store; Node documents it as a seat belt, not a defence against malicious code');
-  if (mode === 'procedural') notes.push('no enforced separation is available: protection is by path checks and digest comparison only');
-  cached = { uid_separation, candidate_uid: uid_separation ? CANDIDATE_UID : null, node_permission_model, mode, notes };
+  const cap = isolationCapability();
+  cached = { uid_separation: false, candidate_uid: null, node_permission_model: true, mode: cap.ok ? 'enforced' : 'procedural', notes: [cap.reason, 'Execution fails closed without namespace isolation; filesystem read mounts only, no network or inherited environment.'] };
   return cached;
 }
 
@@ -53,11 +39,10 @@ export class CandidateProcess {
       for (const w of extra.allowWrite ?? []) nodeArgs.push(`--allow-fs-write=${w}`);
     }
     nodeArgs.push(RUNNER);
-    const cmd = iso.uid_separation ? 'setpriv' : process.execPath;
-    const args = iso.uid_separation ? [`--reuid=${CANDIDATE_UID}`, `--regid=${CANDIDATE_UID}`, '--clear-groups', '--', process.execPath, ...nodeArgs] : nodeArgs;
-    // A minimal environment: no credentials, tokens or proxy settings are inherited.
-    this.child = spawn(cmd, args, { cwd: '/', env: { PATH: '/usr/local/bin:/usr/bin:/bin', HOME: '/nonexistent', NODE_NO_WARNINGS: '1' }, stdio: ['pipe', 'pipe', 'pipe'] });
+    if (extra.allowWrite?.length) throw new SwarmError('sandbox_write_denied', 'Candidate bundles are read-only');
+    this.child = isolatedNode([RUNNER, bundleDir, ...(extra.allowRead ?? [])], '/', nodeArgs, 'pipe');
     this.child.stdout!.on('data', (d: Buffer) => {
+      if (this.buffer.length + d.length > 1024 * 1024) { killGroup(this.child); return; }
       this.buffer += d.toString();
       let nl: number;
       while ((nl = this.buffer.indexOf('\n')) >= 0) {
@@ -85,6 +70,7 @@ export class CandidateProcess {
       }
       this.waiting.clear();
     });
+    this.child.on('error', (err) => { this.stderr = String(err); this.exited = true; for (const w of this.waiting.values()) { clearTimeout(w.timer); w.reject(err); } this.waiting.clear(); });
     this.child.stdin!.on('error', () => undefined);
   }
 
@@ -94,7 +80,7 @@ export class CandidateProcess {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.waiting.delete(id);
-        this.child.kill('SIGKILL');
+        killGroup(this.child);
         reject(new SwarmError('candidate_timeout', `candidate did not answer ${op} within ${timeoutMs} ms`));
       }, timeoutMs);
       this.waiting.set(id, { resolve, reject, timer });
@@ -108,6 +94,6 @@ export class CandidateProcess {
     } catch {
       /* already closed */
     }
-    setTimeout(() => this.child.kill('SIGKILL'), 500).unref();
+    setTimeout(() => killGroup(this.child), 500).unref();
   }
 }

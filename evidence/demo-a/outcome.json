@@ -1,7 +1,7 @@
 {
   "outcome": {
-    "id": "out_0mwgs1x6y7w21cc0a1c",
-    "mission_id": "msn_0mwgs1usx07efa05d3e",
+    "id": "out_0mwgy75bd7w69f3b9d3",
+    "mission_id": "msn_0mwgy735007c5d8c942",
     "task_id": null,
     "terminal_state": "accepted",
     "verified_success": true,
@@ -87,25 +87,25 @@
       "worker_invocations": 11,
       "tokens": 0,
       "cost_usd_est": 0,
-      "wall_ms": 1103
+      "wall_ms": 1028
     },
-    "elapsed_ms": 3095,
-    "critical_path_wait_ms": 118,
+    "elapsed_ms": 2820,
+    "critical_path_wait_ms": 91,
     "messages": 1,
     "message_bytes": 86,
     "release_id": "r1",
     "source": "fixture",
     "label_source": "executable_check",
-    "created_at": "2026-11-14T19:07:02.605Z"
+    "created_at": "2026-11-14T21:59:04.108Z"
   },
   "critical_path": {
     "keys": [
-      "delivery.report.implement",
+      "delivery.engine.implement",
       "delivery.integrate",
       "reliability.knowledge",
       "review.packet"
     ],
-    "wait_ms": 118
+    "wait_ms": 91
   },
   "communication": {
     "messages": 1,
@@ -127,12 +127,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 14,
+        "wall_ms": 8,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:06:59.692Z"
+        "observed_at": "2026-11-14T21:59:01.419Z"
       }
     },
     {
@@ -149,12 +149,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 15,
+        "wall_ms": 8,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:06:59.973Z"
+        "observed_at": "2026-11-14T21:59:01.639Z"
       }
     },
     {
@@ -171,38 +171,16 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 14,
+        "wall_ms": 8,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.194Z"
+        "observed_at": "2026-11-14T21:59:01.812Z"
       }
     },
     {
       "task": "planning.plan",
-      "provider": "fixture",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "fixture-worker",
-        "meter_kind": "fixture_declared",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 13,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.401Z"
-      }
-    },
-    {
-      "task": "delivery.decompose",
       "provider": "fixture",
       "mode": "fixture",
       "model_requested": null,
@@ -220,99 +198,11 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:00.682Z"
+        "observed_at": "2026-11-14T21:59:02.026Z"
       }
     },
     {
-      "task": "delivery.engine.implement",
-      "provider": "fixture",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "fixture-worker",
-        "meter_kind": "fixture_declared",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 81,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:01.063Z"
-      }
-    },
-    {
-      "task": "delivery.report.implement",
-      "provider": "fixture",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "fixture-worker",
-        "meter_kind": "fixture_declared",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 56,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:01.112Z"
-      }
-    },
-    {
-      "task": "delivery.integrate",
-      "provider": "runtime",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "runtime-step",
-        "meter_kind": "runtime_measured",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 678,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.084Z"
-      }
-    },
-    {
-      "task": "verification.acceptance",
-      "provider": "runtime",
-      "mode": "fixture",
-      "model_requested": null,
-      "model_actual": null,
-      "usage": {
-        "source": "runtime-step",
-        "meter_kind": "runtime_measured",
-        "call_count": 0,
-        "input_units": null,
-        "output_units": null,
-        "cache_read_units": null,
-        "cache_write_units": null,
-        "wall_ms": 192,
-        "reported_cost": null,
-        "currency": null,
-        "cost_basis": "none",
-        "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.305Z"
-      }
-    },
-    {
-      "task": "reliability.knowledge",
+      "task": "delivery.decompose",
       "provider": "fixture",
       "mode": "fixture",
       "model_requested": null,
@@ -330,7 +220,117 @@
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.427Z"
+        "observed_at": "2026-11-14T21:59:02.264Z"
+      }
+    },
+    {
+      "task": "delivery.engine.implement",
+      "provider": "fixture",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "fixture-worker",
+        "meter_kind": "fixture_declared",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 64,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T21:59:02.635Z"
+      }
+    },
+    {
+      "task": "delivery.report.implement",
+      "provider": "fixture",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "fixture-worker",
+        "meter_kind": "fixture_declared",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 43,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T21:59:02.647Z"
+      }
+    },
+    {
+      "task": "delivery.integrate",
+      "provider": "runtime",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "runtime-step",
+        "meter_kind": "runtime_measured",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 665,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T21:59:03.576Z"
+      }
+    },
+    {
+      "task": "verification.acceptance",
+      "provider": "runtime",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "runtime-step",
+        "meter_kind": "runtime_measured",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 184,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T21:59:03.765Z"
+      }
+    },
+    {
+      "task": "reliability.knowledge",
+      "provider": "fixture",
+      "mode": "fixture",
+      "model_requested": null,
+      "model_actual": null,
+      "usage": {
+        "source": "fixture-worker",
+        "meter_kind": "fixture_declared",
+        "call_count": 0,
+        "input_units": null,
+        "output_units": null,
+        "cache_read_units": null,
+        "cache_write_units": null,
+        "wall_ms": 13,
+        "reported_cost": null,
+        "currency": null,
+        "cost_basis": "none",
+        "completeness": "complete",
+        "observed_at": "2026-11-14T21:59:03.911Z"
       }
     },
     {
@@ -347,12 +347,12 @@
         "output_units": null,
         "cache_read_units": null,
         "cache_write_units": null,
-        "wall_ms": 20,
+        "wall_ms": 15,
         "reported_cost": null,
         "currency": null,
         "cost_basis": "none",
         "completeness": "complete",
-        "observed_at": "2026-11-14T19:07:02.553Z"
+        "observed_at": "2026-11-14T21:59:04.055Z"
       }
     }
   ]

@@ -1,0 +1,32 @@
+{
+  "evidence_class": "synthetic_local_warehouse",
+  "versions": {
+    "dbt-core": "1.10.15",
+    "dbt-bigquery": "1.10.3",
+    "dbt-duckdb": "1.10.1",
+    "duckdb": "1.4.4",
+    "sqlglot": "28.10.1"
+  },
+  "models_built_locally": 27,
+  "data_tests_passed": 129,
+  "negative_data_tests_detected": 3,
+  "additional_checks": [
+    "Layer dependencies: Consumer reads only Mart or Consumer",
+    "Conformed keys separate identical hardware IDs in two datasets",
+    "Finding revisions do not inflate finding count",
+    "Hardware Type 2 retains two knowledge versions",
+    "Historical cutoff retains the original configuration conflict",
+    "Historical cutoff retains subsequently withdrawn evidence",
+    "Historical cutoff does not learn late hardware early"
+  ],
+  "bigquery_dbt_parse": "passed: fixture and source modes",
+  "bigquery_static_sql_syntax_models": 27,
+  "bigquery_dbt_compile": "not performed by this offline verifier",
+  "bigquery_execution": "not performed",
+  "production_deployment": "not performed",
+  "limitations": [
+    "DuckDB execution does not validate BigQuery execution semantics, IAM, DDL contracts or performance",
+    "Static Jinja rendering is not dbt BigQuery compilation",
+    "No manufacturing ground truth or operational reliability claim"
+  ]
+}

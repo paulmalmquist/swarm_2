@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { REPO_ROOT } from '../config.ts';
 import type { ExternalEffect } from '../contracts/runtime.ts';
@@ -6,7 +6,7 @@ import type { Envelope } from '../contracts/types.ts';
 import type { RawRequest } from '../cos/port.ts';
 import type { Gate } from '../gate/gate.ts';
 import type { Runtime } from '../runtime.ts';
-import { newId } from '../lib/util.ts';
+import { newId, hashOf, SwarmError } from '../lib/util.ts';
 
 /**
  * Connector ports. swarm_2 talks to outside systems only through these interfaces.
@@ -58,36 +58,44 @@ export class LocalFixtureRequests implements RequestSourcePort {
  */
 export function performEffect<T extends Record<string, unknown>>(rt: Runtime, e: { adapter: string; action: string; idempotency_key: string; request: Record<string, unknown>; run: () => T; reconcile: () => 'applied' | 'not_applied' | 'unknown' }): { effect: ExternalEffect; response: T | null; executed: boolean } {
   const { store } = rt;
-  let effect = store.effects.first('"idempotency_key" = ?', e.idempotency_key);
-  if (effect?.status === 'confirmed') return { effect, response: effect.response as T | null, executed: false };
-  if (effect && (effect.status === 'unknown' || effect.status === 'intended')) {
+  if (store.db.inTransaction) throw new SwarmError('effect_in_transaction', 'External effects need a separately committed intent');
+  const find = () => store.effects.where('"adapter" = ? AND "idempotency_key" = ?', e.adapter, e.idempotency_key).find((x) => x.action === e.action);
+  // Commit intent before any call. BEGIN IMMEDIATE in the second transaction serializes
+  // synchronous callers; a crash rolls back confirmation, leaving intent for reconciliation.
+  store.db.tx(() => {
+    const prior = find();
+    if (prior && hashOf(prior.request) !== hashOf(e.request)) throw new SwarmError('idempotency_conflict', 'This adapter/action/key already names a different request');
+    if (!prior) store.effects.put({ id: newId('eff'), adapter: e.adapter, action: e.action, idempotency_key: e.idempotency_key, status: 'intended', request: e.request, response: null, attempts: 0, created_at: store.clock.iso(), reconciled_at: null });
+  });
+  return store.db.tx(() => {
+    let effect = find()!;
+    if (effect.status === 'confirmed') return { effect, response: effect.response as T | null, executed: false };
     const state = e.reconcile();
-    store.emit({ type: 'external_effect_reconciled', actor_id: e.adapter, actor_kind: 'runtime', payload: { key: e.idempotency_key, action: e.action, found: state } });
+    if (effect.attempts > 0) store.emit({ type: 'external_effect_reconciled', actor_id: e.adapter, actor_kind: 'runtime', payload: { key: e.idempotency_key, action: e.action, found: state } });
     if (state === 'applied') {
       effect = { ...effect, status: 'confirmed', reconciled_at: store.clock.iso() };
       store.effects.put(effect);
       return { effect, response: effect.response as T | null, executed: false };
     }
-    if (state === 'unknown') return { effect, response: null, executed: false };
-  }
-  if (!effect) {
-    effect = { id: newId('eff'), adapter: e.adapter, action: e.action, idempotency_key: e.idempotency_key, status: 'intended', request: e.request, response: null, attempts: 0, created_at: store.clock.iso(), reconciled_at: null };
-    store.effects.put(effect);
-  }
-  effect = { ...effect, attempts: effect.attempts + 1 };
-  store.effects.put(effect);
-  try {
-    const response = e.run();
-    effect = { ...effect, status: 'confirmed', response };
-    store.effects.put(effect);
-    return { effect, response, executed: true };
-  } catch (err) {
-    // The call may or may not have landed. That is recorded as unknown, not as failed.
-    effect = { ...effect, status: 'unknown', response: { error: err instanceof Error ? err.message : String(err) } };
-    store.effects.put(effect);
-    store.emit({ type: 'external_effect_uncertain', actor_id: e.adapter, actor_kind: 'runtime', payload: { key: e.idempotency_key, action: e.action } });
-    return { effect, response: null, executed: true };
-  }
+    if (state !== 'not_applied') {
+      effect = { ...effect, status: 'unknown' };
+      store.effects.put(effect);
+      return { effect, response: null, executed: false };
+    }
+    effect = { ...effect, attempts: effect.attempts + 1 };
+    try {
+      const response = e.run();
+      if (response && typeof (response as { then?: unknown }).then === 'function') throw new SwarmError('async_effect_unsupported', 'Effects must use synchronous adapters');
+      effect = { ...effect, status: 'confirmed', response };
+      store.effects.put(effect);
+      return { effect, response, executed: true };
+    } catch (err) {
+      effect = { ...effect, status: 'unknown', response: { error: err instanceof Error ? err.message : String(err) } };
+      store.effects.put(effect);
+      store.emit({ type: 'external_effect_uncertain', actor_id: e.adapter, actor_kind: 'runtime', payload: { key: e.idempotency_key, action: e.action } });
+      return { effect, response: null, executed: true };
+    }
+  });
 }
 
 /** LOCAL FILE: writes newline-delimited JSON in the shape a warehouse load job takes. */
@@ -102,22 +110,39 @@ export class LocalJsonlWarehouse implements WarehousePort {
     this.dir = dir ?? join(rt.paths.home, 'export');
   }
   load(table: string, rows: Record<string, unknown>[], idempotency_key: string): Envelope<{ table: string; rows: number; location: string }> {
+    if (!/^[a-zA-Z0-9_-]+$/.test(table)) throw new SwarmError('invalid_table', 'Use a simple table identifier');
     mkdirSync(this.dir, { recursive: true });
     const file = join(this.dir, `${table}.jsonl`);
-    const marker = join(this.dir, '.loads');
-    const landed = (): boolean => existsSync(marker) && readFileSync(marker, 'utf8').split('\n').includes(idempotency_key);
+    const loads = join(this.dir, '.loads-v2', table);
+    const loadFile = join(loads, `${hashOf({ table, idempotency_key })}.jsonl`);
+    const baseFile = join(loads, 'legacy-base');
+    const atomic = (path: string, text: string): void => {
+      const temp = `${path}.${process.pid}.tmp`;
+      writeFileSync(temp, text);
+      renameSync(temp, path);
+    };
+    const materialize = (): void => {
+      const fragments = readdirSync(loads).filter((n) => n.endsWith('.jsonl')).sort().map((n) => readFileSync(join(loads, n), 'utf8'));
+      atomic(file, (existsSync(baseFile) ? readFileSync(baseFile, 'utf8') : '') + fragments.join(''));
+    };
     const res = performEffect(this.rt, {
       adapter: 'warehouse:local-jsonl',
       action: `load ${table}`,
       idempotency_key,
-      request: { table, rows: rows.length },
+      request: { table, rows: rows.length, content_hash: hashOf(rows) },
       run: () => {
-        appendFileSync(file, rows.map((r) => JSON.stringify(r)).join('\n') + (rows.length ? '\n' : ''));
-        appendFileSync(marker, idempotency_key + '\n');
+        mkdirSync(loads, { recursive: true });
+        if (!existsSync(baseFile)) atomic(baseFile, existsSync(file) ? readFileSync(file, 'utf8') : '');
+        atomic(loadFile, rows.map((r) => JSON.stringify(r)).join('\n') + (rows.length ? '\n' : ''));
+        materialize();
         if (this.failAfterWrite) throw new Error('connection lost after the load was sent');
         return { table, rows: rows.length, location: file };
       },
-      reconcile: () => (landed() ? 'applied' : 'not_applied'),
+      reconcile: () => {
+        if (!existsSync(loadFile)) return 'not_applied';
+        materialize(); // repair an interrupted materialization without appending the load twice
+        return 'applied';
+      },
     });
     if (res.effect.status !== 'confirmed') return { source: 'unavailable', reason: `the outcome of loading ${table} is ${res.effect.status}; it will be reconciled before any retry` };
     return { source: 'fixture', generated_at: this.rt.store.clock.iso(), table, rows: rows.length, location: file };
@@ -155,7 +180,7 @@ export function exportAnalytics(rt: Runtime, gate: Gate, warehouse: WarehousePor
     tasks: store.tasks.where('1=1').map((t) => ({ task_id: t.id, mission_id: t.mission_id, key: t.key, executor: t.executor, archetype: t.contract.assignee.archetype, status: t.status, depth: t.depth, attempts: t.attempt, generation: t.generation, retries: t.retries, repairs: t.repairs, currency: t.currency, created_at: t.created_at, updated_at: t.updated_at })),
     attempts: store.attempts.where('1=1').map((a) => ({ attempt_id: a.id, task_id: a.task_id, mission_id: a.mission_id, attempt_no: a.attempt_no, status: a.status, provider: a.provider, provider_mode: a.provider_mode, model_requested: a.model_requested, model_actual: a.model_actual, input_units: a.usage?.input_units ?? null, output_units: a.usage?.output_units ?? null, wall_ms: a.usage?.wall_ms ?? null, reported_cost: a.usage?.reported_cost ?? null, cost_basis: a.usage?.cost_basis ?? null, usage_completeness: a.usage?.completeness ?? null, started_at: a.started_at, ended_at: a.ended_at })),
     verifications: store.verifications.where('1=1').map((v) => ({ verification_id: v.id, mission_id: v.mission_id, task_id: v.task_id, criterion_id: v.criterion_id, method: v.method, verdict: v.verdict, independent: v.independent, generation: v.generation, created_at: v.created_at })),
-    outcomes: store.outcomes.where('1=1').map((o) => ({ outcome_id: o.id, mission_id: o.mission_id, verified_success: o.verified_success, escaped_defects: o.escaped_defects, rework_count: o.rework_count, integration_failures: o.integration_failures, human_corrections: o.human_corrections, recovery_events: o.recovery_events, worker_invocations: o.total_usage.worker_invocations, model_calls: o.total_usage.model_calls, tokens: o.total_usage.tokens, cost_usd_est: o.total_usage.cost_usd_est, elapsed_ms: o.elapsed_ms, critical_path_wait_ms: o.critical_path_wait_ms, messages: o.messages, release_id: o.release_id, source: o.source, created_at: o.created_at })),
+    outcomes: store.outcomes.where('1=1').map((o) => ({ outcome_id: o.id, mission_id: o.mission_id, verified_success: o.verified_success, technical_success: o.technical_success, human_acceptance: o.human_acceptance, escaped_defects: o.escaped_defects, rework_count: o.rework_count, integration_failures: o.integration_failures, human_corrections: o.human_corrections, recovery_events: o.recovery_events, worker_invocations: o.total_usage.worker_invocations, model_calls: o.total_usage.model_calls, tokens: o.total_usage.tokens, cost_usd_est: o.total_usage.cost_usd_est, elapsed_ms: o.elapsed_ms, critical_path_wait_ms: o.critical_path_wait_ms, messages: o.messages, release_id: o.release_id, source: o.source, created_at: o.created_at })),
     observations: store.observations.where('1=1').map((o) => ({ observation_id: o.id, mission_id: o.mission_id, kind: o.kind, failure_class: o.failure_class, certainty: o.certainty, component: o.component, release_id: o.release_id, source: o.source, created_at: o.created_at })),
     experiments: gate.experiments.where('1=1').map((e) => ({ experiment_id: e.id, level: e.level, title: e.title, stage: e.stage, decision: e.decision, lineage_id: e.lineage_id, revises: e.revises, holdout_set: e.protocol?.holdout_set ?? null, incumbent_release: e.incumbent_release, release_id: e.release_id, source: e.source, created_at: e.created_at })),
     experiment_metrics: gate.receipts.where('1=1').flatMap((r) => r.comparisons.map((c) => ({ receipt_id: r.receipt_id, experiment_id: r.experiment_id, level: r.level, decision: r.decision, evidence_basis: r.evidence_basis, metric: c.metric, candidate: c.candidate, incumbent: c.incumbent, baseline: c.baseline, diff_vs_incumbent: c.diff_vs_incumbent, ci95_low: c.ci95_vs_incumbent?.[0] ?? null, ci95_high: c.ci95_vs_incumbent?.[1] ?? null, n: c.n, decided_at: r.decided_at }))),

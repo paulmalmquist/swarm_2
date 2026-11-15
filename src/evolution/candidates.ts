@@ -1,3 +1,5 @@
+import { rejectLinks } from '../gate/scope.ts';
+import { SwarmError } from '../lib/util.ts';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ExecutionDef } from '../contracts/definitions.ts';
@@ -48,7 +50,11 @@ function substitute(dir: string, subst: Record<string, string>): void {
  * author's work product. Nothing here touches the registry or the protected store.
  */
 export function buildCandidate(parentDir: string, specDir: string, outDir: string, subst: Record<string, string> = {}): BuiltCandidate {
+  rejectLinks(specDir);
+  rejectLinks(parentDir);
   const spec = JSON.parse(readFileSync(join(specDir, 'candidate.json'), 'utf8')) as CandidateSpec;
+  if (!['execution', 'coordination', 'evolution'].includes(spec.level)) throw new SwarmError('invalid_candidate', 'Unknown component level');
+  if (spec.skill_patch && (!Array.isArray(spec.skill_patch.validators_add) || !Array.isArray(spec.skill_patch.validators_remove) || ![...spec.skill_patch.validators_add, ...spec.skill_patch.validators_remove].every((f) => /^[\w-]+\.mjs$/.test(f)))) throw new SwarmError('invalid_candidate', 'Invalid validator path');
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
   cpSync(parentDir, outDir, { recursive: true });

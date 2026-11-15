@@ -1,0 +1,87 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swarm_2@0.1.0 test
+> node --disable-warning=ExperimentalWarning --test --test-concurrency=1 "tests/**/*.test.ts"
+
+[coordinator] recovery: 0 in-flight attempt(s) fenced, 0 call slot(s) freed
+[coordinator] bootstrapped mission msn_0mwgvlsq108df1566e9 with a hierarchical plan
+[coordinator] dispatched discovery.analyze (fixture, token g1a1)
+[coordinator] dispatched planning.criteria (fixture, token g1a1)
+[coordinator] dispatched planning.contract (fixture, token g1a1)
+[coordinator] dispatched planning.plan (fixture, token g1a1)
+[coordinator] dispatched delivery.decompose (fixture, token g1a1)
+[coordinator] dispatched delivery.engine.implement (fixture, token g1a1)
+[coordinator] dispatched delivery.report.implement (fixture, token g1a1)
+[coordinator] dispatched reliability.knowledge (fixture, token g1a1)
+✔ the API serves provenance envelopes and accepts only tokened, idempotent commands (4986.232248ms)
+✔ arena: episodes are deterministic and campaigns respect the budget (935.762511ms)
+✔ improving the improvement process: two policies, equal budgets, unseen episodes (18976.746587ms)
+✔ communication is scoped, persisted and measured; large results travel as references (12.258582ms)
+✔ conflicts go to a named owner; debate is bounded and then escalates (7.437906ms)
+✔ a pending handoff keeps the original owner until it is accepted (5.569134ms)
+✔ outward-facing work is drafted for review and never sent by the system (4.900943ms)
+✔ an external effect with an uncertain outcome is reconciled before any retry (42.538281ms)
+✔ connectors report honestly what is connected, and history exports for analysis (3151.765343ms)
+✔ work that exhausts its repairs stops for a person, whose guidance reaches the next attempt (6935.449703ms)
+✔ a failing check reports what it expected and what it got, not its code (0.772775ms)
+✔ a malformed plan proposal is refused with a reason instead of breaking validation (7.03525ms)
+✔ a request left out by discovery is a scope change for the chief of staff, not a silent narrowing (6145.28515ms)
+✔ first-order improvement: an observed failure becomes a candidate judged on held-out cases (883.95242ms)
+✔ rejection: a cheaper candidate that omits a required verification step is rejected (375.971745ms)
+✔ isolation: candidate code cannot change the rules, the records or the release pointer (663.438375ms)
+✔ test execution cannot read host state, inherit secrets, write source, or reach the host network (333.447493ms)
+✔ passing subsets, skip/TODO, missing plans, failure exits and truncated output prove nothing (1.13562ms)
+✔ file proposals reject traversal, symlinks and out-of-scope paths before applying edits (13.433962ms)
+✔ an unprefixed acceptance failure blocks a mission even when every named criterion passes (6389.022195ms)
+✔ the gate rejects routing changes smuggled alongside a tested validator (77.434678ms)
+✔ review decisions and their effects roll back together; success requires human acceptance (3056.585137ms)
+✔ memory cannot self-certify, cite missing sources, or cross into real missions (20.039051ms)
+✔ source revisions fence old work, preserve history, and ignore stale redelivery (8.480027ms)
+✔ effects bind adapter, action and payload to their idempotency key (7.683464ms)
+✔ rejection and source revision cannot leave a successful outcome or approve a cancelled review (6116.305828ms)
+[coordinator] recovery: 0 in-flight attempt(s) fenced, 0 call slot(s) freed
+✔ invalid knowledge after verification is retried within limits instead of stranding the task (3730.44298ms)
+[coordinator] bootstrapped mission msn_0mwgvn65gbe400598bd with a hierarchical plan
+[coordinator] dispatched discovery.analyze (fixture, token g1a1, INJECTED FAULT slow:8000)
+✔ STOP in server mode kills a live worker and fences its lease before closing the database (336.465239ms)
+✔ ownership: one owner per lease, heartbeats extend it, expiry reclaims it (17.045161ms)
+✔ fencing: a stale worker cannot overwrite a newer attempt (9.199198ms)
+✔ dependencies: cycles are rejected and prerequisites gate readiness (9.942292ms)
+✔ teams: children start only after their container, and the container settles from them (15.804709ms)
+✔ budget: children consume the parent budget and cannot create spending authority (8.156002ms)
+✔ budget: unspent reservations return to the parent when work settles (7.633798ms)
+✔ authority: children inherit narrower authority; outward actions are never delegable (5.787548ms)
+✔ delegation depth is capped by operator configuration (4.632982ms)
+✔ invalidation: a changed upstream artifact marks consumers stale and fences in-flight work (20.430341ms)
+✔ reuse: an unchanged input lets a verified result be revalidated without rerunning (21.616606ms)
+✔ acceptance needs a passing, independent verification for the current generation (12.657518ms)
+✔ rework is bounded by the repair limit (5.987033ms)
+✔ idempotency: duplicates are no-ops; a reused key with a different body is quarantined (3.647259ms)
+✔ cancellation propagates to descendants, releases reservations and keeps artifacts (10.27124ms)
+✔ concurrency: the call-slot cap is enforced and survives recovery (9.999305ms)
+✔ a provider capacity failure blocks without burning retries (6.034571ms)
+✔ the event log is append-only and hash-chained (4.569366ms)
+✔ a worker publishes only the outputs its contract names, and files only from inside its workspace (11.139502ms)
+✔ a mission past its wall-clock ceiling stops for a person, who alone can extend it (905.154219ms)
+✔ improvement work draws on a bounded exploration allocation (417.764189ms)
+✔ coordination episodes: independent verification catches an injected defect that self-verification lets through (11042.134425ms)
+✔ coordination episodes: without an interface agreement, a disagreement surfaces at integration and is reworked (10808.456583ms)
+✔ a mission runs from intake to an independently verified, reviewable result (3973.927652ms)
+✔ pattern: one agent for straightforward work (382.897745ms)
+✔ pattern: parallel specialists, then a synthesis (647.342336ms)
+✔ pattern: competing approaches, selected on verified evidence (368.220764ms)
+✔ pattern: a temporary specialist team is bounded and disbands (309.369572ms)
+✔ plans are proposals: the runtime refuses ones that are unsound or exceed authority (6.463375ms)
+✔ reuse across missions: an identical verified investigation is not repeated (7016.727574ms)
+✔ the active improvement policy decides the organization's improvement work; replacing it changes what is done (20753.763886ms)
+✔ recovery: a killed worker, a stale result, a coordinator restart, a duplicate and an upstream revision (8334.158346ms)
+✔ canary and rollback: a qualified release is tried on bounded missions and rolled back on a regression (4147.664286ms)
+✔ retain: a canary that stays healthy becomes the default for future work only (4059.485102ms)
+ℹ tests 61
+ℹ suites 0
+ℹ pass 61
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 139642.075306

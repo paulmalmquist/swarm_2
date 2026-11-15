@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgs413g7fd6aa93a7",
-  "experiment_id": "exp_0mwgs2pgwka0859bdb7",
+  "receipt_id": "rcpt_0mwgy923n7fd62efd55",
+  "experiment_id": "exp_0mwgy7uaxka1fe0e9b2",
   "level": "coordination",
   "problem": {
     "statement": "Every mission pays for a separate verification swarm even though delivery already runs its own tests at integration.",
@@ -8,6 +8,7 @@
     "observed_failure_count": 0
   },
   "hypothesis": "If the independent verification swarm is retired and delivery's own integration tests are trusted, missions will finish with fewer worker invocations and less time, with no more defects escaping.",
+  "authorship": null,
   "expected_benefit": "Fewer worker invocations and a shorter completion time per mission.",
   "possible_regressions": [
     "A defect that delivery's own tests do not cover would reach the review packet unverified"
@@ -31,10 +32,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/coordination",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:39.248Z",
+    "frozen_at": "2026-11-14T21:59:36.489Z",
     "workload_refs": [
       "mission-episodes:missions-A",
-      "snapshot:8374880c942f1f27bccbf9a25e8e67b5f4d7293f5688718659d18855d1a2e07c"
+      "snapshot:e90e917b40b61ea7544886f78ad611b65a8fa6495e28c2f856bc66297f99a17a"
     ],
     "holdout_set": "missions-A",
     "executor": "mission-episodes",
@@ -47,14 +48,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T19:08:40.972Z",
+      "at": "2026-11-14T22:00:33.251Z",
       "cases": 8,
       "note": "one evaluation on missions-A"
     }
   ],
   "resource_use": {
     "experiment_units": 183,
-    "wall_ms": 61721,
+    "wall_ms": 56759,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -123,18 +124,18 @@
       "metric": "completion_ms",
       "unit": "milliseconds from start to a reviewable result",
       "higher_is_better": false,
-      "candidate": 3010.625,
-      "incumbent": 4143.875,
-      "baseline": 4143.875,
-      "diff_vs_incumbent": -1133.25,
+      "candidate": 2806.625,
+      "incumbent": 3786.625,
+      "baseline": 3786.625,
+      "diff_vs_incumbent": -980,
       "ci95_vs_incumbent": [
-        -1558.25,
-        -576.875
+        -1360.125,
+        -476.75
       ],
-      "diff_vs_baseline": -1133.25,
+      "diff_vs_baseline": -980,
       "ci95_vs_baseline": [
-        -1558.25,
-        -576.875
+        -1360.125,
+        -476.75
       ],
       "n": 8,
       "method": "paired bootstrap over the same 8 mission episodes (20000 resamples, seeded); sign test: 0 better, 8 worse, 0 same, p=0.00781"
@@ -307,7 +308,7 @@
   "decision": "reject",
   "justification": "Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:08:40.972Z",
+  "decided_at": "2026-11-14T22:00:33.251Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -323,5 +324,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "3a791f3376d186b4137739f53c52ae21866448edc0300f2dff3501933a595c5a"
+  "receipt_hash": "9047019791db3f4ac1433fd9ba3a4b9083c62c4d0f97a97eea4fc6b64e27b160"
 }

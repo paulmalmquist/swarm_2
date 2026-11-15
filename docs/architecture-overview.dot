@@ -1,0 +1,37 @@
+digraph manufacturing {
+  graph [rankdir=TB, newrank=true, bgcolor="#0b1220", pad="0.4", nodesep="0.28", ranksep="0.42", splines=polyline, fontname="DejaVu Sans", label="SWARM 2 · ROCKET MANUFACTURING\n\nTarget workflow · manufacturing connections are planned", labelloc=t, fontsize=20, fontcolor="#f0f6ff"];
+  node [shape=box, style="rounded,filled", fillcolor="#172439", color="#364a65", fontcolor="#edf3fa", fontname="DejaVu Sans", fontsize=12, margin="0.18,0.14", penwidth=1.2];
+  edge [color="#7991ae", fontcolor="#a8bbd0", fontname="DejaVu Sans", fontsize=10, arrowsize=0.65];
+
+  subgraph cluster_sources {
+    label="SOURCE RECORDS"; color="#344458"; fontcolor="#90abc9"; fontsize=10; style="rounded,dashed"; margin=16;
+    design [label="DESIGN\nRequirements · revisions"];
+    build [label="BUILD\nBOM · serial/lot · travelers"];
+    quality [label="QUALITY + TEST\nNCRs · results · qualification"];
+    {rank=same; design; build; quality;}
+  }
+  context [label="Affected hardware + evidence\nAs-designed · as-built · as-tested", fillcolor="#21304b", color="#7299d3"];
+  design -> context; build -> context; quality -> context;
+  chief [label="Chief of staff\nPrioritize · scope · assign owner", fillcolor="#283154", color="#9b9ef8"];
+  context -> chief;
+
+  subgraph cluster_swarm {
+    label="COORDINATED INVESTIGATION"; labeljust=l; labelloc=b; color="#2c405a"; fontcolor="#90abc9"; fontsize=10; style=rounded; margin=16;
+    engineering [label="ENGINEERING\nChange impact"];
+    manufacturing [label="MANUFACTURING\nAffected builds"];
+    assurance [label="QUALITY + TEST\nEvidence still applicable?"];
+    {rank=same; engineering; manufacturing; assurance;}
+    review [label="Independent evidence review\nTraceability · gaps · assumptions", color="#4ea7ac"];
+    packet [label="Decision packet\nAffected hardware · options · evidence", color="#9b9ef8"];
+    engineering -> review; manufacturing -> review; assurance -> review;
+    review -> packet;
+  }
+  chief -> engineering; chief -> manufacturing; chief -> assurance;
+  human [label="Engineering + quality owners\nReview + authorize", fillcolor="#283154", color="#9b9ef8"];
+  action [label="Approved work in source systems\nDisposition · rework · retest", style="rounded,filled,dashed", color="#7299d3"];
+  learning [label="Observed outcomes\nPropose + validate better checks", fillcolor="#12302c", color="#4ea78d"];
+  packet -> human;
+  human -> action;
+  action -> learning;
+  learning -> chief [label="future investigations", color="#4ea78d", style=dashed, constraint=false];
+}

@@ -1,6 +1,9 @@
 import type { ActorKind, AuthorityEnvelope, Command, Decision, Draft, Envelope, IntakeRequest, Mission, NextAction, ResourceAmounts, ReviewPacket, SourceLabel } from '../contracts/types.ts';
+import { recordOutcome } from '../coordination/metrics.ts';
+import { creditMemories } from '../memory/memory.ts';
 import { devAuthority, devBudget } from '../config.ts';
 import type { Cluster } from '../kernel/intake.ts';
+import { ranAModel } from '../kernel/kernel.ts';
 import type { Runtime } from '../runtime.ts';
 import { SwarmError, newId } from '../lib/util.ts';
 
@@ -28,6 +31,8 @@ export interface ChiefOfStaffPort {
 }
 
 export interface RawRequest {
+  source_revision?: number;
+  withdrawn?: boolean;
   id: string;
   source: string;
   stakeholder: string;
@@ -67,7 +72,8 @@ export interface ProgressSnapshot {
   next_actions: (NextAction & { task_key: string; task_title: string; status: string })[];
   blockers: { task_key: string; reason: string | null; owner_id: string | null }[];
   /** How the work was actually executed: by a model, by a labeled script, or by the runtime itself. */
-  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number };
+  /** `unreported_usage_attempts`: model attempts that ended without saying what they used; above zero, `spent` tokens and cost are lower bounds. */
+  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number; unreported_usage_attempts: number };
   spent: ResourceAmounts;
   budget: ResourceAmounts;
   open_decisions: number;
@@ -121,7 +127,12 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
     let received = 0;
     let duplicates = 0;
     for (const r of cmd.data.requests) {
-      const res = this.rt.intake.ingest({ ...r, data_class: r.id.startsWith('syn-') ? 'synthetic' : 'real' });
+      const res = this.rt.intake.ingest({ ...r, data_class: r.id.startsWith('syn-') ? 'synthetic' : 'real' }, (prior) => {
+        if (!prior.mission_id) return;
+        this.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `source-revision:${prior.id}:${r.source_revision}`, data: { mission_id: prior.mission_id, reason: `Source request ${prior.id} revised or withdrawn; replan against its new revision` } });
+        for (const v of this.rt.store.versions.where('"mission_id" = ? AND "currency" = ?', prior.mission_id, 'current')) this.rt.store.versions.put({ ...v, currency: 'needs_revalidation' });
+        for (const mem of this.rt.store.memories.where("\"status\" = 'active'")) if (mem.provenance.mission_id === prior.mission_id) this.rt.store.memories.put({ ...mem, status: 'invalidated', invalidated_by: `source revision: ${prior.id}` });
+      });
       if (res.duplicate) duplicates++;
       else received++;
     }
@@ -178,6 +189,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         store.emit({ type: 'mission_pinned_to_canary', mission_id: m.id, actor_id: 'release-gate', actor_kind: 'gate', payload: { canary_id: pin.canary_id, release_id: pin.release_id } });
       }
       const requests = (d.request_ids ?? []).map((id) => store.requests.get(id)).filter((r): r is IntakeRequest => Boolean(r));
+      if (requests.some((r) => r.withdrawn)) throw new SwarmError('request_withdrawn', 'Withdrawn requests cannot authorize new work');
       for (const r of requests) store.requests.put({ ...r, mission_id: m.id });
       if (requests.length) {
         kernel.publishVersion({
@@ -204,6 +216,8 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
 
   cancelMission(cmd: Command<{ mission_id: string; reason: string }>): Envelope<{ mission: Mission; cancelled_tasks: string[]; pids_to_stop: number[] }> {
     const r = this.rt.kernel.cancelMission(cmd);
+    this.rt.workspaces.stopPath(this.rt.workspaces.repoDir(r.mission.id).replace(/\/repo$/, ''));
+    if (this.rt.store.outcomes.first('"mission_id" = ? AND "task_id" IS NULL', r.mission.id)) recordOutcome(this.rt, r.mission.id);
     return this.env({ mission: r.mission, cancelled_tasks: r.cancelled, pids_to_stop: r.pids }, this.sourceOf(cmd.data.mission_id));
   }
 
@@ -219,7 +233,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         tasks: { total: tasks.length, by_status },
         next_actions: tasks.filter((t) => t.next_action).map((t) => ({ ...t.next_action!, task_key: t.key, task_title: t.title, status: t.status })),
         blockers: tasks.filter((t) => t.status === 'blocked' || t.status === 'failed').map((t) => ({ task_key: t.key, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null })),
-        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length }))(store.attempts.where('"mission_id" = ?', m.id)),
+        execution: ((attempts) => ({ model_attempts: attempts.filter(ranAModel).length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length, unreported_usage_attempts: kernel.unreportedUsage(m.id) }))(store.attempts.where('"mission_id" = ?', m.id)),
         spent: kernel.budget.spent(m.budget_account_id),
         budget: store.accounts.must(m.budget_account_id).limit,
         open_decisions: store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).length,
@@ -272,71 +286,91 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
 
   resolveDecision(cmd: Command<{ decision_id: string; chosen: string; rationale: string }>): Envelope<{ decision: Decision; effect: string }> {
     const { store, kernel, comms } = this.rt;
-    const before = store.decisions.must(cmd.data.decision_id);
-    if (!['chief_of_staff', 'human'].includes(before.owner_kind)) throw new SwarmError('not_decision_owner', `Decision ${before.id} is not the chief of staff's to make`);
-    const wasOpen = ['open', 'escalated'].includes(before.status);
-    const decision = comms.resolve({ ...cmd, actor: before.owner_id });
-    let effect = 'recorded';
-    if (wasOpen && decision.mission_id) {
-      const m = store.missions.must(decision.mission_id);
-      const review = store.getMeta<{ decision_id: string; draft_id: string }>(`mission:${m.id}:review`);
-      if (decision.kind === 'outward_action' && review?.decision_id === decision.id) {
-        if (decision.chosen === 'approve') {
-          comms.reviewDraft({ command: 'reviewDraft', actor: cmd.actor, key: `${cmd.key}:draft`, data: { draft_id: review.draft_id, approve: true, note: cmd.data.rationale } });
-          kernel.setMissionStatus(m.id, 'completed', cmd.actor, { decision_id: decision.id });
-          kernel.budget.close(m.budget_account_id);
-          effect = 'draft approved; mission completed; the merge itself stays with the existing protected path';
-        } else if (decision.chosen === 'reject') {
-          comms.reviewDraft({ command: 'reviewDraft', actor: cmd.actor, key: `${cmd.key}:draft`, data: { draft_id: review.draft_id, approve: false, note: cmd.data.rationale } });
-          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `rejected at review: ${cmd.data.rationale}` } });
-          effect = 'draft rejected; mission closed; artifacts kept';
-        } else {
-          this.recordCorrection({ command: 'recordCorrection', actor: cmd.actor, key: `${cmd.key}:correction`, data: { mission_id: m.id, task_key: null, correction: cmd.data.rationale, failure_class: 'review_correction' } });
-          kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
-          effect = 'correction recorded; mission held for rework';
-        }
-      } else if (decision.kind === 'scope_change') {
-        if (decision.chosen === 'stop') {
-          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `scope was narrowed without authorization: ${cmd.data.rationale}` } });
-          effect = 'mission cancelled; artifacts kept';
-        } else if (decision.chosen === 'separate') {
-          // The request goes back to intake so that it can be proposed as a mission of its own.
-          const id = store.getMeta<string>(`decision:${decision.id}:request_id`);
-          const req = id ? store.requests.get(id) : undefined;
-          if (req) store.requests.put({ ...req, mission_id: null, cluster_id: null });
-          effect = req ? `${req.id} returned to intake; this mission continues without it` : 'recorded';
-        }
-      } else if (decision.kind === 'failure_escalation' && decision.chosen === 'retry' && decision.task_id) {
-        const t = store.tasks.must(decision.task_id);
-        if (t.status === 'failed') {
-          kernel.reviveTask(t.id, cmd.actor, cmd.data.rationale);
-          // What a person said about failed work is a correction: it is kept as evidence and as memory.
-          this.recordCorrection({ command: 'recordCorrection', actor: cmd.actor, key: `${cmd.key}:correction`, data: { mission_id: m.id, task_key: t.key, correction: cmd.data.rationale, failure_class: 'guidance_after_failure' } });
-          if (m.status === 'blocked') kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: `"${t.title}" sent back with guidance` });
-          effect = 'failed work sent back for one more repair with your guidance';
-        }
-      } else if (decision.kind === 'blocked_work' && decision.chosen === 'retry' && decision.task_id) {
-        const t = store.tasks.must(decision.task_id);
-        if (t.status === 'blocked') {
-          const said = store.getMeta<{ summary: string }>(`task:${t.id}:output:g${t.generation}`);
-          // The next worker is told what stopped the previous one.
-          store.setMeta(`task:${t.id}:rework`, { reason: `the previous worker reported it was blocked: ${said?.summary ?? 'no reason given'}`.slice(0, 1200), repairs: t.repairs });
-          kernel.unblock(t.id, cmd.actor, `retry decided by ${cmd.actor}: ${cmd.data.rationale}`);
-          effect = 'task released for another attempt';
-        }
-      } else if (['failure_escalation', 'limit_reached', 'blocked_work'].includes(decision.kind) && decision.chosen === 'cancel') {
-        kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : 'failure'}: ${cmd.data.rationale}` } });
-        effect = 'mission cancelled; artifacts kept';
-      } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
-        // Only a person can extend a ceiling. The extension is one more period of the configured length.
-        const key = `mission:${m.id}:wall_extension_ms`;
-        store.setMeta(key, (store.getMeta<number>(key) ?? 0) + this.rt.limits.max_wall_ms);
-        store.emit({ type: 'limit_extended', mission_id: m.id, actor_id: cmd.actor, actor_kind: 'chief_of_staff', payload: { limit: 'wall_clock', added_ms: this.rt.limits.max_wall_ms, decision_id: decision.id } });
-        kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'time limit extended by the chief of staff' });
-        effect = 'time limit extended by one period; mission resumed';
+    return store.db.tx(() => {
+      const before = store.decisions.must(cmd.data.decision_id);
+      if (!['chief_of_staff', 'human'].includes(before.owner_kind)) throw new SwarmError('not_decision_owner', `Decision ${before.id} is not the chief of staff's to make`);
+      const wasOpen = ['open', 'escalated'].includes(before.status);
+      if (wasOpen && before.mission_id) {
+        const m = store.missions.must(before.mission_id);
+        if (m.status === 'cancelled') throw new SwarmError('mission_cancelled', 'A cancelled mission cannot be approved or resumed through an old decision');
+        const review = store.getMeta<{ decision_id: string }>(`mission:${m.id}:review`);
+        if (review?.decision_id === before.id && before.kind === 'outward_action' && m.status !== 'review_ready') throw new SwarmError('review_not_current', 'This mission is not ready for final review');
       }
-    }
-    return this.env({ decision, effect }, this.sourceOf(decision.mission_id));
+      const decision = comms.resolve({ ...cmd, actor: before.owner_id });
+      let effect = 'recorded';
+      if (wasOpen && decision.mission_id) {
+        const m = store.missions.must(decision.mission_id);
+        const review = store.getMeta<{ decision_id: string; draft_id: string }>(`mission:${m.id}:review`);
+        if (decision.kind === 'outward_action' && review?.decision_id === decision.id) {
+          if (decision.chosen === 'approve') {
+            comms.reviewDraft({ command: 'reviewDraft', actor: cmd.actor, key: `${cmd.key}:draft`, data: { draft_id: review.draft_id, approve: true, note: cmd.data.rationale } });
+            kernel.setMissionStatus(m.id, 'completed', cmd.actor, { decision_id: decision.id });
+            kernel.budget.close(m.budget_account_id);
+            effect = 'draft approved; mission completed; the merge itself stays with the existing protected path';
+          } else if (decision.chosen === 'reject') {
+            comms.reviewDraft({ command: 'reviewDraft', actor: cmd.actor, key: `${cmd.key}:draft`, data: { draft_id: review.draft_id, approve: false, note: cmd.data.rationale } });
+            kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `rejected at review: ${cmd.data.rationale}` } });
+            effect = 'draft rejected; mission closed; artifacts kept';
+          } else {
+            this.recordCorrection({ command: 'recordCorrection', actor: cmd.actor, key: `${cmd.key}:correction`, data: { mission_id: m.id, task_key: null, correction: cmd.data.rationale, failure_class: 'review_correction' } });
+            kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'changes requested at review' });
+            effect = 'correction recorded; mission held for rework';
+          }
+        } else if (decision.kind === 'scope_change') {
+          if (decision.chosen === 'stop') {
+            kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `scope was narrowed without authorization: ${cmd.data.rationale}` } });
+            effect = 'mission cancelled; artifacts kept';
+          } else if (decision.chosen === 'separate') {
+            // The request goes back to intake so that it can be proposed as a mission of its own.
+            const id = store.getMeta<string>(`decision:${decision.id}:request_id`);
+            const req = id ? store.requests.get(id) : undefined;
+            if (req) store.requests.put({ ...req, mission_id: null, cluster_id: null });
+            effect = req ? `${req.id} returned to intake; this mission continues without it` : 'recorded';
+          }
+        } else if (decision.kind === 'failure_escalation' && decision.chosen === 'retry' && decision.task_id) {
+          const t = store.tasks.must(decision.task_id);
+          if (t.status === 'failed') {
+            kernel.reviveTask(t.id, cmd.actor, cmd.data.rationale);
+            // What a person said about failed work is a correction: it is kept as evidence and as memory.
+            this.recordCorrection({ command: 'recordCorrection', actor: cmd.actor, key: `${cmd.key}:correction`, data: { mission_id: m.id, task_key: t.key, correction: cmd.data.rationale, failure_class: 'guidance_after_failure' } });
+            if (m.status === 'blocked') kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: `"${t.title}" sent back with guidance` });
+            effect = 'failed work sent back for one more repair with your guidance';
+          }
+        } else if (decision.kind === 'blocked_work' && decision.chosen === 'retry' && decision.task_id) {
+          const t = store.tasks.must(decision.task_id);
+          if (t.status === 'blocked') {
+            const said = store.getMeta<{ summary: string }>(`task:${t.id}:output:g${t.generation}`);
+            // The next worker is told what stopped the previous one.
+            store.setMeta(`task:${t.id}:rework`, { reason: `the previous worker reported it was blocked: ${said?.summary ?? 'no reason given'}`.slice(0, 1200), repairs: t.repairs });
+            kernel.unblock(t.id, cmd.actor, `retry decided by ${cmd.actor}: ${cmd.data.rationale}`);
+            effect = 'task released for another attempt';
+          }
+        } else if (decision.kind === 'blocked_work' && decision.chosen === 'hold' && ['planning', 'active'].includes(m.status)) {
+          kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'held for investigation by the chief of staff' });
+          effect = 'mission held; nothing further runs on it';
+        } else if (decision.kind === 'stalled' && decision.chosen === 'resume' && m.status === 'blocked') {
+          const released = store.tasks.where(`"mission_id" = ? AND "status" = 'blocked'`, m.id);
+          for (const t of released) kernel.unblock(t.id, cmd.actor, `resume decided by ${cmd.actor}: ${cmd.data.rationale}`);
+          kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'resumed by the chief of staff after a stop' });
+          effect = `${released.length} blocked task(s) released; mission resumed`;
+        } else if (['failure_escalation', 'limit_reached', 'blocked_work', 'stalled'].includes(decision.kind) && decision.chosen === 'cancel') {
+          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : decision.kind === 'stalled' ? 'it stopped with nothing able to run' : 'failure'}: ${cmd.data.rationale}` } });
+          effect = 'mission cancelled; artifacts kept';
+        } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
+          // Only a person can extend a ceiling. The extension is one more period of the configured length.
+          const key = `mission:${m.id}:wall_extension_ms`;
+          store.setMeta(key, (store.getMeta<number>(key) ?? 0) + this.rt.limits.max_wall_ms);
+          store.emit({ type: 'limit_extended', mission_id: m.id, actor_id: cmd.actor, actor_kind: 'chief_of_staff', payload: { limit: 'wall_clock', added_ms: this.rt.limits.max_wall_ms, decision_id: decision.id } });
+          kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'time limit extended by the chief of staff' });
+          effect = 'time limit extended by one period; mission resumed';
+        }
+      }
+      if (wasOpen && decision.mission_id && store.outcomes.first('"mission_id" = ? AND "task_id" IS NULL', decision.mission_id)) {
+        recordOutcome(this.rt, decision.mission_id);
+        creditMemories(this.rt, decision.mission_id);
+      }
+      return this.env({ decision, effect }, this.sourceOf(decision.mission_id));
+    });
   }
 
   reviewDraft(cmd: Command<{ draft_id: string; approve: boolean; note: string }>): Envelope<{ draft: Draft }> {

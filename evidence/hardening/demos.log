@@ -1,0 +1,184 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swarm_2@0.1.0 demo:all
+> node --disable-warning=ExperimentalWarning demos/run.ts all
+
+
+== Demonstration A ==
+   ok   Overlapping requests are nominated and the unrelated one is left out
+        one cluster of syn-req-001, syn-req-002, syn-req-003, syn-req-004; syn-req-005 (licensing) not included
+   ok   The mission runs to a reviewable state
+        coordinator idle; mission review_ready; 18/18 tasks accepted
+   ok   At least three swarm capabilities take part
+        5 participated: discovery, planning, delivery, verification, reliability
+   ok   The organization uses three delegated layers and no more
+        deepest task is at layer 3; subordinate teams: Implement the evaluation engine that produces HealthRecords / Implement the SLA report and alerts that consume HealthRecords
+   ok   Each stakeholder keeps a distinct need tied to its own acceptance criterion
+        syn-ana-propulsion→AC-FRESH-PROPULSION (satisfied); syn-ben-supplychain→AC-SCHEMA-SUPPLY (satisfied); syn-chloe-quality→AC-SLA-QUALITY (satisfied); syn-dev-fde→AC-POLICY-FDE (satisfied)
+   ok   Two workstreams execute concurrently
+        engine leased #91 2026-11-14T20:46:28.337Z → submitted #94; report leased #92 2026-11-14T20:46:28.428Z → submitted #97
+   ok   Workers actually execute as separate processes in isolated worktrees
+        8 worker attempts in 8 distinct processes; worktree branches: task/delivery-engine-implement/g1a1, task/delivery-report-implement/g1a1
+   ok   The workstreams meet at a real integration boundary
+        delivery.engine.implement merged as e33cb6d817; delivery.report.implement merged as 2e255d9881
+   ok   The integrated result is verified independently of its authors
+        AC-FRESH-PROPULSION=pass, AC-SCHEMA-SUPPLY=pass, AC-SLA-QUALITY=pass, AC-POLICY-FDE=pass, AC-CONTRACT=pass by the verification swarm, on tests delivery never saw
+   ok   Handoffs carry the artifact version, acceptance evidence and remaining uncertainty
+        3 handoffs, all accepted by the next owner; 1 carried stated uncertainty
+   ok   A review packet and the decision it needs are waiting for the chief of staff
+        decision: Approve the integrated result of "Shared dataset-health capability" for merge into the protected branch? | draft: Merge request: Shared dataset-health capability
+   ok   Resource accounting reconciles across the whole task tree
+        24 accounts reconcile; 11 worker invocations and 940 ms of worker time used
+   ok   Everything shown comes from the persisted, hash-chained event log
+        158 events, chain intact
+   ok   Approval is recorded and nothing is merged or sent by the system
+        mission completed; draft approved; sent_by_swarm=false
+
+== Demonstration B ==
+   ok   A killed worker loses ownership and the work is re-leased under a new fencing token
+        attempt 1 (pid 348) is "killed"; the task is now on token g1a2
+   ok   A worker presumed dead cannot overwrite the attempt that replaced it
+        its lease expired without a heartbeat; it later presented token g1a1 and was rejected (task is accepted)
+   ok   A new coordinator resumes from persisted state alone
+        the second coordinator fenced 1 in-flight attempt(s), finished the mission, and exited 0
+   ok   An orphaned worker is stopped rather than left running
+        pid 570 outlived the coordinator that started it and was stopped on recovery
+   ok   A duplicate delivery changes nothing, and a conflicting one is quarantined
+        5 redelivered requests ignored; the repeated command returned the original mission; the conflicting one was refused: "Idempotency key demo-b-submit was reused with a different body"
+   ok   Revising an upstream contract invalidates exactly what depended on it
+        delivery.engine.implement: rerun_required; delivery.integrate: downstream_blocked; reliability.knowledge: rerun_required; review.packet: downstream_blocked; delivery.report.implement: rerun_required
+   ok   A review decision resting on stale evidence cannot be approved by mistake
+        the pending decision was superseded, its draft withdrawn, and the mission reopened
+   ok   Only affected work is redone, and the result is verified again
+        discovery, criteria, plan and decomposition were not rerun; engine and report were rebuilt against contract v2; all 5 criteria pass again at generation 4
+   ok   State reconciles after all of it
+        budget tree reconciles; event chain intact; mission review_ready with a fresh decision requested
+
+== Demonstration C ==
+   ok   An observed failure is recorded with what actually went wrong
+        13 verified failures in 40 reviews under release r1 (accuracy 68%): type_changed×3, field_removed×4, field_renamed×3, required_added×2, enum_value_removed×1
+   ok   The first candidate is an executable change to a skill, judged on held-out cases against a frozen protocol
+        adds execution.json, validators/interface_compat.mjs; protocol frozen 2026-11-14T20:46:39.656Z; scored once on holdout-A
+   ok   A candidate that helps but harms something else is rejected, and its result kept
+        accuracy 0.5 → 0.6, but Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.
+   ok   A revision is never scored on cases its lineage has already seen results for
+        first attempt on holdout-A; revision on holdout-B; the first set is recorded as development data for this lineage
+   ok   The revised candidate is compared with the incumbent and the fixed original baseline
+        accuracy 0.4875 → 1 (difference 0.5125, 95% interval 0.4 to 0.625, n=80); baseline 0.4875
+   ok   Acceptance creates a release manifest but does not make it the default
+        r2: execution v2, coordination v1, evolution v1; rollback target r1; active release still r1
+   ok   The qualified release is monitored in a bounded canary on fresh cases
+        accuracy_drop_vs_approval=0 (limit 0.05); escaped_defect_rate_increase=0 (limit 0.02); canary_missions_with_acceptance_failures=0 (limit 0)
+   ok   A healthy canary is retained and applies to future work only
+        active release is now r2; r1 is retired and remains the rollback target
+   ok   The evaluation ledger is complete and intact
+        17 ledger entries, hash chain intact; protected store matches its sealed digest
+
+== Demonstration D ==
+   ok   The candidate changes the evolution system's own behaviour and is versioned as such
+        evolution v1 → candidate; changed evolution.json, policy.mjs
+   ok   Old and new policies get equal budgets and the same unseen failure episodes
+        30 episodes from held-out set arena-A; budget 420 units each; mean spent 411.3333 (incumbent) and 372.8 (candidate)
+   ok   What is measured is independently validated improvement, not the policy's own claims
+        validated benefit 165 → 177.6167 per 100 reviews (difference 12.6167, 95% interval 0.4167 to 25.4333); sign test: 11 better, 2 worse, 17 same, p=0.02246
+   ok   The cost of unsuccessful experiments is counted
+        budget spent on fixes that failed: 207.3333 → 120.0667 units per campaign (difference -87.2667, 95% interval -113.3333 to -62.1333)
+   ok   The decision follows the frozen rule, whichever way it falls
+        accept: Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.
+   ok   The sensitivity check and known regressions are reported, favourable or not
+        without the unverified complaint class: difference 5.6167 (95% interval -5.15 to 16.65). In 2 of 30 episodes the candidate policy delivered less validated benefit than the incumbent Without the unverified complaint class the advantage is not demonstrated (difference 5.6167, 95% interval -5.15 to 16.65)
+
+== Demonstration E ==
+   ok   The candidate really is cheaper
+        steps per review 2 → 1
+   ok   It is cheaper because it omits a required verification step
+        The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.
+   ok   The release gate rejects it; a hard gate cannot be outscored
+        Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.
+   ok   The omission has a measured consequence on held-out cases
+        share of breaking changes approved 0.8 → 1
+   ok   The rejected candidate and its result are preserved
+        candidate ad307fc1e0c2ada6 kept in custody; receipt rcpt_0mwgvmiceic2a134381
+
+== Demonstration F ==
+   ok   The host's actual separation was tested, not assumed
+        mode enforced: Linux namespace isolation; Execution fails closed without namespace isolation; filesystem read mounts only, no network or inherited environment.
+   ok   As submitted, the candidate is rejected before any of its code runs
+        The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs
+   ok   Run anyway for this demonstration, every attempt on the rules and the records is denied
+        overwrite the promotion policy: denied (ERR_ACCESS_DENIED); overwrite the scoring rules: denied (ERR_ACCESS_DENIED); read the held-out cases: denied (ERR_ACCESS_DENIED); append to the evaluation ledger: denied (ERR_ACCESS_DENIED); rewrite the active release pointer: denied (ERR_ACCESS_DENIED); plant a recorded result: denied (ERR_ACCESS_DENIED)
+   ok   The gate verifies for itself that nothing changed
+        protected digest 2536453dd42a6f44 before and after; active release r1; ledger chain intact
+   ok   Operating-system user separation is not available on this host
+        ENVIRONMENTAL LIMITATION: not running as root, so candidate code shares the operator's user. Only Node's permission model (a seat belt, not a security boundary) and digest comparison apply.
+   ok   A proposal to change the rules is routed to the chief of staff and applied by nobody
+        decision dec_0mwgvmik9iq308585fc awaits a person; the policy file is unchanged
+
+== Demonstration G ==
+   ok   A qualified candidate is activated only in a bounded development canary
+        canary of 2 synthetic missions; new mission pinned to r2; the earlier mission stays on r1; default release still r1
+   ok   The canary is bounded
+        second mission took the last canary place; the next one got r1
+   ok   Monitoring on fresh cases finds nothing wrong at first
+        accuracy_drop_vs_approval=0; escaped_defect_rate_increase=0; canary_missions_with_acceptance_failures=0
+   ok   An injected regression is measured, not asserted
+        INJECTED: later traffic contains a kind of safe change no evaluation set had. accuracy_drop_vs_approval=0.1833 against a limit of 0.05
+   ok   The prior release is restored
+        active release r1; r2 marked rolled_back; new work is pinned to r1
+   ok   Missions, artifacts and memories that depended on the rolled-back version are identified
+        2 missions (review_ready; planning, in flight), 12 artifacts, 4 memories
+   ok   None of them is silently kept
+        artifacts marked needs_revalidation; memories invalidated with the reason "rollback of r2"
+   ok   Migration of in-flight work is a deliberate, visible decision
+        one decision opened for the chief of staff about the in-flight mission: repin_and_redo or finish_quarantined
+
+== Demonstration H ==
+   ok   The simpler configuration is a coordination-level candidate with its own version
+        coordination v1 → candidate: Sets independent_verification to false: no verification swarm is formed and the integrated result is accepted on delivery's own combined tests.
+   ok   Both configurations run the same seeded missions end to end
+        8 complete fixture missions per configuration from held-out set missions-A; a defect is injected into a first attempt in about half of them
+   ok   The simpler configuration really is cheaper and faster
+        worker invocations per mission 12.875 → 10; completion 4099 ms → 3050 ms
+   ok   What it gives up is measured by an oracle, not assumed
+        defects reaching an accepted result per mission 0 → 0.625; truly correct missions 1 → 0.375 (difference -0.625, 95% interval -0.875 to -0.25)
+   ok   The decision follows the frozen rule
+        reject: Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.
+   ok   A second simplification is put to the same gate: no interface agreement before parallel work
+        Removes the interface-agreement step: no contract task, and delivery workstreams take the acceptance criteria as input instead of a pinned contract. Run on missions-B; the workstreams disagreed about the shared record in 5 of 8 episodes (an assumed rate).
+   ok   The cost of the step and the cost of going without it are both measured
+        the agreement step costs 1 worker invocations and 254.67 ms per mission; a mission where the workstreams disagreed cost 1 more invocations and 844.6 ms more than the same mission with the agreement
+   ok   Integration failures and quality are reported, not assumed
+        integration failures per mission 0 → 0.625; truly correct missions 1 → 1; invocations 11.75 → 12 (difference 0.25, 95% interval -0.5 to 0.75); completion 3557 ms → 3989 ms
+   ok   The decision follows the frozen rule, whatever it is
+        inconclusive: No demonstrated improvement: truly_correct_missions is no worse (95% interval 0 to 0, margin 0), but cost did not fall (worker_invocations_per_mission changed by 0.25), so the simplification saves nothing.
+
+== Demonstration I ==
+   ok   The organization keeps a portfolio of hypotheses built from its own recorded observations
+        13 verified review failures in 5 classes, plus 30 unverified reports of one complaint; 8 hypotheses
+   ok   The policy of the release in force decides each step, inside a bounded budget
+        r1's policy (frequency-first) took 8 decisions and used 712 of 900 units
+   ok   The replacement policy first has to pass the release gate
+        accept: Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.
+   ok   During the canary the new policy decides, and the default has not changed
+        7 decisions under canary can_0mwgvpma99nf0c5c43e; active release still r1
+   ok   Replacing the policy changes what the organization works on
+        frequency-first began with style_strict; expected-value began with guard_removed_toplevel and piloted 2 times before submitting
+   ok   Every submission from either policy was decided by the same release gate
+        control: 1 accepted, style_strict (inconclusive) not accepted; trial: 1 accepted, guard_type_strict (rejected) not accepted
+   ok   Each approach that did not pass is recorded so it is not repeated blindly
+        [suspected] Adding the style_strict check to change review (built on r1) was inconclusive at the release gate: No demonstr… | [verified] Adding the guard_type_strict check to change review (built on r1) was rejected at the release gate: Rejected: …
+   ok   The canary is observed, then retained
+        actions the runtime had to refuse: 0; r2 is now the default for future work
+   ok   A fix qualified against the old default is not promoted over the new one
+        Release r3 was qualified against r1, but r2 is now active. Rebuild the candidate on r2 and evaluate it again. All 8 hypotheses were reopened to be rebuilt on r2.
+
+== Summary ==
+ok   A Cross-swarm delivery — 14/14 checks held, 3351 ms → evidence/demo-a/
+ok   B Failure recovery — 9/9 checks held, 9372 ms → evidence/demo-b/
+ok   C First-order improvement — 9/9 checks held, 4887 ms → evidence/demo-c/
+ok   D Improvement of the improvement process — 6/6 checks held, 17150 ms → evidence/demo-d/
+ok   E Rejection of a candidate that omits required verification — 5/5 checks held, 351 ms → evidence/demo-e/
+ok   F Isolation of the rules and the records — 6/6 checks held, 278 ms → evidence/demo-f/
+ok   G Canary and rollback — 8/8 checks held, 3917 ms → evidence/demo-g/
+ok   H Targeted comparisons against simpler configurations — 9/9 checks held, 124935 ms → evidence/demo-h/
+ok   I The improvement policy in force runs the organization's own improvement work — 9/9 checks held, 17352 ms → evidence/demo-i/

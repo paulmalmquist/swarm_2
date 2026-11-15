@@ -1,6 +1,7 @@
-import { spawn, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { isolatedNode, killGroup } from '../security/process.ts';
 import { SwarmError } from '../lib/util.ts';
 
 export interface RunResult {
@@ -9,6 +10,7 @@ export interface RunResult {
   stderr: string;
   ms: number;
   timed_out: boolean;
+  output_limited?: boolean;
 }
 
 const GIT_ID = ['-c', 'user.name=swarm2', '-c', 'user.email=swarm2@localhost', '-c', 'commit.gpgsign=false', '-c', 'init.defaultBranch=main'];
@@ -22,6 +24,18 @@ const GIT_ID = ['-c', 'user.name=swarm2', '-c', 'user.email=swarm2@localhost', '
  */
 export class Workspaces {
   root: string;
+  private running = new Set<import('node:child_process').ChildProcess>();
+  private stopped = false;
+  private directories = new Map<import('node:child_process').ChildProcess, string>();
+
+  stopPath(prefix: string): void {
+    for (const [child, cwd] of this.directories) if (cwd.startsWith(prefix + '/')) killGroup(child);
+  }
+
+  stop(): void {
+    this.stopped = true;
+    for (const child of this.running) killGroup(child);
+  }
 
   constructor(root: string) {
     this.root = root;
@@ -158,26 +172,45 @@ export class Workspaces {
   run(cwd: string, cmd: string[], timeoutMs = 60_000, env: Record<string, string> = {}): Promise<RunResult> {
     return new Promise((resolve) => {
       const started = Date.now();
-      // A check must behave the same whether or not this process is itself running under a test runner.
-      const childEnv: NodeJS.ProcessEnv = { ...process.env, ...env };
-      delete childEnv.NODE_TEST_CONTEXT;
-      const child = spawn(cmd[0]!, cmd.slice(1), { cwd, env: childEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+      if (this.stopped || cmd[0] !== 'node' || Object.keys(env).length) {
+        resolve({ code: -1, stdout: '', stderr: 'execution stopped or unsupported command/environment', ms: 0, timed_out: false });
+        return;
+      }
+      let child: import('node:child_process').ChildProcess;
+      try { child = isolatedNode([cwd], cwd, cmd.slice(1)); }
+      catch (err) {
+        resolve({ code: -1, stdout: '', stderr: String(err), ms: 0, timed_out: false });
+        return;
+      }
+      this.running.add(child);
+      this.directories.set(child, cwd);
       let stdout = '';
       let stderr = '';
       let timed_out = false;
+      let output_limited = false;
+      let bytes = 0;
       const timer = setTimeout(() => {
         timed_out = true;
-        child.kill('SIGKILL');
+        killGroup(child);
       }, timeoutMs);
-      child.stdout.on('data', (d: Buffer) => (stdout += d.toString()));
-      child.stderr.on('data', (d: Buffer) => (stderr += d.toString()));
+      const capture = (d: Buffer, err: boolean): void => {
+        bytes += d.length;
+        if (bytes > 1024 * 1024) { output_limited = true; killGroup(child); return; }
+        if (err) stderr += d.toString(); else stdout += d.toString();
+      };
+      child.stdout!.on('data', (d: Buffer) => capture(d, false));
+      child.stderr!.on('data', (d: Buffer) => capture(d, true));
       child.on('close', (code) => {
         clearTimeout(timer);
-        resolve({ code, stdout, stderr, ms: Date.now() - started, timed_out });
+        this.running.delete(child);
+        this.directories.delete(child);
+        resolve({ code, stdout, stderr, ms: Date.now() - started, timed_out, output_limited });
       });
       child.on('error', (err) => {
         clearTimeout(timer);
-        resolve({ code: -1, stdout, stderr: stderr + String(err), ms: Date.now() - started, timed_out });
+        this.running.delete(child);
+        this.directories.delete(child);
+        resolve({ code: -1, stdout, stderr: stderr + String(err), ms: Date.now() - started, timed_out, output_limited });
       });
     });
   }
@@ -229,7 +262,20 @@ export function parseTap(out: string): { name: string; ok: boolean }[] {
   const results: { name: string; ok: boolean }[] = [];
   for (const line of out.split('\n')) {
     const m = /^(not ok|ok) \d+ - (.*)$/.exec(line);
-    if (m) results.push({ ok: m[1] === 'ok', name: (m[2] ?? '').replace(/ # .*$/, '').trim() });
+    if (m) results.push({ ok: m[1] === 'ok' && !/ # (?:SKIP|TODO)\b/i.test(m[2] ?? ''), name: (m[2] ?? '').replace(/ # .*$/, '').trim() });
   }
   return results;
+}
+
+/** A passing subset is insufficient: require normal exit, a complete TAP plan and no skipped/failing test. */
+export function testRunComplete(run: RunResult): boolean {
+  const results = parseTap(run.stdout);
+  const plans = [...run.stdout.matchAll(/^1\.\.(\d+)\s*$/gm)];
+  return !run.timed_out && !run.output_limited && results.length > 0 &&
+    plans.length === 1 && Number(plans[0]![1]) === results.length &&
+    !/^\s*(?:Bail out!|(?:not ok|ok) .* # (?:SKIP|TODO)\b)/im.test(run.stdout);
+}
+
+export function testRunPassed(run: RunResult): boolean {
+  return run.code === 0 && testRunComplete(run) && parseTap(run.stdout).every((r) => r.ok) && !/^\s*not ok /m.test(run.stdout);
 }

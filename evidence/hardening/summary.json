@@ -1,0 +1,141 @@
+{
+  "base_commit": "15299b971c92710b1c226592621dc679791196ff",
+  "node": "v24.22.1",
+  "platform": "Linux",
+  "typecheck": "passed",
+  "tests": {
+    "command": "npm test",
+    "total": 61,
+    "passed": 61,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 139642.075306
+  },
+  "demonstrations": {
+    "ran_at": "2026-11-14T20:49:28.509Z",
+    "provider": "fixture",
+    "results": [
+      {
+        "demo": "a",
+        "title": "Cross-swarm delivery",
+        "ok": true,
+        "checks": 14,
+        "held": 14,
+        "ms": 3351,
+        "labels": [
+          "DETERMINISTIC FIXTURE PROVIDER \u2014 scripted workers in real processes; no model was run",
+          "SYNTHETIC DATA \u2014 every request, team, dataset and value is invented"
+        ]
+      },
+      {
+        "demo": "b",
+        "title": "Failure recovery",
+        "ok": true,
+        "checks": 9,
+        "held": 9,
+        "ms": 9372,
+        "labels": [
+          "DETERMINISTIC FIXTURE PROVIDER \u2014 scripted workers in real processes; no model was run",
+          "SYNTHETIC DATA \u2014 every request, team, dataset and value is invented",
+          "INJECTED FAULTS \u2014 a killed worker, a stalled worker, a killed coordinator; each is labeled in the event log",
+          "This demonstrates resilience. It is not evidence of general performance."
+        ]
+      },
+      {
+        "demo": "c",
+        "title": "First-order improvement",
+        "ok": true,
+        "checks": 9,
+        "held": 9,
+        "ms": 4887,
+        "labels": [
+          "DETERMINISTIC FIXTURE EVALUATION \u2014 executable validators on synthetic change-review cases; no model was run",
+          "ISOLATION MODE: enforced",
+          "Both candidates were written by the same author who wrote the held-out cases. This shows the machinery separates a flawed candidate from a sound one; it is not evidence about a model's ability to generalize."
+        ]
+      },
+      {
+        "demo": "d",
+        "title": "Improvement of the improvement process",
+        "ok": true,
+        "checks": 6,
+        "held": 6,
+        "ms": 17150,
+        "labels": [
+          "SIMULATION \u2014 a synthetic improvement arena; policies and fixes are real executable code, the failure distribution is invented",
+          "Both policies and the arena were written by the same author. The result describes this testbed."
+        ]
+      },
+      {
+        "demo": "e",
+        "title": "Rejection of a candidate that omits required verification",
+        "ok": true,
+        "checks": 5,
+        "held": 5,
+        "ms": 351,
+        "labels": [
+          "DETERMINISTIC FIXTURE EVALUATION \u2014 executable validators on synthetic cases; no model was run"
+        ]
+      },
+      {
+        "demo": "f",
+        "title": "Isolation of the rules and the records",
+        "ok": true,
+        "checks": 6,
+        "held": 6,
+        "ms": 278,
+        "labels": [
+          "INJECTED FAULT \u2014 an adversarial candidate fixture",
+          "ISOLATION MODE ON THIS HOST: enforced"
+        ]
+      },
+      {
+        "demo": "g",
+        "title": "Canary and rollback",
+        "ok": true,
+        "checks": 8,
+        "held": 8,
+        "ms": 3917,
+        "labels": [
+          "DETERMINISTIC FIXTURE PROVIDER \u2014 scripted workers in real processes; no model was run",
+          "SYNTHETIC DATA \u2014 every request, team, dataset and value is invented",
+          "INJECTED REGRESSION \u2014 a traffic shift toward a case class no evaluation set contained"
+        ]
+      },
+      {
+        "demo": "h",
+        "title": "Targeted comparisons against simpler configurations",
+        "ok": true,
+        "checks": 9,
+        "held": 9,
+        "ms": 124935,
+        "labels": [
+          "DETERMINISTIC FIXTURE PROVIDER \u2014 scripted workers in real processes; no model was run",
+          "SYNTHETIC DATA \u2014 every request, team, dataset and value is invented",
+          "INJECTED DEFECTS \u2014 in about half of the episodes one worker's first attempt carries a defect its own tests do not catch",
+          "ASSUMED RATES \u2014 how often defects occur, and how often two workstreams disagree about an interface nobody agreed, are parameters of this testbed. The comparisons show what each coordination step catches and costs when those things happen; they do not show how often they happen in real work."
+        ]
+      },
+      {
+        "demo": "i",
+        "title": "The improvement policy in force runs the organization's own improvement work",
+        "ok": true,
+        "checks": 9,
+        "held": 9,
+        "ms": 17352,
+        "labels": [
+          "DETERMINISTIC FIXTURE PROVIDER \u2014 scripted workers in real processes; no model was run",
+          "SYNTHETIC DATA \u2014 every request, team, dataset and value is invented",
+          "SYNTHETIC \u2014 the review workload, the 30 unverified complaints and the library of candidate fixes (some deliberately flawed)",
+          "One campaign per policy: a case study, not a statistical comparison"
+        ]
+      }
+    ]
+  },
+  "live_model_calls": 0,
+  "limitations": [
+    "New tool-free live worker protocol has not been smoke-tested against a model",
+    "Synthetic fixtures and scripted fixture approvals are not production capability evidence",
+    "Remote CI is separate from this local validation"
+  ]
+}

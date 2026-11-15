@@ -15,7 +15,7 @@
   "steps": [
     {
       "n": 1,
-      "at": "2026-11-14T19:09:46.938Z",
+      "at": "2026-11-14T22:01:35.361Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -33,7 +33,7 @@
     },
     {
       "n": 2,
-      "at": "2026-11-14T19:09:47.336Z",
+      "at": "2026-11-14T22:01:35.754Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -46,12 +46,12 @@
       },
       "outcome": "inconclusive on holdout-A",
       "cost": 281,
-      "experiment_id": "exp_0mwgs5g160z94475cca",
-      "receipt_id": "rcpt_0mwgs5gav13883a5511"
+      "experiment_id": "exp_0mwgyae2y0z1c74d2fd",
+      "receipt_id": "rcpt_0mwgyaebs1382b21708"
     },
     {
       "n": 3,
-      "at": "2026-11-14T19:09:47.383Z",
+      "at": "2026-11-14T22:01:35.816Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -69,7 +69,7 @@
     },
     {
       "n": 4,
-      "at": "2026-11-14T19:09:47.811Z",
+      "at": "2026-11-14T22:01:36.242Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -82,12 +82,12 @@
       },
       "outcome": "accept on holdout-B; r2 is qualified for a canary",
       "cost": 281,
-      "experiment_id": "exp_0mwgs5gdl18c3e2ac5f",
-      "receipt_id": "rcpt_0mwgs5go11c119a7a57"
+      "experiment_id": "exp_0mwgyaef118468ee182",
+      "receipt_id": "rcpt_0mwgyaepd1ce0b7c203"
     },
     {
       "n": 5,
-      "at": "2026-11-14T19:09:47.855Z",
+      "at": "2026-11-14T22:01:36.287Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -105,7 +105,7 @@
     },
     {
       "n": 6,
-      "at": "2026-11-14T19:09:47.909Z",
+      "at": "2026-11-14T22:01:36.337Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -123,7 +123,7 @@
     },
     {
       "n": 7,
-      "at": "2026-11-14T19:09:47.949Z",
+      "at": "2026-11-14T22:01:36.385Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -141,7 +141,7 @@
     },
     {
       "n": 8,
-      "at": "2026-11-14T19:09:47.988Z",
+      "at": "2026-11-14T22:01:36.429Z",
       "policy": {
         "release_id": "r1",
         "evolution_version": 1,
@@ -173,8 +173,8 @@
       "pilot": null,
       "submitted": true,
       "result": "accept",
-      "experiment_id": "exp_0mwgs5gdl18c3e2ac5f",
-      "receipt_id": "rcpt_0mwgs5go11c119a7a57",
+      "experiment_id": "exp_0mwgyaef118468ee182",
+      "receipt_id": "rcpt_0mwgyaepd1ce0b7c203",
       "release_id": "r2",
       "failed_approach_memory_id": null,
       "cost_so_far": 321
@@ -310,10 +310,10 @@
       "pilot": null,
       "submitted": true,
       "result": "inconclusive",
-      "experiment_id": "exp_0mwgs5g160z94475cca",
-      "receipt_id": "rcpt_0mwgs5gav13883a5511",
+      "experiment_id": "exp_0mwgyae2y0z1c74d2fd",
+      "receipt_id": "rcpt_0mwgyaebs1382b21708",
       "release_id": null,
-      "failed_approach_memory_id": "mem_0mwgs5gaw1576aad0aa",
+      "failed_approach_memory_id": "mem_0mwgyaebt1552955062",
       "cost_so_far": 301
     }
   ],

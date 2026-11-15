@@ -25,6 +25,8 @@ export class Db {
     this.raw.exec('PRAGMA foreign_keys = ON');
   }
 
+  get inTransaction(): boolean { return this.depth > 0; }
+
   /** Run `fn` atomically. Nested calls join the outer transaction. */
   tx<T>(fn: () => T): T {
     if (this.depth > 0) return fn();

@@ -11,7 +11,7 @@ import { LEVELS } from '../gate/registry.ts';
 import { pairedBootstrapCI, round, signTest } from '../lib/stats.ts';
 import { rng, seedFrom } from '../lib/util.ts';
 import { openRuntime } from '../runtime.ts';
-import { parseTap } from '../workspace/workspaces.ts';
+import { parseTap, testRunPassed } from '../workspace/workspaces.ts';
 import { readFileSync } from 'node:fs';
 import { episodeSeeds } from '../../protected/cases/arena-holdout.ts';
 
@@ -58,7 +58,7 @@ function requests(): RawRequest[] {
 export async function runEpisode(coordinationDir: string, seed: string, opts: { defect_rate: number; mismatch_rate_without_agreement?: number }): Promise<EpisodeResult> {
   const home = mkdtempSync(join(tmpdir(), 'swarm2-episode-'));
   const rt = openRuntime({ home });
-  const co = new Coordinator(rt);
+  const co = new Coordinator(rt, { log: process.env.SWARM2_DEBUG ? (m) => process.stderr.write(m + '\n') : undefined });
   try {
     // A registry for this episode only: the baseline definitions with the coordination level swapped.
     const defs = join(home, 'definitions');
@@ -85,6 +85,7 @@ export async function runEpisode(coordinationDir: string, seed: string, opts: { 
     const state = await co.runUntilIdle({ mission_id: m.id, max_ms: 120_000 });
     await co.drain();
     const elapsed_ms = Date.now() - t0;
+    if (process.env.SWARM2_DEBUG) process.stderr.write(JSON.stringify({ state, mission: rt.store.missions.must(m.id).status, observations: rt.store.observations.where('"mission_id" = ?', m.id).map((o) => ({ kind: o.kind, details: o.details })), tasks: rt.store.tasks.where('"mission_id" = ?', m.id).filter((t) => ['failed','blocked','submitted','verifying'].includes(t.status)).map((t) => ({ key: t.key, status: t.status, blocked: t.blocked_reason })) }) + '\n');
     const completed = state === 'idle' && rt.store.missions.must(m.id).status === 'review_ready';
 
     // The oracle: the protected acceptance suite on whatever the mission accepted.
@@ -99,9 +100,9 @@ export async function runEpisode(coordinationDir: string, seed: string, opts: { 
         mkdirSync(join(dir, 'contracts'), { recursive: true });
         cpSync(join(REPO_ROOT, 'fixtures/scenarios/shared-capability/contracts/health-record.v1.json'), pinned);
       }
-      const run = await rt.workspaces.run(dir, ['node', '--disable-warning=ExperimentalWarning', '--test', 'acceptance/**/*.test.ts'], 90_000);
+      const run = await rt.workspaces.run(dir, ['node', '--disable-warning=ExperimentalWarning', '--test', '--test-reporter=tap', 'acceptance/**/*.test.ts'], 90_000);
       const results = parseTap(run.stdout);
-      failing = results.length ? results.filter((x) => !x.ok).length : -1;
+      failing = testRunPassed(run) ? 0 : Math.max(1, results.filter((x) => !x.ok).length);
     }
     const tasks = rt.store.tasks.where('"mission_id" = ?', m.id);
     return {

@@ -1,11 +1,64 @@
 # Progress notes
 
+## Combined transfer baseline — 2026-11-14
+
+Integrated the independent audit follow-up (PR #2) with hardening, manufacturing and warehouse
+work (PR #3), preserving transactional review and stopped-mission recovery. The combined 95-test
+runtime suite and TypeScript checks pass. Fresh fixture verification writes to
+`evidence/validation/`, preserving the historical bundles used by the document audit. Start the
+Paul OS comparison with `docs/paul-os-transfer.md`. Earlier entries describe their own revisions.
+
+## Kimball / dbt / BigQuery pass — 2026-11-14
+
+Added `warehouse/`: Staging → Intermediate → Mart → Consumer, conformed source/hardware/date
+dimensions, `sc_dim_hardware` knowledge history with separate physical validity, explicit identity
+and genealogy bridges, revision-grain facts, and Consumer views. Model contracts, grain/FK checks,
+historical reconstruction and deliberate negative tests are included. BigQuery is parsed offline;
+DuckDB executes synthetic local checks. Cloud compilation attempted credential-metadata discovery
+and was blocked; no BigQuery execution or deployment was performed. See `warehouse/README.md`
+and `evidence/warehouse/validation.json` for exact validation and limits.
+
+## Research implementation — 2026-11-14
+
+Added a deterministic affected-hardware pilot: `src/manufacturing/`, a normalized local export
+adapter, CLI commands, an invented anomaly fixture, and `npm run demo:manufacturing`.
+It uses the existing runtime database/event log. Source versions, two time axes, exact identity
+matching, temporal genealogy, configuration conflicts, evidence comparison, access checks,
+immutable packets and review invalidation are implemented. No models or external systems are
+invoked. Validation: typecheck, 78/78 tests (17 manufacturing regressions), and the synthetic
+manufacturing demo pass locally. Receipts: `evidence/manufacturing/validation.json` and `tests.log`.
+See `docs/manufacturing.md` for trust boundaries and deferred research recommendations.
+
+## Manufacturing view — 2026-11-14
+
+The primary diagram now follows hardware configuration, change impact, build effectivity,
+evidence applicability and engineering/quality decisions. It is explicitly a target workflow;
+manufacturing domain contracts and integrations remain to be built. The existing infrastructure
+view is preserved in `docs/runtime-overview.svg`. Runtime controls are unchanged.
+
+## Hardening update — 2026-11-14
+
+PR #1 merged at `15299b9`. The `codex/harden-swarm-runtime` branch adds isolation, complete-run
+verification, scoped promotion, transactional review, current outcomes, checked memory sources,
+request revisions and effect idempotency. Local validation: 61 tests; nine demos; 75/75 demo checks.
+Receipts: `evidence/hardening/`. Diagram: `docs/architecture-overview.svg`.
+Current limits and operating prerequisites: `docs/hardening.md`. The revised live worker path has
+not been exercised with a model. Older progress and live receipts below are historical.
+
 Durable notes so the work survives a context reset. Read this first, then `docs/handoff.md`.
 
 ## State
 
-All seven increments of the build order are complete and pushed on branch
-`claude/swarm-2-agent-org-ffiy5j` (draft pull request #1).
+All seven increments of the build order are complete and merged into `main` (pull request #1,
+merged 2026-11-14). Follow-up work goes on branch `claude/swarm-2-agent-org-ffiy5j`, restarted from
+`main`, as a new pull request.
+
+Pull request #2 carries what checking the evidence report turned up, first by its author and then
+by a separate agent (`docs/evidence-report.md`, sections 5 and 9): four runtime defects fixed (two
+in spend accounting, two that could leave a mission stopped with nobody told), a live command
+that would have deleted the kept live evidence, seventeen tests added, the report and the handoff
+corrected, and a test that rebuilds the documents' figures from `evidence/` and catches planted
+errors.
 
 | Increment | State | Where to look |
 |---|---|---|
@@ -24,7 +77,8 @@ on real model workers (`evidence/live-*`), connector ports and analytical export
 
 ```
 npm run typecheck
-npm test                           # 49 tests, about two minutes
+npm test                           # 95 tests
+npm run check:report               # document claims rebuilt from evidence/
 npm run demo:all                   # demonstrations A–I on fixtures; rewrites evidence/
 npm run demo:a … demo:i            # one demonstration
 SWARM2_LIVE=1 npm run demo:live    # cross-swarm mission on real model workers (uses the account)
@@ -49,14 +103,19 @@ node src/cli.ts serve --run        # interface + coordinator, http://127.0.0.1:4
   necessary for independent levels, but it cannot silently drop a promotion (see open items).
 - **In a live mission, planning templates stay scripted** and are recorded as fixture attempts.
   The work graph comes from the versioned coordination policy, not from a model.
+- **The documents' figures are checked by a test** (`tests/report.test.ts`). A figure that varies
+  from run to run is quoted approximately and checked as a band, so regenerating the evidence does
+  not break the check unless something real changed.
+- **Allowance moves between budget accounts; it is never booked as spending.** What a mission has
+  spent is what its attempts reported, and an attempt that reported nothing is counted as unknown.
 
 ## Open decisions for Paul
 
 1. **Which chief-of-staff transport to wire first** — Paul OS calling the HTTP commands, or
    importing the port in process. Nothing in swarm_2 depends on the choice.
-2. **A worker credential.** Model workers cannot authenticate as an unprivileged user with the
-   operator's credential, and should not be given it. A scoped credential (through Strongbox) would
-   make worker isolation OS-enforced instead of harness-enforced.
+2. **A dedicated executor for production** with aggregate resource controls and scoped provider
+   credentials. The current proposal-only worker and Linux execution boundary are described in
+   `docs/hardening.md`; a live smoke test of that revised protocol remains open.
 3. **Who owns the acceptance tests.** In the fixture scenario they are pre-authored. In live use
    they must be derived from the agreed criteria by the verification swarm, or supplied by a
    person; the first live run showed what happens when a hidden test is stricter than its criterion.
@@ -78,9 +137,11 @@ node src/cli.ts serve --run        # interface + coordinator, http://127.0.0.1:4
 
 ## Next executable step
 
-`SWARM2_LIVE=1 npm run demo:live`, then read `evidence/live-a/README.md`. If the mission stops for
-a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
-`node src/cli.ts --home var/live-a decide <id> retry --rationale "<guidance>"` sends the work back.
+`SWARM2_LIVE=1 node demos/live.ts live-d`, then read `evidence/live-d/README.md`. (Without a name
+the run gets a new one; a bundle that exists is never replaced unless `SWARM2_OVERWRITE=1`.) If
+the mission stops for a person, `node src/cli.ts --home var/live-d attention` shows the decision,
+and `node src/cli.ts --home var/live-d decide <id> retry --rationale "<guidance>"` sends the work
+back.
 
 ## Environment notes
 
@@ -88,7 +149,8 @@ a person, `node src/cli.ts --home var/live-a attention` shows the decision, and
   While it lasted, delegated agents and nested model workers returned HTTP 429; the build was done
   in one session and live runs were made afterwards.
 - The limit was hit again at about 19:25 UTC (reset stated as 21:50 UTC). It stopped an independent
-  audit of `docs/evidence-report.md` against `evidence/`. That audit is still owed: have a separate
-  agent check every figure in the report and the handoff against the bundle files, read-only.
+  audit of `docs/evidence-report.md` against `evidence/`. The audit was run again after the reset
+  by a separate read-only agent; its 27 findings and 10 omissions are applied, and section 9 of
+  the report records them. What was written after it began has had no second reader.
 - `swarm_design` was not read: attaching it was declined by the session's permission check.
 - State directories under `var/` are not committed. `evidence/` is.

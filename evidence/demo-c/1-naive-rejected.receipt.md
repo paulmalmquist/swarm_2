@@ -1,16 +1,16 @@
-# Improvement receipt rcpt_0mwgs242g9mf2b19c90
+# Improvement receipt rcpt_0mwgy7brj9m3dd852e0
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: safe changes are not blocked failed. Share of safe changes blocked: candidate 50.0%, incumbent 0.0%; allowed margin 5.0%.
 
-Decided by release-gate at 2026-11-14T19:07:11.512Z. Level: execution. Experiment: `exp_0mwgs23ra9i4ff19a0e`.
+Decided by release-gate at 2026-11-14T21:59:12.464Z. Level: execution. Experiment: `exp_0mwgy7bhk9i0368b7ac`.
 
 ## Problem and supporting observations
 
 Reviews approve changes that break the shared contract: removed, renamed and retyped fields pass because the procedure never compares the contract before and after.
 
-Verified failure observations cited: 12 (for example `obs_0mwgs23r894f3dc7bc4`, `obs_0mwgs23r895b0608f2a`, `obs_0mwgs23r8967ccb85d4`).
+Verified failure observations cited: 12 (for example `obs_0mwgy7bhg94ecad5542`, `obs_0mwgy7bhg9500515d1a`, `obs_0mwgy7bhg96db5747e6`).
 
 ## Hypothesis
 
@@ -35,9 +35,9 @@ Adds validator interface_compat (top-level comparison of fields and types) and a
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T19:07:11.111Z, before the candidate was submitted
+- Protocol: promotion-policy@1/execution, frozen at 2026-11-14T21:59:12.104Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: review:holdout-A; snapshot:35bf39166d25237732d6f6266f33a54de7b56949911f97ea30bca997f1d38919
+- Workload: review:holdout-A; snapshot:1e5b17904388f586565c8bc47dfd06943ff924db71920a0038b2a98a8e69c4ef
 - Held-out set: holdout-A
 - Executor: validator-executor (deterministic; rerun; 1 pass)
 
@@ -48,7 +48,7 @@ Adds validator interface_compat (top-level comparison of fields and types) and a
 | 1 | development | 40 | development check by the candidate author |
 | 2 | holdout | 80 | one evaluation on holdout-A |
 
-Resource use: 281 experiment units, 329 ms, 0 model calls, cost not measured.
+Resource use: 281 experiment units, 305 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -59,7 +59,7 @@ Resource use: 281 experiment units, 329 ms, 0 model calls, cost not measured.
 | escaped_defect_rate (lower is better) | 0.34 | 0.8 | 0.8 | -0.46 | — | 80 |
 | false_alarm_rate (lower is better) | 0.5 | 0 | 0 | 0.5 | — | 80 |
 | steps_per_review (lower is better) | 3 | 2 | 2 | 1 | 1 to 1 | 80 |
-| wall_ms_per_review (lower is better) | 0.194 | 0.153 | 0.123 | 0.042 | — | 80 |
+| wall_ms_per_review (lower is better) | 0.14 | 0.106 | 0.133 | 0.035 | — | 80 |
 
 Method for the primary metric: paired bootstrap over the same 80 cases (20000 resamples, seeded); sign test: 23 better, 15 worse, 42 same, p=0.25588.
 
@@ -102,4 +102,4 @@ Method for the primary metric: paired bootstrap over the same 80 cases (20000 re
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `482ef4cf929e467a912c8a99dd6f8e9d4155bf43ec0dcbd7df50454be4cb92ad`
+Receipt hash: `d0b4daab9728a34d899cae80feb6be702e8955cb7853e360b445f9942a2e1b73`

@@ -1,0 +1,14 @@
+version: 2
+sources:
+  - name: manufacturing_raw
+    config:
+      enabled: "{{ not var('manufacturing_fixture_mode') }}"
+    database: "{{ var('raw_project') }}"
+    schema: "{{ var('raw_dataset') }}"
+    tables:
+      - name: source_versions
+        description: "Immutable normalized source deliveries. Ingestion sequence is unique per dataset and knowledge time never goes backwards."
+        columns:
+          - name: dataset_id
+          - name: ingestion_sequence
+          - name: record_json

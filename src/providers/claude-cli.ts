@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { killGroup } from '../security/process.ts';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { LimitsProfile, UsageRecord, WorkOutput } from '../contracts/types.ts';
@@ -10,6 +11,7 @@ export const WORK_OUTPUT_SCHEMA = {
   additionalProperties: false,
   required: ['status', 'summary', 'artifacts', 'evidence', 'criteria_claims', 'remaining_uncertainty', 'questions', 'proposals'],
   properties: {
+    file_changes: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['path', 'content'], properties: { path: { type: 'string' }, content: { type: ['string', 'null'] } } } },
     status: { type: 'string', enum: ['completed', 'blocked', 'failed'] },
     summary: { type: 'string' },
     artifacts: {
@@ -85,7 +87,11 @@ export function interpretResult(ev: ClaudeResultEvent | null, meta: { model_requ
   const base = { self_submitted: false, model_requested: meta.model_requested };
   if (!ev) {
     const status = meta.timed_out ? 'timeout' : meta.signal ? 'killed' : 'failed';
-    return { ...base, status, output: null, usage: null, model_actual: null, session_id: null, error: { code: status === 'failed' ? 'no_result' : status, message: `worker ended without a result (exit ${meta.exit_code}, signal ${meta.signal})` } };
+    // The client was started and never said what it used. Record what the runtime measured itself
+    // (one invocation, the elapsed time) and mark the rest unknown: tokens and cost are left null,
+    // not zero, so a total that includes this attempt cannot be read as complete.
+    const usage: UsageRecord = { source: 'claude-cli', meter_kind: 'runtime_measured', call_count: 1, input_units: null, output_units: null, cache_read_units: null, cache_write_units: null, wall_ms: meta.wall_ms, reported_cost: null, currency: null, cost_basis: 'none', completeness: 'unknown', observed_at: new Date().toISOString() };
+    return { ...base, status, output: null, usage, model_actual: null, session_id: null, error: { code: status === 'failed' ? 'no_result' : status, message: `worker ended without a result (exit ${meta.exit_code}, signal ${meta.signal})` } };
   }
   const models = Object.entries(ev.modelUsage ?? {}).sort((a, b) => (b[1].outputTokens ?? 0) - (a[1].outputTokens ?? 0));
   const model_actual = models[0]?.[0] ?? null;
@@ -120,6 +126,7 @@ export function interpretResult(ev: ClaudeResultEvent | null, meta: { model_requ
   if (ev.subtype && ev.subtype !== 'success') {
     return { ...common, status: 'failed', output: null, error: { code: ev.subtype, message: String(ev.result ?? ev.subtype) } };
   }
+  if (meta.timed_out || meta.signal || meta.exit_code !== 0) return { ...common, status: meta.timed_out ? 'timeout' : 'failed', output: null, error: { code: 'abnormal_exit', message: `Worker exited abnormally (${meta.exit_code}, ${meta.signal})` } };
   if (meta.expects_structured) {
     const out = ev.structured_output as WorkOutput | undefined;
     if (!out || typeof out !== 'object' || typeof out.summary !== 'string' || !Array.isArray(out.artifacts)) {
@@ -158,7 +165,7 @@ export function buildPrompt(req: WorkRequest): string {
     '',
     '# How to answer',
     'Return the structured result. Put documents in `artifacts[].content` under the required output keys.',
-    'For code, write files in the current directory and list nothing but a short summary; the runtime commits your changes.',
+    'For code, return file_changes: [{path, content}] with complete file contents (null to delete). You have no tools. Work from the supplied workspace snapshot. The runtime validates paths, applies edits and runs tests in isolation; report checks you have not run as unknown.',
     'Mark each evidence item as an observed fact or an interpretation. List what remains uncertain. Do not claim a criterion is met unless you say what you ran or checked.',
   );
   return lines.join('\n');
@@ -202,34 +209,26 @@ export class ClaudeCliProvider implements Provider {
       const result: WorkResult = { status: 'rate_limited', output: null, self_submitted: false, usage: null, model_requested: req.model, model_actual: null, session_id: null, error: { code: 'provider_unavailable', message: gate.reason ?? 'unavailable' } };
       return { pid: null, done: Promise.resolve(result), kill: () => undefined };
     }
-    const cwd = req.workspace?.dir ?? join(this.scratch, req.attempt_id);
+    const cwd = join(this.scratch, req.attempt_id);
     mkdirSync(cwd, { recursive: true });
-    const coding = req.workspace !== null;
-    const args = ['-p', buildPrompt(req), '--output-format', 'stream-json', '--verbose', '--json-schema', JSON.stringify(WORK_OUTPUT_SCHEMA), '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--disable-slash-commands', '--setting-sources', ''];
+    const args = ['-p', '--output-format', 'stream-json', '--verbose', '--json-schema', JSON.stringify(WORK_OUTPUT_SCHEMA), '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--disable-slash-commands', '--setting-sources', ''];
     if (req.instructions) args.push('--append-system-prompt', req.instructions);
     if (req.model) args.push('--model', req.model);
     if (req.effort) args.push('--effort', req.effort);
     if (req.max_budget_usd !== null) args.push('--max-budget-usd', String(req.max_budget_usd));
-    if (coding) {
-      // Tool allow-lists are a harness-level control, not an OS boundary: a bare `Write` rule was
-      // observed to permit writes outside the working directory, so edits are path-scoped here and
-      // the runtime re-checks the write scope from git afterwards.
-      // Verified on Claude Code 2.1.325 in don't-ask mode: with these path-scoped rules a read, a
-      // glob, a write and a `cat` aimed outside the working directory were each denied, while
-      // `node --test …` (also piped to tail) ran. A bare `Write` rule had NOT confined writes.
-      args.push('--tools', 'Read,Write,Edit,Glob,Grep,Bash', '--allowedTools', 'Read(./**)', 'Glob(./**)', 'Grep(./**)', 'Edit(./**)', 'Write(./**)', 'Bash(node --test:*)');
-    } else {
-      args.push('--tools', '');
-    }
+    args.push('--tools', '');
     const started = Date.now();
-    const child = spawn('claude', args, { cwd, stdio: ['ignore', 'pipe', 'pipe'], env: process.env });
+    const child = spawn('claude', args, { cwd, detached: true, stdio: ['pipe', 'pipe', 'pipe'], env: process.env });
+    child.stdin.on('error', () => undefined);
+    child.stdin.end(buildPrompt(req));
     let buffer = '';
+    let bytes = 0;
     let final: ClaudeResultEvent | null = null;
     let lastBeat = 0;
     let timed_out = false;
     const timer = setTimeout(() => {
       timed_out = true;
-      child.kill('SIGTERM');
+      killGroup(child);
     }, req.timeout_ms);
     // A model can generate for longer than a lease without emitting an event. While the process is
     // alive the lease is kept; a worker that hangs is ended by the timeout above.
@@ -240,6 +239,8 @@ export class ClaudeCliProvider implements Provider {
       }
     }, Math.max(500, Math.floor(this.limits.lease_ms / 5)));
     child.stdout.on('data', (d: Buffer) => {
+      bytes += d.length;
+      if (bytes > 2 * 1024 * 1024) { killGroup(child); return; }
       buffer += d.toString();
       let nl: number;
       while ((nl = buffer.indexOf('\n')) >= 0) {
@@ -258,6 +259,7 @@ export class ClaudeCliProvider implements Provider {
         }
       }
     });
+    child.stderr.on('data', () => undefined);
     const done = new Promise<WorkResult>((resolve) => {
       child.on('close', (code, signal) => {
         clearTimeout(timer);
@@ -272,6 +274,6 @@ export class ClaudeCliProvider implements Provider {
         resolve({ status: 'failed', output: null, self_submitted: false, usage: null, model_requested: req.model, model_actual: null, session_id: null, error: { code: 'spawn_failed', message: String(err) } });
       });
     });
-    return { pid: child.pid ?? null, done, kill: (signal = 'SIGTERM') => void child.kill(signal) };
+    return { pid: child.pid ?? null, done, kill: (signal = 'SIGTERM') => killGroup(child, signal) };
   }
 }

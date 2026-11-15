@@ -1,5 +1,7 @@
+import { Coordinator } from '../src/coordination/coordinator.ts';
+import type { Gate } from '../src/gate/gate.ts';
 import { type ChildProcess, spawn } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../src/config.ts';
 import type { FaultSpec } from '../src/coordination/coordinator.ts';
@@ -38,6 +40,21 @@ export async function waitFor<T>(fn: () => T | undefined | null | false, timeout
 
 export function scenarioRequests(): RawRequest[] {
   return (JSON.parse(readFileSync(join(REPO_ROOT, 'fixtures/scenarios/shared-capability/requests.json'), 'utf8')) as { requests: RawRequest[] }).requests;
+}
+
+/**
+ * The name a live run writes its bundle under. A live run costs real model calls and cannot be
+ * repeated exactly, so a kept bundle is never replaced by accident: without a name the run gets a
+ * new timestamped one, and naming a bundle that exists is refused unless SWARM2_OVERWRITE=1 says
+ * the replacement is meant. The name is a single path segment, so it cannot point outside evidence/.
+ */
+export function liveRunName(given: string | undefined, prefix: string, now = new Date()): string {
+  const name = given ?? `${prefix}-${now.toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '-')}`;
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(name)) throw new Error(`"${name}" is not a usable run name: letters, digits, hyphens and underscores only.`);
+  if (existsSync(join(REPO_ROOT, 'evidence', name)) && process.env.SWARM2_OVERWRITE !== '1') {
+    throw new Error(`evidence/${name} already exists and is not overwritten. Choose another name, or set SWARM2_OVERWRITE=1 to replace it.`);
+  }
+  return name;
 }
 
 export function freshHome(home: string, limits: Record<string, unknown> = {}): Runtime {
@@ -82,4 +99,24 @@ export function writeEvidence(dir: string, name: string, value: unknown): string
   mkdirSync(dirname(p), { recursive: true });
   writeFileSync(p, typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
   return p;
+}
+
+/** Scripted approval is confined to synthetic fixture demonstrations, never live/real work. */
+export async function completeFixtureCanary(rt: Runtime, gate: Gate, canaryId: string): Promise<string> {
+  const c = gate.canaries.must(canaryId);
+  const cos = new LocalChiefOfStaff(rt, (m) => gate.releaseFor(m));
+  cos.onPinned = (canary, mission) => gate.noteCanaryMission(canary, mission);
+  cos.ingestRequests({ command: 'ingestRequests', actor: 'fixture-reviewer', key: `${canaryId}:ingest`, data: { requests: scenarioRequests() } });
+  const submitted = cos.submitMission({ command: 'submitMission', actor: 'fixture-reviewer', key: `${canaryId}:mission`, data: { title: 'Synthetic canary trial', objective: 'Exercise the release through delivery and review', scenario: 'shared-capability', provider_mode: 'fixture', data_class: 'synthetic', request_ids: scenarioRequests().slice(0, 4).map((r) => r.id) } });
+  if (submitted.source === 'unavailable' || submitted.mission.release_id !== c.release_id) throw new Error('canary mission was not pinned');
+  const co = new Coordinator(rt);
+  try {
+    await co.runUntilIdle({ mission_id: submitted.mission.id, max_ms: 60_000 });
+    await co.drain();
+    const m = rt.store.missions.must(submitted.mission.id);
+    if (m.status !== 'review_ready' || m.provider_mode !== 'fixture' || m.data_class !== 'synthetic') throw new Error('fixture canary did not reach review');
+    const review = rt.store.getMeta<{ decision_id: string }>(`mission:${m.id}:review`)!;
+    cos.resolveDecision({ command: 'resolveDecision', actor: 'fixture-reviewer', key: `${canaryId}:approve`, data: { decision_id: review.decision_id, chosen: 'approve', rationale: 'SCRIPTED FIXTURE APPROVAL: exercises the lifecycle; not real user acceptance evidence' } });
+    return m.id;
+  } finally { co.stop(); await co.drain(); }
 }

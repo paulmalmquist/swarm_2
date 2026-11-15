@@ -1,0 +1,1454 @@
+{
+  "packet": {
+    "id": "mp_42ade3ca98442d209d58dfd8f3f6df96530c9066cd1e8bad6288dfe43d94bb7c",
+    "hash": "42ade3ca98442d209d58dfd8f3f6df96530c9066cd1e8bad6288dfe43d94bb7c",
+    "data_class": "synthetic",
+    "mode": "read_only_decision_support",
+    "authorizes_hardware_action": false,
+    "manifest": {
+      "engine_version": "affected-hardware-v1",
+      "engine_hash": "104d4790ca4b0dd98a2d814ad05e5b7d4247583a0586dae0d756fc0a53cd98c1",
+      "snapshot_id": "ms_b0fc7ccf512eceb50c4113604fab0dd8032c72220868e03ab9c31fbaa621dd98",
+      "snapshot_hash": "b0fc7ccf512eceb50c4113604fab0dd8032c72220868e03ab9c31fbaa621dd98",
+      "policy_hash": "38f846400a3d3c2748503102375e957354429c2fe955580032d7c4bf193674a9",
+      "request": {
+        "dataset_id": "synthetic-anomaly",
+        "finding": {
+          "system": "syn-qms",
+          "type": "finding",
+          "native_id": "SYN-NCR-1042"
+        },
+        "seed_lot": {
+          "system": "syn-mes",
+          "type": "hardware",
+          "native_id": "SYN-MAT-L17"
+        },
+        "exposure_start": "2026-11-01T00:00:00.000Z",
+        "exposure_end": "2026-11-10T00:00:00.000Z",
+        "configuration_at": "2026-11-09T00:00:00.000Z",
+        "configuration_scope": "built",
+        "required_dimensions": [
+          "process",
+          "material_lot",
+          "design_revision"
+        ],
+        "claim_class": "acceptance"
+      }
+    },
+    "authority_policy": {
+      "id": "synthetic-pilot-policy",
+      "revision": 1,
+      "configuration_authorities": [
+        {
+          "scope": "built",
+          "dimension": "process",
+          "systems": [
+            "syn-mes"
+          ]
+        },
+        {
+          "scope": "built",
+          "dimension": "material_lot",
+          "systems": [
+            "syn-mes"
+          ]
+        },
+        {
+          "scope": "built",
+          "dimension": "design_revision",
+          "systems": [
+            "syn-design"
+          ]
+        }
+      ],
+      "reviewers": [
+        {
+          "principal_id": "syn-engineer",
+          "role": "engineering"
+        },
+        {
+          "principal_id": "syn-quality",
+          "role": "quality"
+        }
+      ]
+    },
+    "impact": {
+      "candidates": [
+        {
+          "key": "SYN-ASM-020",
+          "hardware_id": "SYN-ASM-020",
+          "label": "SYN-ASM-020",
+          "status": "potentially_affected",
+          "is_finding_subject": false,
+          "reasons": [
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN008",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-008"
+                },
+                "source_hash": "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              },
+              {
+                "relationship": "installed_in",
+                "from": "SYN-SN008",
+                "to": "SYN-ASM-020",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-INSTALL-008-020"
+                },
+                "source_hash": "f6d4ecae1f46c483cd6e589b1e99e0c35667d294967090c4a72509bc5b775ad6",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": "2026-11-05T00:00:00.000Z"
+              }
+            ]
+          ],
+          "source_hashes": [
+            "b0cd748f452974cf64fef4f486d6fa158a43043663c6bf9e3f9a41270ce9bddc",
+            "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+            "f6d4ecae1f46c483cd6e589b1e99e0c35667d294967090c4a72509bc5b775ad6"
+          ]
+        },
+        {
+          "key": "SYN-ASM-021",
+          "hardware_id": "SYN-ASM-021",
+          "label": "SYN-ASM-021",
+          "status": "potentially_affected",
+          "is_finding_subject": false,
+          "reasons": [
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN008",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-008"
+                },
+                "source_hash": "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              },
+              {
+                "relationship": "installed_in",
+                "from": "SYN-SN008",
+                "to": "SYN-ASM-021",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-INSTALL-008-021"
+                },
+                "source_hash": "d0c25395a0b2b3118739f1bd8513523c75ae30c5d0aea80e37532649c0ab36a7",
+                "valid_from": "2026-11-05T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "a8a78708cbebe7264776d503384f0e00b8ef3e88cd4c172dab7a83d1fd389754",
+            "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+            "d0c25395a0b2b3118739f1bd8513523c75ae30c5d0aea80e37532649c0ab36a7"
+          ]
+        },
+        {
+          "key": "SYN-ASM-022",
+          "hardware_id": "SYN-ASM-022",
+          "label": "SYN-ASM-022",
+          "status": "potentially_affected",
+          "is_finding_subject": false,
+          "reasons": [
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN009",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-009"
+                },
+                "source_hash": "d8cbfdf935991c4cfa46b9a549fe97276bcbf87a0b28db6dbcc2716748e7db8c",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              },
+              {
+                "relationship": "installed_in",
+                "from": "SYN-SN009",
+                "to": "SYN-ASM-022",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-INSTALL-009-022"
+                },
+                "source_hash": "9b91fe2295995e65f0abfe6ea9808ab97eac0f0ecc9dfb8892d4729488ceaef1",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "3be512ae4c123a6ecc05341cf96fa2fb2819e102d76046e01fcd7f746503583d",
+            "d8cbfdf935991c4cfa46b9a549fe97276bcbf87a0b28db6dbcc2716748e7db8c",
+            "9b91fe2295995e65f0abfe6ea9808ab97eac0f0ecc9dfb8892d4729488ceaef1"
+          ]
+        },
+        {
+          "key": "SYN-MAT-L17",
+          "hardware_id": "SYN-MAT-L17",
+          "label": "SYN-MAT-L17",
+          "status": "potentially_affected",
+          "is_finding_subject": false,
+          "reasons": [
+            "Investigator-selected lot hypothesis; causal relevance is unproven"
+          ],
+          "paths": [],
+          "source_hashes": [
+            "f455559f7ae3d5be6478e78ba1d227cc97ddf4eab0d5a101e22f7eb69901c4d5"
+          ]
+        },
+        {
+          "key": "SYN-SN008",
+          "hardware_id": "SYN-SN008",
+          "label": "SYN-SN008",
+          "status": "potentially_affected",
+          "is_finding_subject": true,
+          "reasons": [
+            "Recorded subject of the finding; no disposition inferred",
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN008",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-008"
+                },
+                "source_hash": "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "2723fe12388f88abfce47827659eb5ce49d26562890271ca80cd38a3d569af0e",
+            "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37"
+          ]
+        },
+        {
+          "key": "SYN-SN009",
+          "hardware_id": "SYN-SN009",
+          "label": "SYN-SN009",
+          "status": "potentially_affected",
+          "is_finding_subject": false,
+          "reasons": [
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN009",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-009"
+                },
+                "source_hash": "d8cbfdf935991c4cfa46b9a549fe97276bcbf87a0b28db6dbcc2716748e7db8c",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "40163162aabc02ff15ff050fbee01b001783334b23f8e24b50aa3754b40f134c",
+            "d8cbfdf935991c4cfa46b9a549fe97276bcbf87a0b28db6dbcc2716748e7db8c"
+          ]
+        },
+        {
+          "key": "SYN-SN010",
+          "hardware_id": "SYN-SN010",
+          "label": "SYN-SN010",
+          "status": "unknown",
+          "is_finding_subject": false,
+          "reasons": [
+            "Source-backed candidate relationship; applicability requires review"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "SYN-SN010",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-010"
+                },
+                "source_hash": "feca4150f5811d80186e60124588c9e750ed9a07c9fa7e3c97416f7bedae6c54",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "59e5823b95211e070d02f1bfd57f2fbbbad8721373b9ab306fc5a35489634d20",
+            "feca4150f5811d80186e60124588c9e750ed9a07c9fa7e3c97416f7bedae6c54"
+          ]
+        },
+        {
+          "key": "unresolved:146e65ebd1253a7593c1b14bb64b01fa503a6d0d420b041e0000ce79f650dd6e",
+          "hardware_id": null,
+          "label": "syn-mes/hardware/SYN-SN011",
+          "status": "unknown",
+          "is_finding_subject": false,
+          "reasons": [
+            "Unresolved identity on the candidate path"
+          ],
+          "paths": [
+            [
+              {
+                "relationship": "produced_from",
+                "from": "SYN-MAT-L17",
+                "to": "syn-mes/hardware/SYN-SN011",
+                "source": {
+                  "system": "syn-mes",
+                  "type": "relationship",
+                  "native_id": "SYN-LOT-LINK-011"
+                },
+                "source_hash": "46b15b89876b1f68d663cc00c695bd049d7a9d5f599d4e21f9e1b871b0f56c11",
+                "valid_from": "2026-11-01T00:00:00.000Z",
+                "valid_to": null
+              }
+            ]
+          ],
+          "source_hashes": [
+            "46b15b89876b1f68d663cc00c695bd049d7a9d5f599d4e21f9e1b871b0f56c11"
+          ]
+        }
+      ],
+      "issues": [
+        {
+          "code": "identity_missing",
+          "detail": "Cannot uniquely resolve syn-mes/hardware/SYN-SN011",
+          "source_hashes": [
+            "46b15b89876b1f68d663cc00c695bd049d7a9d5f599d4e21f9e1b871b0f56c11"
+          ]
+        },
+        {
+          "code": "ambiguous_path",
+          "detail": "Cannot traverse syn-mes/relationship/SYN-LOT-LINK-011 without identity reconciliation",
+          "source_hashes": [
+            "46b15b89876b1f68d663cc00c695bd049d7a9d5f599d4e21f9e1b871b0f56c11"
+          ]
+        },
+        {
+          "code": "genealogy_not_complete",
+          "detail": "SYN-SN010: source genealogy is incomplete",
+          "source_hashes": [
+            "59e5823b95211e070d02f1bfd57f2fbbbad8721373b9ab306fc5a35489634d20"
+          ]
+        },
+        {
+          "code": "coverage_not_established",
+          "detail": "No source export proves the complete hardware universe. Unreached hardware is unassessed, never unaffected.",
+          "source_hashes": []
+        }
+      ],
+      "unassessed_hardware": [
+        "SYN-MAT-L03",
+        "SYN-REF-077"
+      ],
+      "coverage": "not_established",
+      "not_found_means_unaffected": false,
+      "finding_source_hash": "af87301f7eecdffd8d6d7f85cea30a0a3db033f9125f7793306b2525aa8cc750"
+    },
+    "configuration": [
+      {
+        "hardware_id": "SYN-ASM-020",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "material_lot",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "design_revision",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          }
+        ],
+        "hash": "7a1e37e5c831e2412b7af7bff265e3758d5692e3f86146da7c3b692d7259d963"
+      },
+      {
+        "hardware_id": "SYN-ASM-021",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "material_lot",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "design_revision",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          }
+        ],
+        "hash": "ee434054f614ff81015b1fc8d5b088ee724f391318eba3db1d42221f8af6f9f3"
+      },
+      {
+        "hardware_id": "SYN-ASM-022",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "material_lot",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "design_revision",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          }
+        ],
+        "hash": "7a98f166b936cc05735e449d77919d51e4d82777b914365608550d9c1f5e0e0a"
+      },
+      {
+        "hardware_id": "SYN-MAT-L17",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "material_lot",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          },
+          {
+            "dimension": "design_revision",
+            "state": "missing",
+            "value": null,
+            "source_hashes": []
+          }
+        ],
+        "hash": "f112e600e2b7fdb950d55dc5d05c1e371c8e0cec2ed90c9db9af71a63670c706"
+      },
+      {
+        "hardware_id": "SYN-SN008",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "known",
+            "value": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "ca4bad364063ce57ea3cfde8148c9d0bcf22d68756469532241e768c4230f1ac"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "state": "known",
+            "value": "SYN-MAT-L17",
+            "source_hashes": [
+              "40d2ad62c351207e91d9739881b991af660f33b8b5a81823e07080d77297faa5"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "state": "known",
+            "value": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "a0d104f9fc781e1175acd4b6159fd2360852193af9bffe3cc85d4ae39e6589b6"
+            ]
+          }
+        ],
+        "hash": "42c9c0698db74341567743e5c14881fa54dc21c08c58510df0d66e03f1d59718"
+      },
+      {
+        "hardware_id": "SYN-SN009",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "disputed",
+            "value": null,
+            "source_hashes": [
+              "195beed972e8b3da832e4136ba36863041b6779e70f7c74a3314bc395aa71b68",
+              "779429c8ab0ca28e25f37ae12b0473ded5da5a2a5106e57c3c401e1205188cde"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "state": "known",
+            "value": "SYN-MAT-L17",
+            "source_hashes": [
+              "ecfa285fa7fcacc563c6c3bbf3ae562559e5c0197b533dca9a4adccc9d50ccba"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "state": "known",
+            "value": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "04485db8a60e72a64c3471d84f30d8337d882ba6cddfabac7eba1699b2992878"
+            ]
+          }
+        ],
+        "hash": "487b78013679c58939eddce482d998d6a8aeddc7c1b794548f086af3667affb3"
+      },
+      {
+        "hardware_id": "SYN-SN010",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "state": "known",
+            "value": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "c21ca7a22283eac2833a4fef946de40f97d4d950019da221a7429fd8a1b75c2c"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "state": "known",
+            "value": "SYN-MAT-L17",
+            "source_hashes": [
+              "b148f56f4e2f3f1b919b2215fcf7ed10ef96ad09cee77d5c324aacb7c3dec881"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "state": "known",
+            "value": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "44762ab82ba2548923614f7df204e8c0526bfe028888e8bc2c275ddf16932f6a"
+            ]
+          }
+        ],
+        "hash": "4ec942382e72e0ab4fe6aa3e4c2f6edafd92cc72203b74c787970b94de8202fb"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-ASM-020",
+        "target_configuration_hash": "7a1e37e5c831e2412b7af7bff265e3758d5692e3f86146da7c3b692d7259d963",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "unknown",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-ASM-020",
+        "target_configuration_hash": "7a1e37e5c831e2412b7af7bff265e3758d5692e3f86146da7c3b692d7259d963",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-ASM-021",
+        "target_configuration_hash": "ee434054f614ff81015b1fc8d5b088ee724f391318eba3db1d42221f8af6f9f3",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "unknown",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-ASM-021",
+        "target_configuration_hash": "ee434054f614ff81015b1fc8d5b088ee724f391318eba3db1d42221f8af6f9f3",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-ASM-022",
+        "target_configuration_hash": "7a98f166b936cc05735e449d77919d51e4d82777b914365608550d9c1f5e0e0a",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "unknown",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-ASM-022",
+        "target_configuration_hash": "7a98f166b936cc05735e449d77919d51e4d82777b914365608550d9c1f5e0e0a",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-MAT-L17",
+        "target_configuration_hash": "f112e600e2b7fdb950d55dc5d05c1e371c8e0cec2ed90c9db9af71a63670c706",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "unknown",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": null,
+            "source_hashes": [
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-MAT-L17",
+        "target_configuration_hash": "f112e600e2b7fdb950d55dc5d05c1e371c8e0cec2ed90c9db9af71a63670c706",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": null,
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-SN008",
+        "target_configuration_hash": "42c9c0698db74341567743e5c14881fa54dc21c08c58510df0d66e03f1d59718",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": true,
+        "status": "unknown",
+        "coverage": "partial",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "exact",
+            "target": "SYN-PS-12 Rev C",
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "ca4bad364063ce57ea3cfde8148c9d0bcf22d68756469532241e768c4230f1ac",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": "SYN-MAT-L17",
+            "evidence": null,
+            "source_hashes": [
+              "40d2ad62c351207e91d9739881b991af660f33b8b5a81823e07080d77297faa5",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": null,
+            "source_hashes": [
+              "a0d104f9fc781e1175acd4b6159fd2360852193af9bffe3cc85d4ae39e6589b6",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-SN008",
+        "target_configuration_hash": "42c9c0698db74341567743e5c14881fa54dc21c08c58510df0d66e03f1d59718",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "exact",
+            "target": "SYN-PS-12 Rev C",
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "ca4bad364063ce57ea3cfde8148c9d0bcf22d68756469532241e768c4230f1ac",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "changed",
+            "target": "SYN-MAT-L17",
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "40d2ad62c351207e91d9739881b991af660f33b8b5a81823e07080d77297faa5",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "exact",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "a0d104f9fc781e1175acd4b6159fd2360852193af9bffe3cc85d4ae39e6589b6",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-SN009",
+        "target_configuration_hash": "487b78013679c58939eddce482d998d6a8aeddc7c1b794548f086af3667affb3",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "unknown",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "disputed",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "195beed972e8b3da832e4136ba36863041b6779e70f7c74a3314bc395aa71b68",
+              "779429c8ab0ca28e25f37ae12b0473ded5da5a2a5106e57c3c401e1205188cde",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": "SYN-MAT-L17",
+            "evidence": null,
+            "source_hashes": [
+              "ecfa285fa7fcacc563c6c3bbf3ae562559e5c0197b533dca9a4adccc9d50ccba",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": null,
+            "source_hashes": [
+              "04485db8a60e72a64c3471d84f30d8337d882ba6cddfabac7eba1699b2992878",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-SN009",
+        "target_configuration_hash": "487b78013679c58939eddce482d998d6a8aeddc7c1b794548f086af3667affb3",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "disputed",
+            "target": null,
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "195beed972e8b3da832e4136ba36863041b6779e70f7c74a3314bc395aa71b68",
+              "779429c8ab0ca28e25f37ae12b0473ded5da5a2a5106e57c3c401e1205188cde",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "changed",
+            "target": "SYN-MAT-L17",
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "ecfa285fa7fcacc563c6c3bbf3ae562559e5c0197b533dca9a4adccc9d50ccba",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "exact",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "04485db8a60e72a64c3471d84f30d8337d882ba6cddfabac7eba1699b2992878",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "target_hardware_id": "SYN-SN010",
+        "target_configuration_hash": "4ec942382e72e0ab4fe6aa3e4c2f6edafd92cc72203b74c787970b94de8202fb",
+        "evidence_class": "acceptance",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "unknown",
+        "coverage": "partial",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "exact",
+            "target": "SYN-PS-12 Rev C",
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "c21ca7a22283eac2833a4fef946de40f97d4d950019da221a7429fd8a1b75c2c",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "missing",
+            "target": "SYN-MAT-L17",
+            "evidence": null,
+            "source_hashes": [
+              "b148f56f4e2f3f1b919b2215fcf7ed10ef96ad09cee77d5c324aacb7c3dec881",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "missing",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": null,
+            "source_hashes": [
+              "44762ab82ba2548923614f7df204e8c0526bfe028888e8bc2c275ddf16932f6a",
+              "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      },
+      {
+        "evidence_source_hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "target_hardware_id": "SYN-SN010",
+        "target_configuration_hash": "4ec942382e72e0ab4fe6aa3e4c2f6edafd92cc72203b74c787970b94de8202fb",
+        "evidence_class": "qualification",
+        "requested_claim_class": "acceptance",
+        "subject_match": false,
+        "status": "class_mismatch",
+        "coverage": "none",
+        "dimensions": [
+          {
+            "dimension": "process",
+            "result": "exact",
+            "target": "SYN-PS-12 Rev C",
+            "evidence": "SYN-PS-12 Rev C",
+            "source_hashes": [
+              "c21ca7a22283eac2833a4fef946de40f97d4d950019da221a7429fd8a1b75c2c",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "material_lot",
+            "result": "changed",
+            "target": "SYN-MAT-L17",
+            "evidence": "SYN-MAT-L03",
+            "source_hashes": [
+              "b148f56f4e2f3f1b919b2215fcf7ed10ef96ad09cee77d5c324aacb7c3dec881",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          },
+          {
+            "dimension": "design_revision",
+            "result": "exact",
+            "target": "SYN-PART-441 Rev A",
+            "evidence": "SYN-PART-441 Rev A",
+            "source_hashes": [
+              "44762ab82ba2548923614f7df204e8c0526bfe028888e8bc2c275ddf16932f6a",
+              "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb"
+            ]
+          }
+        ],
+        "supports_acceptance": false
+      }
+    ],
+    "citations": [
+      {
+        "source": "syn-mes/configuration/SYN-CFG-008-material_lot",
+        "revision": 1,
+        "hash": "40d2ad62c351207e91d9739881b991af660f33b8b5a81823e07080d77297faa5",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-LOT-LINK-009",
+        "revision": 1,
+        "hash": "d8cbfdf935991c4cfa46b9a549fe97276bcbf87a0b28db6dbcc2716748e7db8c",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-INSTALL-008-021",
+        "revision": 1,
+        "hash": "d0c25395a0b2b3118739f1bd8513523c75ae30c5d0aea80e37532649c0ab36a7",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-05T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/configuration/SYN-CFG-008-process",
+        "revision": 1,
+        "hash": "ca4bad364063ce57ea3cfde8148c9d0bcf22d68756469532241e768c4230f1ac",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-test/evidence/SYN-AT-008",
+        "revision": 1,
+        "hash": "74aaf812805d288c70b7d7ff294ee0a75a21e5a16e8a7ee4e98a5036ec451280",
+        "kind": "evidence",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-MAT-L17",
+        "revision": 1,
+        "hash": "f455559f7ae3d5be6478e78ba1d227cc97ddf4eab0d5a101e22f7eb69901c4d5",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-SN008",
+        "revision": 1,
+        "hash": "2723fe12388f88abfce47827659eb5ce49d26562890271ca80cd38a3d569af0e",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/configuration/SYN-CFG-009-material_lot",
+        "revision": 1,
+        "hash": "ecfa285fa7fcacc563c6c3bbf3ae562559e5c0197b533dca9a4adccc9d50ccba",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-SN010",
+        "revision": 1,
+        "hash": "59e5823b95211e070d02f1bfd57f2fbbbad8721373b9ab306fc5a35489634d20",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-LOT-LINK-011",
+        "revision": 1,
+        "hash": "46b15b89876b1f68d663cc00c695bd049d7a9d5f599d4e21f9e1b871b0f56c11",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/configuration/SYN-CFG-009-process",
+        "revision": 1,
+        "hash": "779429c8ab0ca28e25f37ae12b0473ded5da5a2a5106e57c3c401e1205188cde",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-test/evidence/SYN-QT-77",
+        "revision": 1,
+        "hash": "97a81eb508db81cacefaae7e1ddd5ff16fa825b31753078d0f830b8781c147eb",
+        "kind": "evidence",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-LOT-LINK-008",
+        "revision": 1,
+        "hash": "cb4fea1860895444e295ae5df4a22aea2da38793b480544603d7d06cc4f88f37",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-qms/configuration/SYN-CONTRARY-009",
+        "revision": 1,
+        "hash": "195beed972e8b3da832e4136ba36863041b6779e70f7c74a3314bc395aa71b68",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-INSTALL-008-020",
+        "revision": 1,
+        "hash": "f6d4ecae1f46c483cd6e589b1e99e0c35667d294967090c4a72509bc5b775ad6",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": "2026-11-05T00:00:00.000Z",
+        "withdrawn": false
+      },
+      {
+        "source": "syn-design/configuration/SYN-CFG-008-design_revision",
+        "revision": 1,
+        "hash": "a0d104f9fc781e1175acd4b6159fd2360852193af9bffe3cc85d4ae39e6589b6",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-design/configuration/SYN-CFG-010-design_revision",
+        "revision": 1,
+        "hash": "44762ab82ba2548923614f7df204e8c0526bfe028888e8bc2c275ddf16932f6a",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-INSTALL-009-022",
+        "revision": 1,
+        "hash": "9b91fe2295995e65f0abfe6ea9808ab97eac0f0ecc9dfb8892d4729488ceaef1",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-design/configuration/SYN-CFG-009-design_revision",
+        "revision": 1,
+        "hash": "04485db8a60e72a64c3471d84f30d8337d882ba6cddfabac7eba1699b2992878",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/configuration/SYN-CFG-010-material_lot",
+        "revision": 1,
+        "hash": "b148f56f4e2f3f1b919b2215fcf7ed10ef96ad09cee77d5c324aacb7c3dec881",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-REF-077",
+        "revision": 1,
+        "hash": "437d49b2f25e6a4a50e31d36e431a7862756f6f9a0a60f6e126005c2266d759f",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-ASM-022",
+        "revision": 1,
+        "hash": "3be512ae4c123a6ecc05341cf96fa2fb2819e102d76046e01fcd7f746503583d",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-ASM-020",
+        "revision": 1,
+        "hash": "b0cd748f452974cf64fef4f486d6fa158a43043663c6bf9e3f9a41270ce9bddc",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-SN009",
+        "revision": 1,
+        "hash": "40163162aabc02ff15ff050fbee01b001783334b23f8e24b50aa3754b40f134c",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-qms/finding/SYN-NCR-1042",
+        "revision": 1,
+        "hash": "af87301f7eecdffd8d6d7f85cea30a0a3db033f9125f7793306b2525aa8cc750",
+        "kind": "finding",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/relationship/SYN-LOT-LINK-010",
+        "revision": 1,
+        "hash": "feca4150f5811d80186e60124588c9e750ed9a07c9fa7e3c97416f7bedae6c54",
+        "kind": "relationship",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-ASM-021",
+        "revision": 1,
+        "hash": "a8a78708cbebe7264776d503384f0e00b8ef3e88cd4c172dab7a83d1fd389754",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/hardware/SYN-MAT-L03",
+        "revision": 1,
+        "hash": "2720921116b90e60c4d20d843e7c2d57a1af28777f365c798a4afd9898cda402",
+        "kind": "hardware",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      },
+      {
+        "source": "syn-mes/configuration/SYN-CFG-010-process",
+        "revision": 1,
+        "hash": "c21ca7a22283eac2833a4fef946de40f97d4d950019da221a7429fd8a1b75c2c",
+        "kind": "configuration",
+        "known_from": "2026-11-14T00:00:00.000Z",
+        "valid_from": "2026-11-01T00:00:00.000Z",
+        "valid_to": null,
+        "withdrawn": false
+      }
+    ]
+  },
+  "currency": "current",
+  "stale_reasons": [],
+  "reviews": []
+}

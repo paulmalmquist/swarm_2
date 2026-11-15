@@ -1,0 +1,18 @@
+{
+  "evidence_class": "synthetic",
+  "node": "v24.22.1",
+  "analysis_source_hash": "104d4790ca4b0dd98a2d814ad05e5b7d4247583a0586dae0d756fc0a53cd98c1",
+  "typecheck": "passed",
+  "tests": {
+    "total": 78,
+    "passed": 78,
+    "failed": 0,
+    "skipped": 0,
+    "new_manufacturing_tests": 17,
+    "duration_ms": 127578.621854
+  },
+  "manufacturing_demo": "passed",
+  "model_calls": 0,
+  "real_manufacturing_connections": 0,
+  "scope": "Local software validation. No manufacturing correctness or operational reliability claim."
+}

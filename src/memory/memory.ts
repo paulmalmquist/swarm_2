@@ -1,7 +1,7 @@
 import type { Memory, MemoryKind, Mission, Task } from '../contracts/types.ts';
 import { jaccard, tokenize } from '../kernel/intake.ts';
 import type { Runtime } from '../runtime.ts';
-import { newId, truncate } from '../lib/util.ts';
+import { newId, truncate, SwarmError } from '../lib/util.ts';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -23,13 +23,26 @@ export function ingestKnowledge(rt: Runtime, task: Task, doc: Record<string, unk
   const { store, kernel } = rt;
   const m = store.missions.must(task.mission_id);
   const out: Memory[] = [];
-  const versionsFor = (refs: string[]): string[] => refs.map((r) => kernel.currentVersion(m.id, r)?.id).filter((v): v is string => Boolean(v));
+  const resolveRefs = (refs: string[]): { evidence_ids: string[]; artifact_version_ids: string[] } => {
+    if (!Array.isArray(refs) || refs.length === 0) throw new SwarmError('memory_source_missing', 'Knowledge requires resolvable sources');
+    const evidence_ids: string[] = [], artifact_version_ids: string[] = [];
+    for (const ref of refs) {
+      const v = kernel.currentVersion(m.id, ref);
+      const e = store.evidence.get(ref);
+      const o = store.observations.get(ref);
+      if (v?.currency === 'current') artifact_version_ids.push(v.id);
+      else if (e?.mission_id === m.id && e.freshness_status === 'fresh') evidence_ids.push(e.id);
+      else if (o?.mission_id === m.id) evidence_ids.push(o.id);
+      else throw new SwarmError('memory_source_missing', `Unknown or stale source for this mission: ${ref}`);
+    }
+    return { evidence_ids, artifact_version_ids };
+  };
   const base = (kind: MemoryKind, statement: string, scope: string[], refs: string[], certainty: Memory['certainty'], days: number | null): Memory => ({
     id: newId('mem'),
     kind,
     statement: truncate(statement, 600),
     scope,
-    provenance: { mission_id: m.id, task_id: task.id, evidence_ids: refs.filter((r) => r.startsWith('obs_') || r.startsWith('evd_')), artifact_version_ids: versionsFor(refs), release_id: m.release_id, recorded_by: task.owner_id },
+    provenance: { mission_id: m.id, task_id: task.id, ...resolveRefs(refs), release_id: m.release_id, recorded_by: task.owner_id },
     origin: 'agent',
     certainty,
     status: 'active',
@@ -43,7 +56,10 @@ export function ingestKnowledge(rt: Runtime, task: Task, doc: Record<string, unk
   });
   for (const n of (doc.notes ?? []) as Note[]) {
     // A procedure is an untested idea until it has been validated on further cases.
-    const certainty = n.kind === 'procedure' ? 'untested' : (n.certainty ?? 'suspected');
+    if (!['fact', 'interpretation', 'procedure', 'failed_approach', 'decision'].includes(n.kind) || typeof n.statement !== 'string' || !Array.isArray(n.scope) || !n.scope.every((s) => typeof s === 'string')) throw new SwarmError('invalid_memory', 'Invalid agent knowledge note');
+    if (n.fresh_for_days !== undefined && (!Number.isFinite(n.fresh_for_days) || n.fresh_for_days <= 0 || n.fresh_for_days > 365)) throw new SwarmError('invalid_memory', 'Knowledge freshness must be between 0 and 365 days');
+    // Resolving a reference does not independently prove the claim about it.
+    const certainty = n.kind === 'procedure' ? 'untested' : 'suspected';
     out.push(base(n.kind, n.statement, n.scope, n.source_refs, certainty, n.fresh_for_days ?? 90));
   }
   const skill = doc.skill_candidate as { id: string; title: string; procedure: string[]; supported_situations?: string[] } | undefined;
@@ -51,7 +67,7 @@ export function ingestKnowledge(rt: Runtime, task: Task, doc: Record<string, unk
   store.db.tx(() => {
     for (const mem of out) {
       // The same statement in the same scope supersedes its earlier copy instead of piling up.
-      const prior = store.memories.where(`"kind" = ? AND "status" = 'active'`, mem.kind).find((p) => p.statement === mem.statement && p.scope.join('|') === mem.scope.join('|'));
+      const prior = store.memories.where(`"kind" = ? AND "status" = 'active'`, mem.kind).find((p) => p.provenance.mission_id === m.id && p.statement === mem.statement && p.scope.join('|') === mem.scope.join('|'));
       if (prior) store.memories.put({ ...prior, status: 'superseded', superseded_by: mem.id });
       store.memories.put(mem);
     }
@@ -83,11 +99,16 @@ export function expireMemories(rt: Runtime): number {
  * Select the memories relevant to a task. Scope must match; wording similarity only orders the
  * matches. Invalidated, superseded and expired memories are never returned.
  */
-export function retrieve(rt: Runtime, q: { scopes: string[]; text: string; kinds?: MemoryKind[]; limit: number; include_failed_approaches: boolean }): Retrieved[] {
+export function retrieve(rt: Runtime, q: { scopes: string[]; text: string; kinds?: MemoryKind[]; limit: number; include_failed_approaches: boolean; mission_id?: string }): Retrieved[] {
   expireMemories(rt);
   const terms = tokenize(q.text);
   const out: Retrieved[] = [];
   for (const mem of rt.store.memories.where(`"status" = 'active'`)) {
+    const source = mem.provenance.mission_id ? rt.store.missions.get(mem.provenance.mission_id) : undefined;
+    const target = q.mission_id ? rt.store.missions.must(q.mission_id) : undefined;
+    // Cross-mission reuse is limited to synthetic fixture work until source ACLs exist.
+    if (target && source?.id !== target.id && !(target.data_class === 'synthetic' && target.provider_mode === 'fixture' && source?.data_class === 'synthetic' && source.provider_mode === 'fixture')) continue;
+    if (mem.provenance.artifact_version_ids.some((id) => rt.store.versions.get(id)?.currency !== 'current')) continue;
     if (q.kinds && !q.kinds.includes(mem.kind)) continue;
     if (mem.kind === 'failed_approach' && !q.include_failed_approaches) continue;
     const shared = mem.scope.filter((s) => q.scopes.includes(s));
@@ -107,7 +128,7 @@ const LABEL: Record<MemoryKind, string> = { fact: 'FACT', interpretation: 'INTER
  */
 export function contextPacket(rt: Runtime, mission: Mission, task: Task, opts: { max: number; include_failed_approaches: boolean }): { text: string; memory_ids: string[] } {
   const scopes = [`archetype:${task.contract.assignee.archetype}`, ...(mission.scenario ? [`scenario:${mission.scenario}`] : []), `mission:${mission.id}`];
-  const got = retrieve(rt, { scopes, text: `${task.title} ${task.contract.objective}`, limit: opts.max, include_failed_approaches: opts.include_failed_approaches });
+  const got = retrieve(rt, { scopes, text: `${task.title} ${task.contract.objective}`, limit: opts.max, include_failed_approaches: opts.include_failed_approaches, mission_id: mission.id });
   if (got.length === 0) return { text: '', memory_ids: [] };
   const lines = ['# What the organization already knows (check it against your inputs before relying on it)'];
   for (const { memory: mem } of got) {
@@ -157,7 +178,9 @@ export function creditMemories(rt: Runtime, mission_id: string): number {
   for (const id of ids) {
     const mem = rt.store.memories.get(id);
     // Work in the mission that produced a memory does not validate it.
-    if (!mem || mem.provenance.mission_id === mission_id) continue;
+    const credit = `memory:${id}:credited:${mission_id}`;
+    if (!mem || mem.status !== 'active' || mem.provenance.mission_id === mission_id || rt.store.getMeta<boolean>(credit)) continue;
+    rt.store.setMeta(credit, true);
     rt.store.memories.put({ ...mem, validated_cases: mem.validated_cases + 1 });
     n++;
   }

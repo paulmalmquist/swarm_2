@@ -1,0 +1,3 @@
+manufacturing_fixture_mode: true
+consumer_dataset_id: synthetic-anomaly
+consumer_valid_at: '2026-11-09T00:00:00.000Z'

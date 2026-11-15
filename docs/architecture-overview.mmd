@@ -1,0 +1,18 @@
+flowchart TD
+    subgraph Target["Target manufacturing workflow · integrations planned"]
+        Design["Design: requirements + revisions"] --> Context["Affected hardware + evidence"]
+        Build["Build: BOM + serial/lot + travelers"] --> Context
+        Quality["Quality + test: NCRs + results + qualification"] --> Context
+        Context --> Chief["Chief of staff: prioritize + assign"]
+        Chief --> Engineering["Engineering: change impact"]
+        Chief --> Manufacturing["Manufacturing: affected builds"]
+        Chief --> Assurance["Quality + test: evidence applicability"]
+        Engineering --> Review["Independent evidence review"]
+        Manufacturing --> Review
+        Assurance --> Review
+        Review --> Packet["Decision packet: hardware + options + evidence"]
+        Packet --> Human["Engineering + quality owners: review + authorize"]
+        Human --> Action["Approved disposition + rework + retest"]
+        Action --> Learning["Observed outcomes: propose + validate better checks"]
+        Learning -. future investigations .-> Chief
+    end

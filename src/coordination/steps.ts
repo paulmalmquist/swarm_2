@@ -4,12 +4,12 @@ import type { IntegrationItem } from '../contracts/runtime.ts';
 import type { AcceptanceCriterion, Mission, PlanProposal, ReviewPacket, Task, Verification, WorkOutput } from '../contracts/types.ts';
 import type { Token } from '../kernel/kernel.ts';
 import { SwarmError, hashOf, newId, truncate } from '../lib/util.ts';
-import { type RunResult, parseTap, tapFailures } from '../workspace/workspaces.ts';
+import { type RunResult, parseTap, tapFailures, testRunPassed, testRunComplete } from '../workspace/workspaces.ts';
 import type { Coordinator } from './coordinator.ts';
 import { materializePlan, validatePlan } from './plan.ts';
 
 export const VERIFIER_ID = 'runtime:verifier';
-const NODE_TEST = ['node', '--disable-warning=ExperimentalWarning', '--test'];
+const NODE_TEST = ['node', '--disable-warning=ExperimentalWarning', '--test', '--test-reporter=tap'];
 
 function out(summary: string, extra: Partial<WorkOutput> = {}): WorkOutput {
   return { status: 'completed', summary, artifacts: [], evidence: [], criteria_claims: [], remaining_uncertainty: [], questions: [], proposals: [], ...extra };
@@ -122,7 +122,7 @@ export class Steps {
         const evidence = this.recordRunEvidence(m, task, `node --test ${c.check.target}`, run);
         const results = parseTap(run.stdout);
         // An empty run proves nothing: no tests means the criterion is not shown to hold.
-        const verdict = run.code === 0 && results.length > 0 ? 'pass' : results.length === 0 && run.code === 0 ? 'inconclusive' : 'fail';
+        const verdict = testRunPassed(run) ? 'pass' : results.length === 0 && run.code === 0 ? 'inconclusive' : 'fail';
         records.push(kernel.recordVerification({ task_id: task.id, verifier_task_id, criterion_id: c.criterion_id, method: 'executable', verdict, verifier_id: VERIFIER_ID, evidence_ids: [evidence], details: { exit: run.code, tests: results.length, failing: results.filter((r) => !r.ok).map((r) => r.name) } }));
       } else if (c.check.runner.startsWith('inspect:')) {
         const fn = scenario.inspectors[c.check.runner.slice(8)];
@@ -141,7 +141,8 @@ export class Steps {
   async verifyInline(task_id: string): Promise<void> {
     const { kernel, store } = this.rt;
     let task = store.tasks.must(task_id);
-    if (task.status !== 'submitted') return;
+    // `verifying` with no check in flight means an earlier check did not finish: it is run again.
+    if (task.status !== 'submitted' && task.status !== 'verifying') return;
     const m = store.missions.must(task.mission_id);
     const stored = this.storedOutput(task);
 
@@ -317,7 +318,7 @@ export class Steps {
           store.integration.put({ ...item, updated_at: store.clock.iso() });
           const run = await workspaces.run(dir, [...NODE_TEST, componentTest], 60_000);
           const evidence = this.recordRunEvidence(m, task, `after merging ${key}: node --test ${componentTest}`, run);
-          if (run.code !== 0) {
+          if (!testRunPassed(run)) {
             workspaces.resetIntegration(m.id, base_commit);
             item.status = 'rejected';
             item.result = { ok: false, summary: 'component tests failed after merge', evidence_id: evidence };
@@ -335,7 +336,7 @@ export class Steps {
       const run = await workspaces.run(dir, [...NODE_TEST, ...params.final_checks], 90_000);
       const evidence = this.recordRunEvidence(m, task, `combined result: node --test ${params.final_checks.join(' ')}`, run);
       const results = parseTap(run.stdout);
-      if (run.code !== 0 || results.length === 0) {
+      if (!testRunPassed(run)) {
         const failing = results.filter((r) => !r.ok).map((r) => r.name);
         const responsibleKeys = [...new Set(failing.flatMap((name) => Object.entries(params.attribution ?? {}).filter(([prefix]) => name.startsWith(prefix)).map(([, key]) => key)))];
         const responsible = responsibleKeys.length ? merged.filter((t) => responsibleKeys.includes(t.key)) : merged;
@@ -390,10 +391,15 @@ export class Steps {
         const evidence = this.recordRunEvidence(m, target, 'protected acceptance suite', run);
         const results = parseTap(run.stdout);
         const why = tapFailures(run.stdout);
+        // A normal assertion failure can be attributed to its owning criterion. Process failures,
+        // unknown tests and skipped/incomplete runs invalidate the whole suite.
+        const attributedFailure = run.code === 1 && testRunComplete(run) && results.some((r) => !r.ok) && results.filter((r) => !r.ok).every((r) => target.contract.acceptance_criteria.some((c) => c.mandatory && r.name.startsWith(`${c.criterion_id}:`)));
+        const suiteValid = testRunPassed(run) || attributedFailure;
         const notes: Record<string, string> = {};
+        if (!suiteValid) for (const c of target.contract.acceptance_criteria) notes[c.criterion_id] = `acceptance process failed or incomplete (exit ${run.code})`;
         for (const c of target.contract.acceptance_criteria) {
           const mine = results.filter((r) => r.name.startsWith(`${c.criterion_id}:`));
-          const verdict = mine.length === 0 ? 'inconclusive' : mine.every((r) => r.ok) ? 'pass' : 'fail';
+          const verdict = !suiteValid ? 'fail' : mine.length === 0 ? 'inconclusive' : mine.every((r) => r.ok) ? 'pass' : 'fail';
           // What the failing check reported goes back to the author; the check's code does not.
           const said = why.filter((f) => f.name.startsWith(`${c.criterion_id}:`) && f.message).map((f) => f.message);
           if (said.length) notes[c.criterion_id] = said.join(' / ');
@@ -403,7 +409,7 @@ export class Steps {
             store.needs.put(need);
           }
         }
-        const failed = target.contract.acceptance_criteria.filter((c) => !results.filter((r) => r.name.startsWith(`${c.criterion_id}:`)).every((r) => r.ok) || !results.some((r) => r.name.startsWith(`${c.criterion_id}:`)));
+        const failed = target.contract.acceptance_criteria.filter((c) => !suiteValid || !results.filter((r) => r.name.startsWith(`${c.criterion_id}:`)).every((r) => r.ok) || !results.some((r) => r.name.startsWith(`${c.criterion_id}:`)));
         summaries.push(`${target.key}: ${target.contract.acceptance_criteria.length - failed.length}/${target.contract.acceptance_criteria.length} criteria pass at ${commit.slice(0, 10)}`);
         settlers.push(() => this.settleTarget(target.id, task, failed, params.attribution ?? {}, notes));
       }
@@ -524,6 +530,7 @@ export class Steps {
       for (const t of tasks) for (const u of this.storedOutput(t)?.remaining_uncertainty ?? []) concerns.add(`Stated by the worker on ${t.key}: ${u}`);
       const spent = kernel.budget.spent(m.budget_account_id);
       const usages = store.attempts.where('"mission_id" = ?', m.id).map((a) => a.usage).filter((u): u is NonNullable<typeof u> => Boolean(u));
+      const unreported = kernel.unreportedUsage(m.id);
       const passed = acceptance.filter((a) => a.verdict === 'pass').length;
       const mandatoryOpen = acceptance.filter((a) => a.mandatory && a.verdict !== 'pass').length;
       const decision = comms.openDecision({
@@ -562,7 +569,7 @@ export class Steps {
         decisions: store.decisions.where('"mission_id" = ?', m.id).filter((d) => d.id !== decision.id).map((d) => ({ id: d.id, question: d.question, chosen: d.chosen, owner_id: d.owner_id, status: d.status })),
         remaining_concerns: [...concerns],
         decision_requested: { decision_id: decision.id, question: decision.question, options: decision.options.map((o) => o.id), consequence: 'Approval marks the merge request draft approved. The merge itself stays with the existing protected path.', reversible: true },
-        resource_use: { ...spent, cost_basis: usages.some((u) => u.cost_basis === 'list_price_estimate') ? 'list_price_estimate' : 'none', usage_completeness: usages.every((u) => u.completeness === 'complete') ? 'complete' : 'partial' },
+        resource_use: { ...spent, cost_basis: usages.some((u) => u.cost_basis === 'list_price_estimate') ? 'list_price_estimate' : 'none', usage_completeness: usages.every((u) => u.completeness === 'complete') && unreported === 0 ? 'complete' : 'partial', unreported_attempts: unreported },
         release_id: m.release_id,
         provider_mode: m.provider_mode,
         data_class: m.data_class,
@@ -614,7 +621,7 @@ export function renderPacket(p: ReviewPacket): string {
   if (p.remaining_concerns.length) for (const c of p.remaining_concerns) lines.push(`- ${c}`);
   else lines.push('None recorded.');
   lines.push('', '## Decision requested', '', p.decision_requested.question, '', `Options: ${p.decision_requested.options.join(', ')}.`, p.decision_requested.consequence, '');
-  lines.push('## Resource use', '', `- Worker invocations: ${p.resource_use.worker_invocations}`, `- Model calls: ${p.resource_use.model_calls}`, `- Tokens: ${p.resource_use.tokens}`, `- Cost: ${p.resource_use.cost_basis === 'none' ? 'not measured' : `${p.resource_use.cost_usd_est} USD (${p.resource_use.cost_basis}, not billing)`}`, `- Worker wall time: ${p.resource_use.wall_ms} ms`, '');
+  lines.push('## Resource use', '', `- Worker invocations: ${p.resource_use.worker_invocations}`, `- Model calls: ${p.resource_use.model_calls}`, `- Tokens: ${p.resource_use.tokens}`, `- Cost: ${p.resource_use.cost_basis === 'none' ? 'not measured' : `${p.resource_use.cost_usd_est} USD (${p.resource_use.cost_basis}, not billing)`}`, `- Worker wall time: ${p.resource_use.wall_ms} ms`, ...(p.resource_use.unreported_attempts ? [`- ${p.resource_use.unreported_attempts} model attempt(s) ended without reporting what they used. Tokens and cost above are lower bounds.`] : []), '');
   return lines.join('\n');
 }
 

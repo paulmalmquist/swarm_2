@@ -1,44 +1,45 @@
 {
-  "receipt_id": "rcpt_0mwgs5gav13883a5511",
-  "experiment_id": "exp_0mwgs5g160z94475cca",
+  "receipt_id": "rcpt_0mwgyaebs1382b21708",
+  "experiment_id": "exp_0mwgyae2y0z1c74d2fd",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: style_nit (0 verified, 30 unverified reports).",
     "observation_ids": [
-      "obs_0mwgs5fyc03c31beae6",
-      "obs_0mwgs5fyc0488202875",
-      "obs_0mwgs5fyd058f8d7cae",
-      "obs_0mwgs5fyd065157dcf8",
-      "obs_0mwgs5fyd0701a7da65",
-      "obs_0mwgs5fyd08a5eea7a0",
-      "obs_0mwgs5fyd097bf1f917",
-      "obs_0mwgs5fyd0a91dbf738",
-      "obs_0mwgs5fyd0bd9c48547",
-      "obs_0mwgs5fyd0c3effde2d",
-      "obs_0mwgs5fyd0d3d2c2396",
-      "obs_0mwgs5fyd0e01105859",
-      "obs_0mwgs5fyd0f6a097902",
-      "obs_0mwgs5fye0gafeffe31",
-      "obs_0mwgs5fye0h9982db85",
-      "obs_0mwgs5fye0ia3eddd7a",
-      "obs_0mwgs5fye0jb1b99900",
-      "obs_0mwgs5fye0k6efa075f",
-      "obs_0mwgs5fye0lfcdaf8cf",
-      "obs_0mwgs5fye0m5aa98995",
-      "obs_0mwgs5fye0n3e01aa34",
-      "obs_0mwgs5fye0ob57cd339",
-      "obs_0mwgs5fye0pdb287770",
-      "obs_0mwgs5fye0qb10861e0",
-      "obs_0mwgs5fye0rbe10b310",
-      "obs_0mwgs5fye0s4cdda063",
-      "obs_0mwgs5fye0t956d179e",
-      "obs_0mwgs5fye0u78de9511",
-      "obs_0mwgs5fyf0v1296268d",
-      "obs_0mwgs5fyf0w56f6ca88"
+      "obs_0mwgyadz6030b3e8866",
+      "obs_0mwgyadz604025a17c3",
+      "obs_0mwgyadz605b715ea2a",
+      "obs_0mwgyadz6062dc21f2c",
+      "obs_0mwgyadz607b90b90b4",
+      "obs_0mwgyadz60835bed8f0",
+      "obs_0mwgyadz60981e872e0",
+      "obs_0mwgyadz60aa7e27f15",
+      "obs_0mwgyadz70b583cf9ab",
+      "obs_0mwgyadz70cf33ebd3c",
+      "obs_0mwgyadz70d2937d6fc",
+      "obs_0mwgyadz70e530fce06",
+      "obs_0mwgyadz70fa39f3edc",
+      "obs_0mwgyadz70g525490bc",
+      "obs_0mwgyadz70he4b1d80d",
+      "obs_0mwgyadz70ia46d4364",
+      "obs_0mwgyadz70j2590a920",
+      "obs_0mwgyadz70kcd053092",
+      "obs_0mwgyadz70l1b13b64f",
+      "obs_0mwgyadz70m751a0757",
+      "obs_0mwgyadz80n8b83ceab",
+      "obs_0mwgyadz80o7eee2818",
+      "obs_0mwgyadz80p0f0126d6",
+      "obs_0mwgyadz80qfab9e73d",
+      "obs_0mwgyadz80r137564a5",
+      "obs_0mwgyadz80sda7d0515",
+      "obs_0mwgyadz80t112144a1",
+      "obs_0mwgyadz80u30462fdd",
+      "obs_0mwgyadz80v861f8544",
+      "obs_0mwgyadz80w9c7050b2"
     ],
     "observed_failure_count": 30
   },
   "hypothesis": "If change review also runs style_strict, verified failures of style_nit will be blocked without blocking safe changes.",
+  "authorship": null,
   "expected_benefit": "Fewer approved breaking changes of these classes.",
   "possible_regressions": [
     "Safe changes could be blocked",
@@ -68,10 +69,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:09:46.986Z",
+    "frozen_at": "2026-11-14T22:01:35.434Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:276c08f704da9f1c6f4dea36e7c6c9a8b1281d6e1e288bd9c1427fb184c42930"
+      "snapshot:fb0655e3e2ce51370ac2da804e68c39afa17fd9bbf9bfaa6168b2956e8b60c94"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -84,21 +85,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:09:47.048Z",
+      "at": "2026-11-14T22:01:35.487Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:09:47.335Z",
+      "at": "2026-11-14T22:01:35.753Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 287,
+    "wall_ms": 266,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -195,12 +196,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.13,
-      "incumbent": 0.108,
-      "baseline": 0.14,
-      "diff_vs_incumbent": 0.022,
+      "candidate": 0.135,
+      "incumbent": 0.117,
+      "baseline": 0.122,
+      "diff_vs_incumbent": 0.017,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": -0.01,
+      "diff_vs_baseline": 0.013,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -387,7 +388,7 @@
   "decision": "inconclusive",
   "justification": "No demonstrated improvement: the 95% interval of the difference in accuracy (0 to 0) includes zero.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:09:47.335Z",
+  "decided_at": "2026-11-14T22:01:35.753Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -403,6 +404,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "6641791df9e7c444bf7f0683aa305704b199818319cee7976b321a77df522089",
-  "id": "rcpt_0mwgs5gav13883a5511"
+  "receipt_hash": "2831010189210018160b9c54c2a9bf2afc0b6defebcba506ca2f3df6abb7f441",
+  "id": "rcpt_0mwgyaebs1382b21708"
 }

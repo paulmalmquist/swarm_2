@@ -1,10 +1,25 @@
 # Architecture
 
+![Target rocket manufacturing workflow](architecture-overview.svg)
+
+The diagram shows the intended manufacturing workflow. A [deterministic pilot](manufacturing.md)
+now implements hardware genealogy, configuration comparison and version-pinned investigation
+packets over local source exports. Live manufacturing integrations and agent investigation
+roles are still planned. The [runtime diagram](runtime-overview.svg) shows the infrastructure.
+
+The manufacturing work unit is a question tied to specific hardware and its configuration:
+which serials or lots are affected, which requirement or revision applies, and whether build
+and test evidence still supports the proposed disposition. Agent output is an investigation
+packet for the responsible engineers. Engineering and quality authority stays with those
+people and their existing approval processes.
+
+Current security changes: [hardening.md](hardening.md).
+
 swarm_2 is an execution and improvement layer that sits beneath an existing chief of staff.
 The chief of staff decides what matters and speaks for Paul. swarm_2 turns an authorized objective
 into coordinated work, verifies the result, and uses the outcome to change how later work is done.
 
-This document describes what is built. What ran, and with what result, is in
+The implementation sections below describe what is built. What ran, and with what result, is in
 [evidence-report.md](evidence-report.md).
 
 ## 1. Three responsibilities
@@ -23,24 +38,9 @@ generation of the work does (`Kernel.acceptTask`).
 
 ## 2. The smallest durable shape
 
-```
- chief of staff ──commands──▶ ChiefOfStaffPort ──▶ kernel (SQLite, one file per state directory)
-        ▲                                             │  missions · tasks · leases · budgets
-        │ decisions, drafts, review packets           │  artifacts · evidence · decisions · events
-        │                                             ▼
-   review interface ◀── read models ◀──────── coordinator (a loop over durable state)
-   (/v1/os/swarm)                                     │ dispatches one OS process per attempt
-                                                      ▼
-                                   workers: model (claude -p) or labeled fixture
-                                   coding workers each get a git worktree
-                                                      │ results come back under a fencing token
-                                                      ▼
-                               integration queue ──▶ independent verification ──▶ review packet
+The runtime diagram shows the control, delivery and improvement paths. SQLite owns operational state;
+the release gate keeps its own protected store. Generated code sees only explicit sandbox mounts.
 
- protected store (separate directory, separate SQLite file, other OS user where available)
-   release registry · promotion policy · held-out cases · evaluation ledger · canaries
-   candidates are evaluated here in a sandbox; nothing they run can write here
-```
 
 - **One language, no services.** TypeScript on Node 22 run directly (type stripping), zero runtime
   dependencies, `node:sqlite` for state, `git` for workspaces, `node:http` for the interface.
@@ -104,8 +104,14 @@ freshness is reused across missions instead of repeated. Commands carry idempote
 is a no-op, and a reused key with a different body is quarantined.
 
 **Recovery.** Everything needed to resume is in the store. A new coordinator fences attempts left
-in flight, stops orphaned worker processes, frees their call slots and continues. Nothing is
-reconstructed from chat history.
+in flight, stops orphaned worker processes, frees their call slots and continues. A result whose
+check did not finish is checked again. Nothing is reconstructed from chat history.
+
+**Stopping.** A mission does not sit idle unannounced. Work that fails for good, a wall-clock
+limit, and work left with nothing able to run each stop the mission, mark it blocked and put one
+decision to the chief of staff. A worker that says it is blocked puts its question to the chief
+of staff while the rest of the mission continues. Waiting for provider capacity is the exception:
+it resumes by itself and is the operator's to watch.
 
 **External effects.** An effect outside the store is recorded as an intent first. If its outcome is
 unknown the target is asked what happened before anything is retried (`performEffect` in
@@ -118,7 +124,9 @@ releases their reservations and keeps the artifacts already produced.
 
 - A mission's budget is a tree. A child reserves from its parent atomically and can never hold
   more than the parent has; spawning an agent creates no spending authority. Unspent reservations
-  return to the parent when work settles, and the tree is reconciled.
+  return to the parent when work settles. A retry its task cannot pay for draws on the recovery
+  reserve by moving allowance from one account to another; a move is never recorded as spending.
+  Consumption and limits are both reconciled against the ledger.
 - Capacity is set aside before delivery starts: 15% for verification, 10% for recovery, 5% for
   completion, and up to 10% for exploration. Delivery cannot spend them.
 - Limits are operator configuration (`src/config.ts`, `swarm2.config.json`, environment): 12
@@ -130,7 +138,10 @@ releases their reservations and keeps the artifacts already produced.
   The system prepares a draft with its supporting context; a person approves it; sending or
   merging stays with the existing protected path.
 - Usage is recorded as what it is: provider-reported tokens, a list-price cost *estimate*
-  (never called billing), runtime-measured wall time, or a declared fixture value.
+  (never called billing), runtime-measured wall time, or a declared fixture value. A model worker
+  stopped before it finishes reports nothing: the attempt is charged the invocation and the time
+  the runtime measured, its tokens and cost stay unknown, and every total that includes it is
+  shown as a lower bound.
 
 ## 6. Memory
 
@@ -188,8 +199,8 @@ decision and its justification, the new release manifest if any, and the rollbac
   (`src/gate/gate.ts`) takes custody of a copy, evaluates it, and alone can create a release.
 - **The protected store** holds the promotion policy, held-out cases, scoring code, the evaluation
   ledger (hash-chained) and the release pointer. Candidate code runs in a sandbox process under an
-  unprivileged OS user with Node's permission model as a second layer. The gate reports which of
-  three modes the host actually provides — `enforced`, `seatbelt` or `procedural` — in every receipt.
+  isolated Linux namespaces with Node's permission model as a second layer. Code execution
+  fails closed when namespace isolation is unavailable; receipts retain the measured capability.
 - **A candidate cannot change the rules it is judged by.** Static screening refuses code that uses
   file, process, network or dynamic-code capabilities. A proposal to change the rules becomes a
   decision for the chief of staff and is applied by nobody else.
