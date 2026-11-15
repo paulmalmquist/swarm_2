@@ -1,5 +1,6 @@
 node_modules/
 var/
+evidence/validation/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm

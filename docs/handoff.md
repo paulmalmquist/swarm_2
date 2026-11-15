@@ -23,13 +23,19 @@ integrates what they produce, has a different swarm verify the result on checks 
 see, sends failed work back with the reason, records what it learned, and hands you a review
 packet with the exact changes, the acceptance evidence, the remaining concerns and one decision.
 
-It has done this with real model workers three times on one synthetic scenario. Once it reached
-review. Twice it stopped and asked a person, which is what it should do when it cannot finish.
+It has done this with real model workers three times on one synthetic scenario. In those runs
+models did the discovery, the acceptance criteria, the implementation and the knowledge capture;
+the work graph and the split into teams came from a fixed policy template. Once it reached
+review. Twice it stopped and asked a person: once because a pre-written acceptance test demanded
+something no requirement states, once because a deadline in the runtime, since fixed, timed out
+the last step.
 
 It can also change itself: propose an improvement to how work is executed, coordinated or
-improved, test it against held-out cases, and adopt it only if a release gate it cannot influence
-accepts it and a bounded trial survives. A real model wrote one such improvement that was accepted,
-after its first version was rejected.
+improved, test it against held-out cases, and adopt it only if a release gate accepts it and a
+bounded trial survives. Candidate code cannot change the gate's rules or records: the operating
+system enforces that for the code, and the worker harness for a model that writes it. A real
+model wrote one such improvement that was accepted, after its first version was rejected. It was
+judged by executing it on synthetic cases, not by use.
 
 It cannot yet reach any of your real systems. It does not send, merge, deploy or commit you to
 anything, and it is not built to: those stay with you.
@@ -50,31 +56,37 @@ Through durable state and contracts, not conversation.
   recovery and completion is set aside before delivery starts.
 - What needs a person **comes to you as a decision** with options and consequences: a merge
   approval, a conflict, work that failed for good, a worker that is blocked, a limit reached, a
-  request the analysis left out of scope, a proposed change to the rules.
+  mission that has stopped because nothing in it can run, a request the analysis left out of
+  scope, a proposed change to the rules.
 
 ## What did it attempt to improve?
 
-| Level | What was tried | Result |
-|---|---|---|
-| Execution | A real model wrote an interface-compatibility check for change review | First version **rejected**: perfect on development cases, but it blocked 10% of safe changes on held-out cases. Revision **accepted** on a different held-out set (accuracy 0.49 → 1.00) and retained after a trial |
-| Execution | A cheaper review procedure that skipped a required step | **Rejected** |
-| Execution | A candidate that tried to rewrite the rules and records | **Rejected** before its code ran; every attempt denied when run anyway |
-| Coordination | Retire the independent verification swarm | **Rejected**: cheaper and faster, and defects reached accepted results |
-| Coordination | Drop the interface agreement before parallel work | **Inconclusive**: no worse, nothing saved |
-| Improvement process | Rank improvement work by expected value, pilot before submitting, stop when nothing is worth its cost | **Accepted**, narrowly, in a synthetic testbed; then run in a bounded trial deciding the organization's own improvement work, and retained |
+| Level | What was tried | Evidence | Result |
+|---|---|---|---|
+| Execution | A real model wrote an interface-compatibility check for change review | Live author, fixture evaluation | First version **rejected**: perfect on development cases, but it blocked 10% of safe changes on held-out cases. Revision **accepted** on a different held-out set (accuracy 0.49 → 1.00) and retained after a trial. It adds a step to every review |
+| Execution | A cheaper review procedure that skipped a required step | Fixture | **Rejected** |
+| Execution | A candidate that tried to rewrite the rules and records | Fixture | **Rejected** before its code ran; every attempt denied when run anyway |
+| Coordination | Retire the independent verification swarm | Simulation | **Rejected**: cheaper and faster in the testbed, and injected defects reached accepted results |
+| Coordination | Drop the interface agreement before parallel work | Simulation | **Inconclusive**: no worse, nothing saved |
+| Improvement process | Rank improvement work by expected value, pilot before submitting, stop when nothing is worth its cost | Simulation, then a fixture case study | **Accepted**, narrowly, in a synthetic testbed; then run in a bounded trial on a synthetic review workload, and retained |
 
 ## What evidence supports the result?
 
 - **Live, small:** three missions and two improvement runs with real models. Enough to show the
-  organization works with real workers and where it broke; not enough to state any rate.
-- **Fixture:** nine demonstrations and 49 tests show the machinery — ownership, recovery,
+  organization works with real workers and where it broke; not enough to state any rate. The
+  runtime was being fixed between the missions, so they are not three samples of one system.
+- **Fixture:** nine demonstrations and 95 tests show the machinery — ownership, recovery,
   invalidation, isolation, the gate, trial and rollback — behaves as designed with scripted workers.
 - **Simulation:** the coordination and improvement-process comparisons rest on testbeds with
   assumed rates, written by the same author as the candidates. One accepted result is narrow and
   disappears under a sensitivity check; the report says so.
 
-Running it with real workers found eleven defects that scripted workers never triggered. They
-are listed in the report with what was changed. Three things worth knowing before relying on it:
+Running it with real workers surfaced eleven problems that scripted workers never triggered
+(report section 5, items 1 to 11). The kept bundles show six of them; the other five come from
+attempts that were not kept. Checking the report against its own evidence afterwards found five
+more: two in how spend was counted, two that could leave a mission stopped with nobody told, and
+one in the live commands themselves, which would have overwritten the kept evidence. All are
+listed in the report with what was changed. Three things worth knowing before relying on it:
 
 1. Acceptance tests in the scenario are pre-written. One of them demands something no requirement
    states, and that cost a live mission its repair limit. In real use, someone has to own the tests.
@@ -92,7 +104,7 @@ From the repository root, with the Linux isolation prerequisites in [hardening.m
 | See it work on fixtures | `npm run demo:all`, then read `evidence/demo-a/README.md` |
 | Open the review interface | `node src/cli.ts init && node src/cli.ts serve --run` → http://127.0.0.1:4317/ |
 | Submit a mission | `node src/cli.ts submit --scenario shared-capability --title "…" --objective "…"` |
-| Use real model workers | add `--live` and set `SWARM2_LIVE=1`; or `SWARM2_LIVE=1 npm run demo:live` |
+| Use real model workers | add `--live` and set `SWARM2_LIVE=1`; or `SWARM2_LIVE=1 npm run demo:live`, which writes a new bundle under `evidence/` and never replaces a kept one |
 | See what needs you | `node src/cli.ts attention` |
 | Decide | `node src/cli.ts decide <decision> <option> --rationale "…"` |
 | Read the evidence for a result | `node src/cli.ts evidence <mission> --md` |
@@ -112,4 +124,6 @@ Stopping loses nothing: the next run resumes from stored state.
 4. **The promotion rules.** The thresholds in `protected/policy.json` are first settings.
    Changing them is your decision; no experiment can.
 
-PR #1 was merged. The subsequent hardening is tracked separately from the original live evidence.
+This revision combines PR #1, the independent audit follow-up from PR #2, and the hardening,
+manufacturing pilot and Kimball warehouse from PR #3. Original live evidence remains historical.
+Use [the Paul OS transfer prompt](paul-os-transfer.md) to evaluate practical improvements.

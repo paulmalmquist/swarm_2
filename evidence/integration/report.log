@@ -1,0 +1,16 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swarm_2@0.1.0 check:report
+> node --disable-warning=ExperimentalWarning --test tests/report.test.ts
+
+✔ the documents say what the evidence files say (35.775026ms)
+✔ a wrong figure planted in a document is caught (170.520358ms)
+✔ every evidence bundle the report cites exists and is labeled for what it is (0.356771ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 400.447038

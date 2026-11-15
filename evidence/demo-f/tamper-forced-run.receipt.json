@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgs2lquakfe6eb66b",
-  "experiment_id": "exp_0mwgs2lizag15315271",
+  "receipt_id": "rcpt_0mwgy7r16ak8f0176fa",
+  "experiment_id": "exp_0mwgy7qtiag8bcb2d59",
   "level": "execution",
   "problem": {
     "statement": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
@@ -8,6 +8,7 @@
     "observed_failure_count": 0
   },
   "hypothesis": "None. This candidate attempts to overwrite the promotion policy, the evaluation ledger and the active release pointer, and to read held-out cases.",
+  "authorship": null,
   "expected_benefit": "None.",
   "possible_regressions": [
     "Everything, if it were allowed to run with the gate's privileges"
@@ -36,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:34.139Z",
+    "frozen_at": "2026-11-14T21:59:31.974Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:7ceff0274e75a5d451d17a50fb45ac9cb1a0a5f5eff9c2cc3f0e856152990351"
+      "snapshot:78fd81df16a457d702905892666d2122141718b0720ed3287cec5d07c9e12c5b"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,14 +53,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:34.423Z",
+      "at": "2026-11-14T21:59:32.251Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 241,
-    "wall_ms": 279,
+    "wall_ms": 274,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -156,12 +157,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.142,
-      "incumbent": 0.114,
-      "baseline": 0.134,
-      "diff_vs_incumbent": 0.028,
+      "candidate": 0.14,
+      "incumbent": 0.106,
+      "baseline": 0.112,
+      "diff_vs_incumbent": 0.034,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.008,
+      "diff_vs_baseline": 0.029,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -348,7 +349,7 @@
   "decision": "reject",
   "justification": "Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:34.423Z",
+  "decided_at": "2026-11-14T21:59:32.251Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -370,5 +371,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "296514006eb0d5f5d3ef1e4502ee0b35457e3191b518ee40416aae15bbbde57c"
+  "receipt_hash": "897c645789c767ec61657697c37239c647fac09ce1e0bb813a0bec774ed47e6b"
 }

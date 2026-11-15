@@ -22,8 +22,8 @@
     "rollback_target": null,
     "status": "retired",
     "evidence_basis": "baseline",
-    "created_at": "2026-11-14T19:07:11.048Z",
-    "manifest_hash": "896e691298dd2430ff1004b9686c7db6ddeccfdee36c9d2e8330640fcc98aded"
+    "created_at": "2026-11-14T21:59:12.042Z",
+    "manifest_hash": "0efdbdb5be490d6233327dfd1e1a62716d70149fc1d739842feba532a4392492"
   },
   {
     "release_id": "r2",
@@ -43,12 +43,12 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "64d9281d50c8252a1bd807979391fe101c453821934d3645255faabbb74cc3c9",
-    "receipt_id": "rcpt_0mwgs24d29s998359dd",
+    "evaluation_snapshot_hash": "0d762d1e8faaf470c4f56e436dec891830217f196fd4877cbd38cd99b1e71a32",
+    "receipt_id": "rcpt_0mwgy7c0y9sa46829e8",
     "rollback_target": "r1",
     "status": "active",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T19:07:11.894Z",
-    "manifest_hash": "1ccecd238ee578d87534dba553f354a29a0f40af7189e21287b53fe505accaa8"
+    "created_at": "2026-11-14T21:59:12.802Z",
+    "manifest_hash": "4f03b400bbc9b5e22f44c55ffb84f26863f0c40fe9b9738aee4273cbdd5cf1e8"
   }
 ]

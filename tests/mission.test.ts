@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Coordinator } from '../src/coordination/coordinator.ts';
+import { renderPacket } from '../src/coordination/steps.ts';
 import { LocalChiefOfStaff } from '../src/cos/port.ts';
 import { freshRuntime, scenarioRequests, submitScenario } from './e2e.ts';
 
@@ -53,6 +54,11 @@ test('a mission runs from intake to an independently verified, reviewable result
     assert.equal(ev.packet!.acceptance.filter((a) => a.verdict === 'pass').length, 5);
     assert.ok(ev.packet!.exact_changes!.files.some((f) => f.path === 'src/engine/evaluate.ts'));
     assert.ok(ev.chain_ok);
+    // The packet says whether its usage figures are complete, and says so in words when they are not.
+    assert.equal(ev.packet!.resource_use.usage_completeness, 'complete');
+    assert.equal(ev.packet!.resource_use.unreported_attempts, 0);
+    assert.doesNotMatch(ev.packet_markdown!, /lower bounds/);
+    assert.match(renderPacket({ ...ev.packet!, resource_use: { ...ev.packet!.resource_use, unreported_attempts: 2 } }), /- 2 model attempt\(s\) ended without reporting what they used\. Tokens and cost above are lower bounds\./);
     const attention = cos.attention();
     assert.ok(attention.source !== 'unavailable');
     assert.deepEqual(attention.items.map((i) => i.kind).sort(), ['decision', 'draft']);

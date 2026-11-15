@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgs2l73a2f16517c8",
-  "experiment_id": "exp_0mwgs24g59y6798d078",
+  "receipt_id": "rcpt_0mwgy7qjea21b75ac1d",
+  "experiment_id": "exp_0mwgy7c3f9yf56f5f4f",
   "level": "evolution",
   "problem": {
     "statement": "Improvement campaigns spend their budget on whatever is reported most often. Frequent complaints that were never verified, and fixes that would have failed a cheap check, consume budget that higher-value problems needed.",
@@ -8,6 +8,7 @@
     "observed_failure_count": 0
   },
   "hypothesis": "If the improvement process ranks problems by verified failures times severity per unit of cost, pilots a built fix on observed cases before paying for a held-out evaluation, and stops when no remaining problem is worth its cost, then with the same budget on unseen failure episodes it will deliver more independently validated harm reduction and spend less on experiments that fail.",
+  "authorship": null,
   "expected_benefit": "More validated harm reduction per fixed experiment budget; lower cost of failed experiments.",
   "possible_regressions": [
     "Pilots cost budget that could have funded another submission",
@@ -38,10 +39,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/evolution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:12.005Z",
+    "frozen_at": "2026-11-14T21:59:12.891Z",
     "workload_refs": [
       "improvement-arena:arena-A",
-      "snapshot:c7b20df435500458804e01b9043a32b4ac939fb1b47699554771b338dc4d0fc8"
+      "snapshot:1073fbfc0594a9b1935fe0f4a7a05658f27d1256366b67c6f20733ff1c74c2f4"
     ],
     "holdout_set": "arena-A",
     "executor": "improvement-arena",
@@ -54,21 +55,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:07:14.836Z",
+      "at": "2026-11-14T21:59:15.210Z",
       "cases": 8,
       "note": "development episodes run by the policy author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:33.711Z",
+      "at": "2026-11-14T21:59:31.611Z",
       "cases": 30,
       "note": "one evaluation on arena-A"
     }
   ],
   "resource_use": {
     "experiment_units": 46866,
-    "wall_ms": 18875,
+    "wall_ms": 16401,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -321,7 +322,7 @@
   "decision": "accept",
   "justification": "Accepted: validated_benefit improved by 12.6167 against the incumbent (95% interval 0.4167 to 25.4333) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:33.712Z",
+  "decided_at": "2026-11-14T21:59:31.611Z",
   "release_manifest": {
     "release_id": "r2",
     "parent_release_id": "r1",
@@ -340,13 +341,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "c7b20df435500458804e01b9043a32b4ac939fb1b47699554771b338dc4d0fc8",
-    "receipt_id": "rcpt_0mwgs2l73a2f16517c8",
+    "evaluation_snapshot_hash": "1073fbfc0594a9b1935fe0f4a7a05658f27d1256366b67c6f20733ff1c74c2f4",
+    "receipt_id": "rcpt_0mwgy7qjea21b75ac1d",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "simulation",
-    "created_at": "2026-11-14T19:07:33.711Z",
-    "manifest_hash": "267fb1883c4eca62001eb823de8e98a4dadd42362e28d1054c651b3af6eb06a9"
+    "created_at": "2026-11-14T21:59:31.610Z",
+    "manifest_hash": "21259957632b62a793c81d1d3322234c08da12dcc5958e1438be8c6ec94e4cf6"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -362,5 +363,5 @@
     ]
   },
   "evidence_basis": "simulation",
-  "receipt_hash": "de4a3763dc17f571397566bf44ca35098c69b66dfaa90c11d0c1f14dcac12d8d"
+  "receipt_hash": "b9eaf6143c54857ee4189d80518661085896d4b7c51744b5bfb4f136115bcfe9"
 }

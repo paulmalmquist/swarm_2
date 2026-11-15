@@ -1,21 +1,22 @@
 {
-  "receipt_id": "rcpt_0mwgs5xvc36581b14e5",
-  "experiment_id": "exp_0mwgs5xka32986b5273",
+  "receipt_id": "rcpt_0mwgyau673619ba7693",
+  "experiment_id": "exp_0mwgyatvy325262e991",
   "level": "execution",
   "problem": {
     "statement": "Review failures recorded under r1: field_removed (4 verified, 0 unverified reports); field_renamed (3 verified, 0 unverified reports).",
     "observation_ids": [
-      "obs_0mwgs5xbc1s8706f402",
-      "obs_0mwgs5xbc1t2babb2db",
-      "obs_0mwgs5xbc1v8a278284",
-      "obs_0mwgs5xbd1zde448741",
-      "obs_0mwgs5xbd218b345998",
-      "obs_0mwgs5xbd22dc3fbd16",
-      "obs_0mwgs5xbd23a271c6fd"
+      "obs_0mwgyatn91sa9a34d6b",
+      "obs_0mwgyatn91t00394808",
+      "obs_0mwgyatn91vcf7bd243",
+      "obs_0mwgyatna1z74c27d10",
+      "obs_0mwgyatna21fde23199",
+      "obs_0mwgyatna22d11b411d",
+      "obs_0mwgyatna23b0afecce"
     ],
     "observed_failure_count": 7
   },
   "hypothesis": "If change review also runs guard_removed_toplevel, verified failures of field_removed, field_renamed will be blocked without blocking safe changes.",
+  "authorship": null,
   "expected_benefit": "Fewer approved breaking changes of these classes.",
   "possible_regressions": [
     "Safe changes could be blocked",
@@ -45,10 +46,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:10:09.707Z",
+    "frozen_at": "2026-11-14T22:01:55.918Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:af9292dc711a5cc21cb191ea34cf883a690c7cc6b6addd1bf3564a84ae73c587"
+      "snapshot:bb4e984503602e820cc11501c365c886ad3d8f630f51c95d2d6a9f71706ee080"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -61,21 +62,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:10:09.776Z",
+      "at": "2026-11-14T22:01:55.975Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:10:10.104Z",
+      "at": "2026-11-14T22:01:56.287Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 328,
+    "wall_ms": 312,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -172,12 +173,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.14,
-      "incumbent": 0.172,
-      "baseline": 0.136,
-      "diff_vs_incumbent": -0.032,
+      "candidate": 0.178,
+      "incumbent": 0.136,
+      "baseline": 0.114,
+      "diff_vs_incumbent": 0.042,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": 0.005,
+      "diff_vs_baseline": 0.064,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -364,7 +365,7 @@
   "decision": "accept",
   "justification": "Accepted: accuracy improved by 0.1625 against the incumbent (95% interval 0.0875 to 0.25) with every hard gate passed.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:10:10.104Z",
+  "decided_at": "2026-11-14T22:01:56.287Z",
   "release_manifest": {
     "release_id": "r3",
     "parent_release_id": "r1",
@@ -383,13 +384,13 @@
       }
     },
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "evaluation_snapshot_hash": "af9292dc711a5cc21cb191ea34cf883a690c7cc6b6addd1bf3564a84ae73c587",
-    "receipt_id": "rcpt_0mwgs5xvc36581b14e5",
+    "evaluation_snapshot_hash": "bb4e984503602e820cc11501c365c886ad3d8f630f51c95d2d6a9f71706ee080",
+    "receipt_id": "rcpt_0mwgyau673619ba7693",
     "rollback_target": "r1",
     "status": "canary",
     "evidence_basis": "fixture",
-    "created_at": "2026-11-14T19:10:10.104Z",
-    "manifest_hash": "9d936fc43d5f4942845e59e6f84c387b3cf23b74a585a3ad50942bed2f674236"
+    "created_at": "2026-11-14T22:01:56.287Z",
+    "manifest_hash": "010cf2f16ed35e4a87c31078f505d6419b023e526ba0746554a468c6004228a3"
   },
   "rollback_target": "r1",
   "isolation": {
@@ -405,6 +406,6 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "b00711b071d8951c1584b14db58883c926cbb639211b6df01b09cff08477948a",
-  "id": "rcpt_0mwgs5xvc36581b14e5"
+  "receipt_hash": "b1d39c3c1f12b1b7766445c82a7d4e9f16c32885d4236f563c9eee1b3f3116c9",
+  "id": "rcpt_0mwgyau673619ba7693"
 }

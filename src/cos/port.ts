@@ -3,6 +3,7 @@ import { recordOutcome } from '../coordination/metrics.ts';
 import { creditMemories } from '../memory/memory.ts';
 import { devAuthority, devBudget } from '../config.ts';
 import type { Cluster } from '../kernel/intake.ts';
+import { ranAModel } from '../kernel/kernel.ts';
 import type { Runtime } from '../runtime.ts';
 import { SwarmError, newId } from '../lib/util.ts';
 
@@ -71,7 +72,8 @@ export interface ProgressSnapshot {
   next_actions: (NextAction & { task_key: string; task_title: string; status: string })[];
   blockers: { task_key: string; reason: string | null; owner_id: string | null }[];
   /** How the work was actually executed: by a model, by a labeled script, or by the runtime itself. */
-  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number };
+  /** `unreported_usage_attempts`: model attempts that ended without saying what they used; above zero, `spent` tokens and cost are lower bounds. */
+  execution: { model_attempts: number; scripted_attempts: number; runtime_steps: number; unreported_usage_attempts: number };
   spent: ResourceAmounts;
   budget: ResourceAmounts;
   open_decisions: number;
@@ -231,7 +233,7 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
         tasks: { total: tasks.length, by_status },
         next_actions: tasks.filter((t) => t.next_action).map((t) => ({ ...t.next_action!, task_key: t.key, task_title: t.title, status: t.status })),
         blockers: tasks.filter((t) => t.status === 'blocked' || t.status === 'failed').map((t) => ({ task_key: t.key, reason: t.blocked_reason ?? t.status, owner_id: t.next_action?.owner_id ?? null })),
-        execution: ((attempts) => ({ model_attempts: attempts.filter((a) => a.provider_mode === 'live' && a.provider !== 'runtime').length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length }))(store.attempts.where('"mission_id" = ?', m.id)),
+        execution: ((attempts) => ({ model_attempts: attempts.filter(ranAModel).length, scripted_attempts: attempts.filter((a) => a.provider === 'fixture').length, runtime_steps: attempts.filter((a) => a.provider === 'runtime').length, unreported_usage_attempts: kernel.unreportedUsage(m.id) }))(store.attempts.where('"mission_id" = ?', m.id)),
         spent: kernel.budget.spent(m.budget_account_id),
         budget: store.accounts.must(m.budget_account_id).limit,
         open_decisions: store.decisions.where(`"mission_id" = ? AND "status" IN ('open', 'escalated')`, m.id).length,
@@ -343,8 +345,16 @@ export class LocalChiefOfStaff implements ChiefOfStaffPort {
             kernel.unblock(t.id, cmd.actor, `retry decided by ${cmd.actor}: ${cmd.data.rationale}`);
             effect = 'task released for another attempt';
           }
-        } else if (['failure_escalation', 'limit_reached', 'blocked_work'].includes(decision.kind) && decision.chosen === 'cancel') {
-          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : 'failure'}: ${cmd.data.rationale}` } });
+        } else if (decision.kind === 'blocked_work' && decision.chosen === 'hold' && ['planning', 'active'].includes(m.status)) {
+          kernel.setMissionStatus(m.id, 'blocked', cmd.actor, { reason: 'held for investigation by the chief of staff' });
+          effect = 'mission held; nothing further runs on it';
+        } else if (decision.kind === 'stalled' && decision.chosen === 'resume' && m.status === 'blocked') {
+          const released = store.tasks.where(`"mission_id" = ? AND "status" = 'blocked'`, m.id);
+          for (const t of released) kernel.unblock(t.id, cmd.actor, `resume decided by ${cmd.actor}: ${cmd.data.rationale}`);
+          kernel.setMissionStatus(m.id, 'active', cmd.actor, { reason: 'resumed by the chief of staff after a stop' });
+          effect = `${released.length} blocked task(s) released; mission resumed`;
+        } else if (['failure_escalation', 'limit_reached', 'blocked_work', 'stalled'].includes(decision.kind) && decision.chosen === 'cancel') {
+          kernel.cancelMission({ command: 'cancelMission', actor: cmd.actor, key: `${cmd.key}:cancel`, data: { mission_id: m.id, reason: `cancelled after ${decision.kind === 'limit_reached' ? 'reaching its time limit' : decision.kind === 'blocked_work' ? 'a worker reported it was blocked' : decision.kind === 'stalled' ? 'it stopped with nothing able to run' : 'failure'}: ${cmd.data.rationale}` } });
           effect = 'mission cancelled; artifacts kept';
         } else if (decision.kind === 'limit_reached' && decision.chosen === 'extend' && m.status === 'blocked') {
           // Only a person can extend a ceiling. The extension is one more period of the configured length.

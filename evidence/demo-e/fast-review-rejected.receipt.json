@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgs2lhja802cbfcac",
-  "experiment_id": "exp_0mwgs2l86a4b3fa0a88",
+  "receipt_id": "rcpt_0mwgy7qska82655f318",
+  "experiment_id": "exp_0mwgy7qkda405d07c62",
   "level": "execution",
   "problem": {
     "statement": "Change review takes two steps per change; most changes are approved anyway.",
@@ -8,6 +8,7 @@
     "observed_failure_count": 0
   },
   "hypothesis": "Dropping the test-presence step halves review cost without changing outcomes that matter.",
+  "authorship": null,
   "expected_benefit": "Review cost per change falls by half.",
   "possible_regressions": [
     "Changes without tests would no longer be blocked"
@@ -36,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:33.750Z",
+    "frozen_at": "2026-11-14T21:59:31.646Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:2af1ae6934c36c0f1f5a284d5075e082caed14299df4cfd63bba71444133923e"
+      "snapshot:35e926ff57dc5c4998d20c72fe2ac47768edd1d0d9adccade9352ec6b88a33f9"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,21 +53,21 @@
     {
       "attempt_no": 1,
       "kind": "development",
-      "at": "2026-11-14T19:07:33.803Z",
+      "at": "2026-11-14T21:59:31.691Z",
       "cases": 40,
       "note": "development check by the candidate author"
     },
     {
       "attempt_no": 2,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:34.087Z",
+      "at": "2026-11-14T21:59:31.940Z",
       "cases": 80,
       "note": "one evaluation on holdout-A"
     }
   ],
   "resource_use": {
     "experiment_units": 281,
-    "wall_ms": 284,
+    "wall_ms": 249,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -163,12 +164,12 @@
       "metric": "wall_ms_per_review",
       "unit": "milliseconds, measured outside the candidate process",
       "higher_is_better": false,
-      "candidate": 0.098,
-      "incumbent": 0.111,
-      "baseline": 0.108,
-      "diff_vs_incumbent": -0.013,
+      "candidate": 0.087,
+      "incumbent": 0.106,
+      "baseline": 0.113,
+      "diff_vs_incumbent": -0.019,
       "ci95_vs_incumbent": null,
-      "diff_vs_baseline": -0.01,
+      "diff_vs_baseline": -0.026,
       "ci95_vs_baseline": null,
       "n": 80,
       "method": "single timing of the whole batch; indicative only"
@@ -355,7 +356,7 @@
   "decision": "reject",
   "justification": "Rejected: required verification steps are performed; no more defects escape; no cumulative regression against the original baseline failed. The candidate omits a step that may not be omitted: tests_present. A probe case with a known answer was not caught.",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:34.087Z",
+  "decided_at": "2026-11-14T21:59:31.940Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -371,5 +372,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "b0729ff6bb1e3a259ffd26d0bb760eaae4ab6b728f4cd568427fab3927a51548"
+  "receipt_hash": "05916b87c7f60069b77eaf429533eb38e94ee10359ba7f67c72e0f25371da29e"
 }

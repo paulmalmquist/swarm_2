@@ -25,7 +25,10 @@ jobs:
       - run: npm test
       - if: matrix.node == 24
         run: npm run demo:all
+        env:
+          SWARM2_EVIDENCE_DIR: evidence/validation
       - run: npm run demo:manufacturing
+      - run: npm run check:report
   warehouse:
     runs-on: ubuntu-22.04
     timeout-minutes: 15

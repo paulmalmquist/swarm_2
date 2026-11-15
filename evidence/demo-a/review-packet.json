@@ -1,5 +1,5 @@
 {
-  "mission_id": "msn_0mwgs1usx07efa05d3e",
+  "mission_id": "msn_0mwgy735007c5d8c942",
   "title": "Shared dataset-health capability",
   "cold_read": [
     "This packet covers \"Shared dataset-health capability\". 5 of 5 acceptance criteria passed independent verification.",
@@ -63,8 +63,8 @@
   },
   "exact_changes": {
     "ref": "integration",
-    "base_commit": "658c558a2faee5a7b94e38a5a7735188f00e1113",
-    "head_commit": "d77b2811661c923f00c0f06ef4a9cc571d1fc7ba",
+    "base_commit": "e335748c15d457e0ce2b792bdf2917d40a54b472",
+    "head_commit": "5235328334097c8b6bfc2b16fbdd0f69955e198c",
     "files": [
       {
         "status": "A",
@@ -97,7 +97,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgs1wym6ga49bb7dc"
+        "evd_0mwgy751u6gdeeb42fe"
       ]
     },
     {
@@ -108,7 +108,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgs1wym6ga49bb7dc"
+        "evd_0mwgy751u6gdeeb42fe"
       ]
     },
     {
@@ -119,7 +119,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgs1wym6ga49bb7dc"
+        "evd_0mwgy751u6gdeeb42fe"
       ]
     },
     {
@@ -130,7 +130,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgs1wym6ga49bb7dc"
+        "evd_0mwgy751u6gdeeb42fe"
       ]
     },
     {
@@ -141,7 +141,7 @@
       "verdict": "pass",
       "independent": true,
       "evidence_ids": [
-        "evd_0mwgs1wym6ga49bb7dc"
+        "evd_0mwgy751u6gdeeb42fe"
       ]
     }
   ],
@@ -219,16 +219,16 @@
   ],
   "decisions": [],
   "remaining_concerns": [
-    "Drift detection compares declared and observed type names literally",
-    "Actual load cadences are not given; thresholds are taken from the requests where stated",
-    "Whether an alert should page someone or only appear in a report is not stated",
-    "No request says how long drift may persist before it matters",
-    "The contract carries no severity ranking; the weekly review may want one",
-    "Thresholds in the criteria come from the requests and have not been confirmed by dataset owners",
-    "Open question from agt_0mwgs1ute0u06bdb2cb: Should a stale-data alert page someone, or only appear in the report? No request says."
+    "Open question from the analyst (discovery): Should a stale-data alert page someone, or only appear in the report? No request says.",
+    "Stated by the worker on delivery.engine.implement: Drift detection compares declared and observed type names literally",
+    "Stated by the worker on discovery.analyze: Actual load cadences are not given; thresholds are taken from the requests where stated",
+    "Stated by the worker on discovery.analyze: Whether an alert should page someone or only appear in a report is not stated",
+    "Stated by the worker on discovery.analyze: No request says how long drift may persist before it matters",
+    "Stated by the worker on planning.contract: The contract carries no severity ranking; the weekly review may want one",
+    "Stated by the worker on planning.criteria: Thresholds in the criteria come from the requests and have not been confirmed by dataset owners"
   ],
   "decision_requested": {
-    "decision_id": "dec_0mwgs1x5i7k0b0d87fe",
+    "decision_id": "dec_0mwgy759x7k23b6d534",
     "question": "Approve the integrated result of \"Shared dataset-health capability\" for merge into the protected branch?",
     "options": [
       "approve",
@@ -243,12 +243,13 @@
     "worker_invocations": 10,
     "tokens": 0,
     "cost_usd_est": 0,
-    "wall_ms": 1083,
+    "wall_ms": 1013,
     "cost_basis": "none",
-    "usage_completeness": "complete"
+    "usage_completeness": "complete",
+    "unreported_attempts": 0
   },
   "release_id": "r1",
   "provider_mode": "fixture",
   "data_class": "synthetic",
-  "generated_at": "2026-11-14T19:07:02.552Z"
+  "generated_at": "2026-11-14T21:59:04.055Z"
 }

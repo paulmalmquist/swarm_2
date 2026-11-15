@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgs413g7fd6aa93a7
+# Improvement receipt rcpt_0mwgy923n7fd62efd55
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: REJECT** — Rejected: no more defects escape failed. Acceptance criteria that fail on results the mission accepted: candidate 5, incumbent 0, across 8 episodes.
 
-Decided by release-gate at 2026-11-14T19:08:40.972Z. Level: coordination. Experiment: `exp_0mwgs2pgwka0859bdb7`.
+Decided by release-gate at 2026-11-14T22:00:33.251Z. Level: coordination. Experiment: `exp_0mwgy7uaxka1fe0e9b2`.
 
 ## Problem and supporting observations
 
@@ -33,9 +33,9 @@ Sets independent_verification to false: no verification swarm is formed and the 
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T19:07:39.248Z, before the candidate was submitted
+- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T21:59:36.489Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: mission-episodes:missions-A; snapshot:8374880c942f1f27bccbf9a25e8e67b5f4d7293f5688718659d18855d1a2e07c
+- Workload: mission-episodes:missions-A; snapshot:e90e917b40b61ea7544886f78ad611b65a8fa6495e28c2f856bc66297f99a17a
 - Held-out set: missions-A
 - Executor: mission-episodes (stochastic; rerun; 1 pass)
 
@@ -45,7 +45,7 @@ Sets independent_verification to false: no verification swarm is formed and the 
 |---|---|---|---|
 | 1 | holdout | 8 | one evaluation on missions-A |
 
-Resource use: 183 experiment units, 61721 ms, 0 model calls, cost not measured.
+Resource use: 183 experiment units, 56759 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -54,7 +54,7 @@ Resource use: 183 experiment units, 61721 ms, 0 model calls, cost not measured.
 | truly_correct_missions (higher is better) | 0.375 | 1 | 1 | -0.625 | -0.875 to -0.25 | 8 |
 | escaped_defects_per_mission (lower is better) | 0.625 | 0 | 0 | 0.625 | 0.25 to 0.875 | 8 |
 | worker_invocations_per_mission (lower is better) | 10 | 12.875 | 12.875 | -2.875 | -3.625 to -1.75 | 8 |
-| completion_ms (lower is better) | 3010.625 | 4143.875 | 4143.875 | -1133.25 | -1558.25 to -576.875 | 8 |
+| completion_ms (lower is better) | 2806.625 | 3786.625 | 3786.625 | -980 | -1360.125 to -476.75 | 8 |
 | rework_per_mission (lower is better) | 0 | 0.625 | 0.625 | -0.625 | -0.875 to -0.25 | 8 |
 | integration_failures_per_mission (lower is better) | 0 | 0 | 0 | 0 | 0 to 0 | 8 |
 
@@ -95,4 +95,4 @@ Method for the primary metric: paired bootstrap over the same 8 mission episodes
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `3a791f3376d186b4137739f53c52ae21866448edc0300f2dff3501933a595c5a`
+Receipt hash: `9047019791db3f4ac1433fd9ba3a4b9083c62c4d0f97a97eea4fc6b64e27b160`

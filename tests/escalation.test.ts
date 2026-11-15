@@ -19,6 +19,11 @@ test('work that exhausts its repairs stops for a person, whose guidance reaches 
     const report = rt.store.tasks.first('"mission_id" = ? AND "key" = ?', mission_id, 'delivery.report.implement')!;
     assert.equal(report.status, 'failed', 'the repair limit is a ceiling for agents');
     assert.equal(rt.store.missions.must(mission_id).status, 'blocked');
+    // The team that contained the failed work is no longer marked done, and integration waits for
+    // it instead of running again on a workstream that is not accepted.
+    assert.notEqual(rt.store.tasks.first('"mission_id" = ? AND "key" = ?', mission_id, 'delivery.report')!.status, 'accepted');
+    assert.equal(rt.store.tasks.first('"mission_id" = ? AND "key" = ?', mission_id, 'delivery.integrate')!.status, 'planned', 'integration waits');
+    assert.equal(rt.store.events({ mission_id, type: 'attempt_failed', limit: 100 }).length, 0, 'and it did not run and fail in the meantime');
     const d = rt.store.decisions.first(`"mission_id" = ? AND "kind" = 'failure_escalation' AND "status" = 'open'`, mission_id)!;
     assert.equal(d.requires_human, true);
     assert.match(d.question, /AC-SLA-QUALITY/, 'the question says which criterion kept failing');

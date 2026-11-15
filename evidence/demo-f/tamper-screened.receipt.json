@@ -1,6 +1,6 @@
 {
-  "receipt_id": "rcpt_0mwgs2lixaeee0abbb5",
-  "experiment_id": "exp_0mwgs2liraa538bc868",
+  "receipt_id": "rcpt_0mwgy7qthae74045c9c",
+  "experiment_id": "exp_0mwgy7qtdaae95754d6",
   "level": "execution",
   "problem": {
     "statement": "Synthetic adversarial fixture for the isolation demonstration. Not a real improvement proposal.",
@@ -8,6 +8,7 @@
     "observed_failure_count": 0
   },
   "hypothesis": "None. This candidate attempts to overwrite the promotion policy, the evaluation ledger and the active release pointer, and to read held-out cases.",
+  "authorship": null,
   "expected_benefit": "None.",
   "possible_regressions": [
     "Everything, if it were allowed to run with the gate's privileges"
@@ -36,10 +37,10 @@
   "evaluation": {
     "protocol_id": "promotion-policy@1/execution",
     "policy_hash": "a79f643c873bbd0de127abee7168849c914b04e9027fabc2cdd871da8aac465c",
-    "frozen_at": "2026-11-14T19:07:34.131Z",
+    "frozen_at": "2026-11-14T21:59:31.970Z",
     "workload_refs": [
       "review:holdout-A",
-      "snapshot:a8800e83c01df29237d2ff12e1e7021d80aa681af5995237fd452e19a6d730a9"
+      "snapshot:e7923858efefe88644bbcd7614817c983427c0afb30caf26d83096964971509b"
     ],
     "holdout_set": "holdout-A",
     "executor": "validator-executor",
@@ -52,14 +53,14 @@
     {
       "attempt_no": 1,
       "kind": "holdout",
-      "at": "2026-11-14T19:07:34.138Z",
+      "at": "2026-11-14T21:59:31.973Z",
       "cases": 0,
       "note": "candidate was not executed on held-out cases"
     }
   ],
   "resource_use": {
     "experiment_units": 0,
-    "wall_ms": 2,
+    "wall_ms": 1,
     "model_calls": 0,
     "cost_usd_est": null
   },
@@ -201,7 +202,7 @@
   "decision": "reject",
   "justification": "Rejected: no forbidden capabilities failed. The candidate uses capabilities a review step has no reason to use: validators/interface_compat.mjs uses node:fs",
   "decided_by": "release-gate",
-  "decided_at": "2026-11-14T19:07:34.138Z",
+  "decided_at": "2026-11-14T21:59:31.973Z",
   "release_manifest": null,
   "rollback_target": null,
   "isolation": {
@@ -217,5 +218,5 @@
     ]
   },
   "evidence_basis": "fixture",
-  "receipt_hash": "f24f36f7a126cd224bddbe5de09353fdab99ce9dabca1f00cab2b0ca087b06b1"
+  "receipt_hash": "5e1629c2984589dd1866c422531ddec506902ce98d4e169fdec8bf21ec56f413"
 }

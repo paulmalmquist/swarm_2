@@ -67,7 +67,7 @@ organization produces a draft with its supporting context and a decision request
 | Provider | What it is | Guarantee |
 |---|---|---|
 | `fixture` | A real child process that runs a scenario script and submits under its own fencing token. Supports injected faults (slow, crash, hang, stale submit, named defects) | Deterministic and labeled. Zero model calls. Never represents model work |
-| `claude-cli` | A real model worker: `claude -p` in headless mode with a JSON schema for its result, one process per attempt | At most one accepted result per fencing token. A retry reruns the model; outputs are not replayed. Usage is provider-reported; cost is a list-price estimate, not billing |
+| `claude-cli` | A real model worker: `claude -p` in headless mode with a JSON schema for its result, one process per attempt | At most one accepted result per fencing token. A retry reruns the model; outputs are not replayed. Usage is provider-reported; cost is a list-price estimate, not billing. A worker stopped before it reports (deadline, fencing, cancellation) leaves tokens and cost unknown, and totals are then marked as lower bounds |
 
 Model routing (which model for which swarm) is part of the execution definitions and so can be
 changed by an experiment. The requested model and the model that actually served are both recorded.

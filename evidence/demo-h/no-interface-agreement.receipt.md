@@ -1,10 +1,10 @@
-# Improvement receipt rcpt_0mwgs5fupzne4c4efdf
+# Improvement receipt rcpt_0mwgyadvrzn94eab953
 
 > DETERMINISTIC FIXTURE EVALUATION — executable checks on synthetic cases; no model was run
 
 **Decision: INCONCLUSIVE** — No demonstrated improvement: truly_correct_missions is no worse (95% interval 0 to 0, margin 0), but cost did not fall (worker_invocations_per_mission changed by 0.25), so the simplification saves nothing.
 
-Decided by release-gate at 2026-11-14T19:09:46.754Z. Level: coordination. Experiment: `exp_0mwgs413l7h14f342b3`.
+Decided by release-gate at 2026-11-14T22:01:35.175Z. Level: coordination. Experiment: `exp_0mwgy923r7h5800f308`.
 
 ## Problem and supporting observations
 
@@ -34,9 +34,9 @@ Removes the interface-agreement step: no contract task, and delivery workstreams
 
 ## Evaluation
 
-- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T19:08:40.977Z, before the candidate was submitted
+- Protocol: promotion-policy@1/coordination, frozen at 2026-11-14T22:00:33.255Z, before the candidate was submitted
 - Policy hash: `a79f643c873bbd0d`
-- Workload: mission-episodes:missions-B; snapshot:4b05cb9472cd4f6a594055807c9695736fb2f7533d36a45d1bd236262fc3601f
+- Workload: mission-episodes:missions-B; snapshot:d04f53cb95395339c641ccde4aa3983d393e3624904b413912dc48e676bb8332
 - Held-out set: missions-B
 - Executor: mission-episodes (stochastic; rerun; 1 pass)
 
@@ -46,7 +46,7 @@ Removes the interface-agreement step: no contract task, and delivery workstreams
 |---|---|---|---|
 | 1 | holdout | 8 | one evaluation on missions-B |
 
-Resource use: 190 experiment units, 65774 ms, 0 model calls, cost not measured.
+Resource use: 190 experiment units, 61917 ms, 0 model calls, cost not measured.
 
 ## Outcome differences and uncertainty
 
@@ -55,7 +55,7 @@ Resource use: 190 experiment units, 65774 ms, 0 model calls, cost not measured.
 | truly_correct_missions (higher is better) | 1 | 1 | 1 | 0 | 0 to 0 | 8 |
 | escaped_defects_per_mission (lower is better) | 0 | 0 | 0 | 0 | 0 to 0 | 8 |
 | worker_invocations_per_mission (lower is better) | 12 | 11.75 | 11.75 | 0.25 | -0.5 to 0.75 | 8 |
-| completion_ms (lower is better) | 4108.75 | 3550 | 3550 | 558.75 | 126.375 to 895.25 | 8 |
+| completion_ms (lower is better) | 3820 | 3376.625 | 3376.625 | 443.375 | 26.375 to 826.5 | 8 |
 | rework_per_mission (lower is better) | 0.875 | 0.25 | 0.25 | 0.625 | 0.25 to 0.875 | 8 |
 | integration_failures_per_mission (lower is better) | 0.625 | 0 | 0 | 0.625 | 0.25 to 0.875 | 8 |
 
@@ -96,4 +96,4 @@ Method for the primary metric: paired bootstrap over the same 8 mission episodes
 
 No release was created. The candidate and this result are kept.
 
-Receipt hash: `c623d0652ada27f1c859cea60190e7b14f47792388f7095a262dbb32996cfdc1`
+Receipt hash: `9fde0ac1fc9b45b65b2c807eaa4809e51dad933960e885e5a90a0e1f51b07fe0`

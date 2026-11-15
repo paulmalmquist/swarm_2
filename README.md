@@ -25,6 +25,7 @@ The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure b
 
 | If you want to | Read |
 |---|---|
+| Transfer useful mechanisms into Paul OS and evaluate them against actual work | [docs/paul-os-transfer.md](docs/paul-os-transfer.md) |
 | Know what it can do today and how to run, inspect and stop it | [docs/handoff.md](docs/handoff.md) |
 | Investigate potentially affected hardware from a finding and lot hypothesis | [docs/manufacturing.md](docs/manufacturing.md) |
 | Inspect the Kimball grains, SC dimensions, bridges and dbt/BigQuery models | [warehouse/README.md](warehouse/README.md) |
@@ -40,7 +41,8 @@ The [runtime architecture](docs/runtime-overview.svg) shows the infrastructure b
 Linux and Node 22.18 or later. Install Git, `bubblewrap` and `util-linux`; unprivileged user/network namespaces must be enabled. Generated-code execution fails closed without isolation. Run `npm ci` for development tools.
 
 ```
-npm test                 # regression suite: coordination, recovery, isolation, rollback, limits, escalation
+npm test                 # 95 tests: coordination, recovery, isolation, rollback, limits, escalation
+npm run check:report     # document claims rebuilt from evidence/
 npm run demo:all         # demonstrations A–I on labeled fixtures; rewrites evidence/
 npm run demo:manufacturing # synthetic genealogy, evidence packet and correction/re-review
 node src/cli.ts init && node src/cli.ts serve --run      # the review interface at http://127.0.0.1:4317/
@@ -64,6 +66,14 @@ Real model workers instead of fixtures (uses your Claude Code account; off by de
 SWARM2_LIVE=1 npm run demo:live                       # the cross-swarm mission on real workers
 SWARM2_LIVE=1 node demos/live-improve.ts              # a real model writes an improvement candidate
 ```
+
+Each live run writes a new bundle under `evidence/` (`live-<date>-<time>` unless you name it). A
+bundle that already exists is not replaced unless `SWARM2_OVERWRITE=1` is set.
+
+`npm run verify` and CI keep fresh fixture runs in `evidence/validation/`, preserving the audited
+historical bundles quoted by `check:report`. To choose another output directory, set
+`SWARM2_EVIDENCE_DIR` when running `npm run demo:all`. A direct demo command without that variable
+still regenerates the historical bundle paths and may require updating the report's claims.
 
 Stop everything: `node src/cli.ts stop`.
 
@@ -91,6 +101,10 @@ the reports:
   It says nothing about how well models do the work.
 - **Simulation**: a synthetic testbed (the improvement arena, mission episodes with assumed defect
   rates). It describes behaviour in the testbed, not rates in real work.
+
+`npm run check:report` rebuilds the quoted figures it covers from the files under `evidence/` and
+fails when a document says something else. What it covers, and what it does not, is in section 9
+of the evidence report.
 
 All requests, people, teams, datasets and review cases in this repository are invented and labeled
 as synthetic. No connector to Slack, Jira, GitLab, BigQuery, dbt, Power BI, OpenMetadata,
